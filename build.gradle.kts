@@ -37,6 +37,10 @@ javafx {
 
 dependencies {
     implementation("org.controlsfx:controlsfx:11.2.1")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:7.7.0.202606012155-r")
+    implementation("org.projectlombok:lombok:1.18.46")
+
+    // testing
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }

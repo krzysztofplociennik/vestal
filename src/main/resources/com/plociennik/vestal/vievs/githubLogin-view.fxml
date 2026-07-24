@@ -11,9 +11,12 @@
         fx:controller="com.plociennik.vestal.controller.GithubLoginController"
         xmlns:fx="http://javafx.com/fxml">
 
-    <Label fx:id="loginStatus" text="not logged in"/>
+    <Label fx:id="codeLabel" />
+    <Label fx:id="statusLabel" />
+    <Button fx:id="copyCodeButton" text="copy" visible="false" onAction="#onCopyCodeClick"/>
+
     <StackPane>
-        <Button fx:id="loginButton" text="login" onAction="#onLoginButtonClick"/>
+        <Button fx:id="loginButton" text="login to GH" onAction="#onLoginButtonClick"/>
         <Button fx:id="logoutButton" text="logout" onAction="#onLogoutButtonClick" visible="false"/>
     </StackPane>
 </HBox>
