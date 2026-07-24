@@ -6,6 +6,6 @@ module com.plociennik.vestal {
 
     opens com.plociennik.vestal to javafx.fxml;
     exports com.plociennik.vestal;
-    exports com.plociennik.vestal.ui;
-    opens com.plociennik.vestal.ui to javafx.fxml;
+    exports com.plociennik.vestal.controller;
+    opens com.plociennik.vestal.controller to javafx.fxml;
 }

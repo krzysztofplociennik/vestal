@@ -9,7 +9,7 @@
 <VBox
         alignment="BASELINE_LEFT"
         xmlns:fx="http://javafx.com/fxml"
-        fx:controller="com.plociennik.vestal.ui.MainController"
+        fx:controller="com.plociennik.vestal.controller.MainController"
         stylesheets="@../css/style.css"
 >
 

@@ -7,8 +7,8 @@
 
 <HBox
         fx:id="loginArea"
-        alignment="BASELINE_RIGHT"
-        fx:controller="com.plociennik.vestal.ui.GithubLoginController"
+        alignment="CENTER"
+        fx:controller="com.plociennik.vestal.controller.GithubLoginController"
         xmlns:fx="http://javafx.com/fxml">
 
     <Label fx:id="loginStatus" text="not logged in"/>

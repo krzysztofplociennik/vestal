@@ -1,4 +1,4 @@
-package com.plociennik.vestal.ui;
+package com.plociennik.vestal.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
