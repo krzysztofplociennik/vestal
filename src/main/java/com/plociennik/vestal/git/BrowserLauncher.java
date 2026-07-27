@@ -1,5 +1,7 @@
 package com.plociennik.vestal.git;
 
+import com.plociennik.vestal.common.VestalException;
+
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
@@ -17,9 +19,7 @@ public class BrowserLauncher {
             if (tryAwtDesktop(url)) return;
             if (tryXdgOpen(url)) return;
         }
-
-        throw new RuntimeException(
-                "Could not open a browser automatically. Please open this URL manually: " + url);
+        throw new VestalException("1326_270726", "Could not open a browser automatically.");
     }
 
     private static boolean tryAwtDesktop(String url) {

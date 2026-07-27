@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.annotationProcessor
+
 plugins {
     java
     application
@@ -39,6 +41,8 @@ dependencies {
     implementation("org.controlsfx:controlsfx:11.2.1")
     implementation("org.eclipse.jgit:org.eclipse.jgit:7.7.0.202606012155-r")
     implementation("org.projectlombok:lombok:1.18.46")
+    implementation("org.slf4j:slf4j-simple:2.0.18")
+    annotationProcessor("org.projectlombok:lombok:1.18.46")
 
     // testing
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")

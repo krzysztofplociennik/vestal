@@ -1,6 +1,7 @@
 package com.plociennik.vestal.common;
 
 public class VestalException extends RuntimeException {
+
     public VestalException(String errorID, String message) {
         super("(%s) %s".formatted(errorID, message));
     }

@@ -1,5 +1,7 @@
 package com.plociennik.vestal.git;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -7,23 +9,24 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Optional;
 
+@Slf4j
 public class TokenValidator {
 
     private static final String API_BASE = "https://api.github.com";
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
-    public boolean existsValidToken() {
+    public AuthResult validate() {
         TokenStorage tokenStorage = new TokenStorage();
         Optional<String> load = tokenStorage.load();
         if (load.isEmpty()) {
-            return false;
+            log.info("Github token is empty.");
+            return new AuthResult(false, "", "Github token is empty.");
         }
         String token = load.get();
-        TokenValidator.AuthResult authResult = this.validate(token);
-        return authResult.success();
+        return this.authorizeToken(token);
     }
 
-    private AuthResult validate(String candidateToken) {
+    private AuthResult authorizeToken(String candidateToken) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(API_BASE + "/user"))
@@ -40,12 +43,13 @@ public class TokenValidator {
                     String username = extractLogin(response.body());
                     yield new AuthResult(true, username, null);
                 }
-                case 401 -> new AuthResult(false, null, "Invalid or expired token.");
-                case 403 -> new AuthResult(false, null, "Rate limited or insufficient scope.");
+                case 401 -> new AuthResult(false, null, "[401] Invalid or expired token.");
+                case 403 -> new AuthResult(false, null, "[403] Rate limited or insufficient scope.");
                 default -> new AuthResult(false, null, "Unexpected error: HTTP " + response.statusCode());
             };
         } catch (IOException | InterruptedException e) {
             if (e instanceof InterruptedException) Thread.currentThread().interrupt();
+            log.warn("[{}] Something happened while trying to authorize the GitHub token: {}", "1549_270726", e.getMessage());
             return new AuthResult(false, null, "Network error: " + e.getMessage());
         }
     }

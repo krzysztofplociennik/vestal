@@ -10,7 +10,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -18,7 +19,8 @@ import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class GithubLoginController extends HBox implements Initializable {
+@Slf4j
+public class GithubLoginController extends VBox implements Initializable {
 
     @FXML
     private Button loginButton;
@@ -36,16 +38,14 @@ public class GithubLoginController extends HBox implements Initializable {
     private Label statusLabel;
 
     private TokenStorage tokenStorage = new TokenStorage();
-
     private TokenValidator tokenValidator = new TokenValidator();
-
     private String userCode = "";
-
+    private String login = "";
 
     private void setupLoginButtonAction() {
         loginButton.setOnAction(e -> {
             statusLabel.setText("Requesting device code...");
-
+            loginButton.setVisible(false);
             copyCodeButton.setVisible(true);
 
             Task<GitHubDeviceFlow.PollResult> task = new Task<>() {
@@ -53,9 +53,7 @@ public class GithubLoginController extends HBox implements Initializable {
                 protected GitHubDeviceFlow.PollResult call() throws Exception {
                     var deviceFlow = new GitHubDeviceFlow();
                     var deviceCode = deviceFlow.requestDeviceCode();
-
                     userCode = deviceCode.userCode();
-                    System.out.println(userCode);
 
                     Platform.runLater(() -> {
                         codeLabel.setText("Enter this code: " + deviceCode.userCode()
@@ -64,6 +62,7 @@ public class GithubLoginController extends HBox implements Initializable {
                             BrowserLauncher.openUrl(deviceCode.verificationUri());
                         } catch (Exception ex) {
                             statusLabel.setText("Couldn't open browser automatically — use the URL above.");
+                            log.warn("Couldn't open browser automatically, error: {}", ex.getMessage());
                         }
                     });
 
@@ -72,56 +71,65 @@ public class GithubLoginController extends HBox implements Initializable {
             };
 
             task.setOnSucceeded(e2 -> {
-                loginButton.setDisable(false);
+                loginButton.setVisible(false);
                 var result = task.getValue();
                 if (result.success()) {
                     tokenStorage.save(result.accessToken());
-                    statusLabel.setText("Logged in!");
+                    loginButton.setVisible(false);
+                    codeLabel.setVisible(false);
+                    copyCodeButton.setVisible(false);
+                    logoutButton.setVisible(true);
+                    statusLabel.setText("Logged in as [%s]".formatted(login));
+                    log.info("Successfully logged in as [{}].", login);
                 } else {
                     statusLabel.setText(result.error());
+                    log.warn("Login unsuccessful, error: {}", task.getException().getMessage());
+
                 }
             });
 
             task.setOnFailed(e2 -> {
-                task.getException().printStackTrace();
-                loginButton.setDisable(false);
-                statusLabel.setText("Login failed: " + task.getException().getMessage());
+                loginButton.setVisible(true);
+                log.warn("Login failed.");
+                statusLabel.setText("Login failed, error: %s".formatted(task.getException().getMessage()));
             });
 
             new Thread(task, "github-device-login").start();
         });
     }
 
-    @FXML
-    protected void onLoginButtonClick() {
-        loginButton.setVisible(false);
-        logoutButton.setVisible(true);
+    private void setupLogoutButtonAction() {
+        logoutButton.setOnAction(e -> {
+            log.info("Logged out.");
+            statusLabel.setText("Logged out.");
+            loginButton.setVisible(true);
+            logoutButton.setVisible(false);
+            tokenStorage.clear();
+        });
     }
-
-    @FXML
-    protected void onLogoutButtonClick() {
-        loginButton.setVisible(true);
-        logoutButton.setVisible(false);
-    }
-
 
     @FXML
     private void onCopyCodeClick() {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         StringSelection selection = new StringSelection(userCode.trim());
         clipboard.setContents(selection, null);
+        log.info("User code [%s] has been copied.".formatted(userCode));
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        boolean isValid = tokenValidator.existsValidToken();
-        if (isValid) {
+        TokenValidator.AuthResult authResult = tokenValidator.validate();
+        if (authResult.success()) {
+            log.info("Current token is valid for login: [{}]", authResult.login());
+            login = authResult.login();
             loginButton.setVisible(false);
             logoutButton.setVisible(true);
         } else {
+            log.warn("Current token is not valid for login: [{}], reason: {}", authResult.login(), authResult.errorMessage());
             loginButton.setVisible(true);
             logoutButton.setVisible(false);
         }
         setupLoginButtonAction();
+        setupLogoutButtonAction();
     }
 }

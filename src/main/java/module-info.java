@@ -7,6 +7,8 @@ module com.plociennik.vestal {
     requires java.net.http;
     requires java.desktop;
     requires java.prefs;
+    requires org.slf4j;
+    requires org.slf4j.simple;
 
     opens com.plociennik.vestal to javafx.fxml;
     exports com.plociennik.vestal;
