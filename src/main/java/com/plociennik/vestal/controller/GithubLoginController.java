@@ -108,12 +108,13 @@ public class GithubLoginController extends VBox implements Initializable {
         });
     }
 
-    @FXML
-    private void onCopyCodeClick() {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        StringSelection selection = new StringSelection(userCode.trim());
-        clipboard.setContents(selection, null);
-        log.info("User code [%s] has been copied.".formatted(userCode));
+    private void setupCopyCodeButtonAction() {
+        copyCodeButton.setOnAction(e -> {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            StringSelection selection = new StringSelection(userCode.trim());
+            clipboard.setContents(selection, null);
+            log.info("User code [%s] has been copied.".formatted(userCode));
+        });
     }
 
     @Override
@@ -131,5 +132,6 @@ public class GithubLoginController extends VBox implements Initializable {
         }
         setupLoginButtonAction();
         setupLogoutButtonAction();
+        setupCopyCodeButtonAction();
     }
 }

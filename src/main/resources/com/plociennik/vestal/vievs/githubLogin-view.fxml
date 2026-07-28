@@ -22,6 +22,6 @@
     <HBox alignment="CENTER">
         <Label fx:id="codeLabel" />
         <Label fx:id="statusLabel" />
-        <Button fx:id="copyCodeButton" text="copy" visible="false" onAction="#onCopyCodeClick"/>
+        <Button fx:id="copyCodeButton" text="copy" visible="false"/>
     </HBox>
 </VBox>
