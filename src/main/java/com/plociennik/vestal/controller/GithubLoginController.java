@@ -42,6 +42,24 @@ public class GithubLoginController extends VBox implements Initializable {
     private String userCode = "";
     private String login = "";
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        TokenValidator.AuthResult authResult = tokenValidator.validate();
+        if (authResult.success()) {
+            log.info("Current token is valid for login: [{}]", authResult.login());
+            login = authResult.login();
+            loginButton.setVisible(false);
+            logoutButton.setVisible(true);
+        } else {
+            log.warn("Current token is not valid for login: [{}], reason: {}", authResult.login(), authResult.errorMessage());
+            loginButton.setVisible(true);
+            logoutButton.setVisible(false);
+        }
+        setupLoginButtonAction();
+        setupLogoutButtonAction();
+        setupCopyCodeButtonAction();
+    }
+
     private void setupLoginButtonAction() {
         loginButton.setOnAction(e -> {
             statusLabel.setText("Requesting device code...");
@@ -113,25 +131,7 @@ public class GithubLoginController extends VBox implements Initializable {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection selection = new StringSelection(userCode.trim());
             clipboard.setContents(selection, null);
-            log.info("User code [%s] has been copied.".formatted(userCode));
+            log.info("User code [{}] has been copied.", userCode);
         });
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        TokenValidator.AuthResult authResult = tokenValidator.validate();
-        if (authResult.success()) {
-            log.info("Current token is valid for login: [{}]", authResult.login());
-            login = authResult.login();
-            loginButton.setVisible(false);
-            logoutButton.setVisible(true);
-        } else {
-            log.warn("Current token is not valid for login: [{}], reason: {}", authResult.login(), authResult.errorMessage());
-            loginButton.setVisible(true);
-            logoutButton.setVisible(false);
-        }
-        setupLoginButtonAction();
-        setupLogoutButtonAction();
-        setupCopyCodeButtonAction();
     }
 }
