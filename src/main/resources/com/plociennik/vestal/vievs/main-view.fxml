@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
-
-<?import javafx.scene.control.Button?>
 
 <VBox
         alignment="BASELINE_LEFT"
@@ -19,6 +16,4 @@
 
     <fx:include source="githubLogin-view.fxml" stylesheets="@../css/githubLogin.css"/>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
 </VBox>
