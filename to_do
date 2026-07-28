@@ -2,11 +2,5 @@ VESTAL
 
 
 TODOS
-1. git login
-2. git logout
-3. git pull
-4. git push
-5. git commit
-6. git view repositories
-7. git pick specific repo
-8. git change repo
+1. creds storage needs to be safe
+2.
