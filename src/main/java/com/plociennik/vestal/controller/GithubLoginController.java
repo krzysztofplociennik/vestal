@@ -55,7 +55,7 @@ public class GithubLoginController extends VBox implements Initializable {
         TokenValidator.AuthResult authResult = tokenValidator.validate();
         if (authResult.success()) {
             log.info("Current token is valid for login: [{}]", authResult.login());
-            statusText.setText("Logged in as [%s]".formatted(credentialStorage.get(CredentialType.GITHUB_LOGIN)));
+            statusText.setText("Logged in as [%s]".formatted(credentialStorage.get(CredentialType.GITHUB_LOGIN).get()));
             loginButton.setVisible(false);
             logoutButton.setVisible(true);
         } else {
