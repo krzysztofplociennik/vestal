@@ -8,17 +8,16 @@ import java.net.http.HttpResponse;
 
 public class GitHubDeviceFlow {
 
-    private static final String CLIENT_ID = "Ov23liUfvKsBUZJb39Sl";
     private static final String SCOPE = "repo";
-
     private final HttpClient httpClient = HttpClient.newHttpClient();
+    private CredentialStorage credentialStorage = new CredentialStorage();
 
     public record DeviceCodeResponse(
             String deviceCode, String userCode, String verificationUri,
             int expiresIn, int interval) {}
 
     public DeviceCodeResponse requestDeviceCode() throws IOException, InterruptedException {
-        String body = "client_id=" + CLIENT_ID + "&scope=" + SCOPE;
+        String body = "client_id=" + credentialStorage.get(CredentialType.GITHUB_CLIENT_ID).get() + "&scope=" + SCOPE;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://github.com/login/device/code"))
@@ -57,8 +56,6 @@ public class GitHubDeviceFlow {
         }
     }
 
-    public record PollResult(boolean success, String accessToken, String error) {}
-
     public PollResult pollForToken(DeviceCodeResponse deviceCode) throws IOException, InterruptedException {
         long deadline = System.currentTimeMillis() + deviceCode.expiresIn() * 1000L;
         int intervalSeconds = deviceCode.interval();
@@ -66,7 +63,7 @@ public class GitHubDeviceFlow {
         while (System.currentTimeMillis() < deadline) {
             Thread.sleep(intervalSeconds * 1000L);
 
-            String body = "client_id=" + CLIENT_ID
+            String body = "client_id=" + credentialStorage.get(CredentialType.GITHUB_CLIENT_ID).get()
                     + "&device_code=" + deviceCode.deviceCode()
                     + "&grant_type=urn:ietf:params:oauth:grant-type:device_code";
 
@@ -101,4 +98,6 @@ public class GitHubDeviceFlow {
         }
         return new PollResult(false, null, "Timed out waiting for authorization.");
     }
+
+    public record PollResult(boolean success, String accessToken, String error) {}
 }

@@ -1,5 +1,6 @@
 package com.plociennik.vestal.git;
 
+import com.plociennik.vestal.common.VestalException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -14,16 +15,24 @@ public class TokenValidator {
 
     private static final String API_BASE = "https://api.github.com";
     private final HttpClient httpClient = HttpClient.newHttpClient();
+    private CredentialStorage credentialStorage = new CredentialStorage();
 
     public AuthResult validate() {
-        TokenStorage tokenStorage = new TokenStorage();
-        Optional<String> load = tokenStorage.load();
-        if (load.isEmpty()) {
+        Optional<String> optionalToken = credentialStorage.get(CredentialType.GITHUB_TOKEN);
+        if (optionalToken.isEmpty()) {
             log.info("Github token is empty.");
             return new AuthResult(false, "", "Github token is empty.");
         }
-        String token = load.get();
-        return this.authorizeToken(token);
+        String token = optionalToken.get();
+        AuthResult authResult = this.authorizeToken(token);
+        String savedLogin = credentialStorage.get(CredentialType.GITHUB_LOGIN).get();
+        if (!savedLogin.equals(authResult.login)) {
+            log.error("[{}] Saved login and authorized login from the token are not matching;\n" +
+                    "Saved: [{}] | AuthResult: [{}]", "1224_290726", savedLogin, authResult.login);
+            throw new VestalException("1224_290726", "Saved login and authorized login from the token are not " +
+                    "matching;\nSaved: [{}] | AuthResult: [{}]");
+        }
+        return authResult;
     }
 
     private AuthResult authorizeToken(String candidateToken) {
@@ -40,8 +49,8 @@ public class TokenValidator {
 
             return switch (response.statusCode()) {
                 case 200 -> {
-                    String username = extractLogin(response.body());
-                    yield new AuthResult(true, username, null);
+                    String login = extractLogin(response.body());
+                    yield new AuthResult(true, login, null);
                 }
                 case 401 -> new AuthResult(false, null, "[401] Invalid or expired token.");
                 case 403 -> new AuthResult(false, null, "[403] Rate limited or insufficient scope.");

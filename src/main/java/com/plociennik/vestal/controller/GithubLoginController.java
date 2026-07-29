@@ -1,16 +1,20 @@
 package com.plociennik.vestal.controller;
 
 import com.plociennik.vestal.git.BrowserLauncher;
+import com.plociennik.vestal.git.CredentialStorage;
+import com.plociennik.vestal.git.CredentialType;
 import com.plociennik.vestal.git.GitHubDeviceFlow;
-import com.plociennik.vestal.git.TokenStorage;
 import com.plociennik.vestal.git.TokenValidator;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.Toolkit;
@@ -22,107 +26,131 @@ import java.util.ResourceBundle;
 @Slf4j
 public class GithubLoginController extends VBox implements Initializable {
 
-    @FXML
-    private Button loginButton;
+    @FXML private Text statusText;
+    @FXML private Button loginButton;
+    @FXML private Button logoutButton;
+    @FXML private VBox clientIdArea;
+    @FXML private PasswordField clientIdField;
+    @FXML private Button saveClientIdButton;
+    @FXML private VBox userCodeArea;
+    @FXML private Text codeInfo;
+    @FXML private Text userCodeText;
+    @FXML private Button copyCodeButton;
+    @FXML private Text verificationLinkText;
+    @FXML private Text verificationLinkInfo;
+    @FXML private Button copyVerificationLinkButton;
 
-    @FXML
-    private Button logoutButton;
-
-    @FXML
-    private Button copyCodeButton;
-
-    @FXML
-    private Label codeLabel;
-
-    @FXML
-    private Label statusLabel;
-
-    private TokenStorage tokenStorage = new TokenStorage();
+    private CredentialStorage credentialStorage = new CredentialStorage();
     private TokenValidator tokenValidator = new TokenValidator();
     private String userCode = "";
-    private String login = "";
+    private String verificationLink = "";
+
+    private boolean clientIdSaved;
+    private final BooleanProperty loginInProcess = new SimpleBooleanProperty(false);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        clientIdSaved = credentialStorage.get(CredentialType.GITHUB_CLIENT_ID).isPresent();
+
         TokenValidator.AuthResult authResult = tokenValidator.validate();
         if (authResult.success()) {
             log.info("Current token is valid for login: [{}]", authResult.login());
-            login = authResult.login();
+            statusText.setText("Logged in as [%s]".formatted(credentialStorage.get(CredentialType.GITHUB_LOGIN)));
             loginButton.setVisible(false);
             logoutButton.setVisible(true);
         } else {
             log.warn("Current token is not valid for login: [{}], reason: {}", authResult.login(), authResult.errorMessage());
+            statusText.setText("Not logged in.");
             loginButton.setVisible(true);
             logoutButton.setVisible(false);
         }
         setupLoginButtonAction();
         setupLogoutButtonAction();
         setupCopyCodeButtonAction();
+        setupSaveClientIdButton();
+        setupVerificationLinkCopyButton();
     }
 
     private void setupLoginButtonAction() {
         loginButton.setOnAction(e -> {
-            statusLabel.setText("Requesting device code...");
-            loginButton.setVisible(false);
-            copyCodeButton.setVisible(true);
+            if (clientIdSaved) {
+                statusText.setText("Requesting device code...");
+                loginButton.setDisable(true);
+                loginInProcess.setValue(true);
+                userCodeArea.setVisible(true);
 
-            Task<GitHubDeviceFlow.PollResult> task = new Task<>() {
-                @Override
-                protected GitHubDeviceFlow.PollResult call() throws Exception {
-                    var deviceFlow = new GitHubDeviceFlow();
-                    var deviceCode = deviceFlow.requestDeviceCode();
-                    userCode = deviceCode.userCode();
+                Task<GitHubDeviceFlow.PollResult> task = new Task<>() {
+                    @Override
+                    protected GitHubDeviceFlow.PollResult call() throws Exception {
+                        var deviceFlow = new GitHubDeviceFlow();
+                        var deviceCode = deviceFlow.requestDeviceCode();
+                        userCode = deviceCode.userCode();
+                        verificationLink = deviceCode.verificationUri();
 
-                    Platform.runLater(() -> {
-                        codeLabel.setText("Enter this code: " + deviceCode.userCode()
-                                + "\nOpen: " + deviceCode.verificationUri());
-                        try {
-                            BrowserLauncher.openUrl(deviceCode.verificationUri());
-                        } catch (Exception ex) {
-                            statusLabel.setText("Couldn't open browser automatically — use the URL above.");
-                            log.warn("Couldn't open browser automatically, error: {}", ex.getMessage());
+                        Platform.runLater(() -> {
+                            codeInfo.setText("Paste this user code for GH verification:");
+                            userCodeText.setText(deviceCode.userCode());
+                            statusText.setText("Waiting for GH response...");
+                            verificationLinkInfo.setText("You can also visit the verification page manually by visiting the link below:");
+                            verificationLinkText.setText(deviceCode.verificationUri());
+                            try {
+                                BrowserLauncher.openUrl(deviceCode.verificationUri());
+                            } catch (Exception ex) {
+                                statusText.setText("Couldn't open browser automatically — use the verification URL below.");
+                                log.warn("Couldn't open browser automatically, error: {}", ex.getMessage());
+                            }
+                        });
+                        return deviceFlow.pollForToken(deviceCode);
+                    }
+                };
+
+                task.setOnSucceeded(e2 -> {
+                    if (clientIdSaved) {
+                        loginButton.setVisible(false);
+                        var result = task.getValue();
+                        if (result.success()) {
+                            credentialStorage.save(CredentialType.GITHUB_TOKEN, result.accessToken());
+                            loginButton.setVisible(false);
+                            loginInProcess.setValue(false);
+                            logoutButton.setVisible(true);
+                            userCodeArea.setVisible(false);
+                            TokenValidator.AuthResult validate = tokenValidator.validate();
+                            credentialStorage.save(CredentialType.GITHUB_LOGIN, validate.login());
+                            statusText.setText("Logged in as [%s]".formatted(credentialStorage.get(CredentialType.GITHUB_LOGIN).get()));
+                            log.info("Successfully logged in as [{}].", credentialStorage.get(CredentialType.GITHUB_LOGIN));
+                        } else {
+                            statusText.setText(result.error());
+                            log.warn("Login unsuccessful, error: {}", task.getException().getMessage());
                         }
-                    });
+                    }
+                });
+                task.setOnFailed(e2 -> {
+                    loginButton.setVisible(true);
+                    loginButton.setDisable(false);
+                    log.warn("[{}] Login failed, error: {}", "1638_280726", task.getException().getMessage());
+                    statusText.setText("Login failed, check if your Client ID is correct.");
 
-                    return deviceFlow.pollForToken(deviceCode);
-                }
-            };
-
-            task.setOnSucceeded(e2 -> {
-                loginButton.setVisible(false);
-                var result = task.getValue();
-                if (result.success()) {
-                    tokenStorage.save(result.accessToken());
-                    loginButton.setVisible(false);
-                    codeLabel.setVisible(false);
-                    copyCodeButton.setVisible(false);
-                    logoutButton.setVisible(true);
-                    statusLabel.setText("Logged in as [%s]".formatted(login));
-                    log.info("Successfully logged in as [{}].", login);
-                } else {
-                    statusLabel.setText(result.error());
-                    log.warn("Login unsuccessful, error: {}", task.getException().getMessage());
-
-                }
-            });
-
-            task.setOnFailed(e2 -> {
-                loginButton.setVisible(true);
-                log.warn("Login failed.");
-                statusLabel.setText("Login failed, error: %s".formatted(task.getException().getMessage()));
-            });
-
-            new Thread(task, "github-device-login").start();
+                    userCodeArea.setVisible(false);
+                    credentialStorage.clear();
+                    clientIdSaved = false;
+                });
+                new Thread(task, "github-device-login").start();
+            } else {
+                clientIdArea.setVisible(true);
+                loginButton.setDisable(true);
+                statusText.setText("Waiting for Client ID...");
+            }
         });
     }
 
     private void setupLogoutButtonAction() {
         logoutButton.setOnAction(e -> {
             log.info("Logged out.");
-            statusLabel.setText("Logged out.");
+            statusText.setText("Logged out.");
             loginButton.setVisible(true);
+            loginButton.setDisable(false);
             logoutButton.setVisible(false);
-            tokenStorage.clear();
+            credentialStorage.clear();
         });
     }
 
@@ -132,6 +160,27 @@ public class GithubLoginController extends VBox implements Initializable {
             StringSelection selection = new StringSelection(userCode.trim());
             clipboard.setContents(selection, null);
             log.info("User code [{}] has been copied.", userCode);
+        });
+    }
+
+    private void setupSaveClientIdButton() {
+        saveClientIdButton.setOnAction(e -> {
+            credentialStorage.save(CredentialType.GITHUB_CLIENT_ID, clientIdField.getText());
+            log.info("Client ID: [{}] has been saved.", clientIdField.getText());
+            clientIdSaved = true;
+            clientIdArea.setVisible(false);
+            loginButton.setDisable(false);
+            statusText.setText("Client ID saved, you can login to GH now.");
+        });
+    }
+
+    private void setupVerificationLinkCopyButton() {
+        copyVerificationLinkButton.setOnAction(e -> {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            String trimmed = verificationLink.trim();
+            StringSelection selection = new StringSelection(trimmed);
+            clipboard.setContents(selection, null);
+            log.info("Verification link [{}] has been copied.", trimmed);
         });
     }
 }
