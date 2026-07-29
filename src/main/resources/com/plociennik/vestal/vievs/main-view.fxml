@@ -4,10 +4,10 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox
-        alignment="BASELINE_LEFT"
+        alignment="TOP_CENTER"
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="com.plociennik.vestal.controller.MainController"
-        stylesheets="@../css/style.css"
+        stylesheets="@../css/main.css"
 >
 
     <padding>
