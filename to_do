@@ -3,5 +3,6 @@ VESTAL
 
 TODOS
 1. creds storage needs to be safe
-2. delete remaining borders
-3.
+2. delete remaining borders, colors, etc.
+3. visibility should be refactored, manual setting is quite bad
+4.
