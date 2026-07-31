@@ -14,6 +14,7 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
 
-    <fx:include source="githubLogin-view.fxml" stylesheets="@../css/githubLogin.css"/>
+    <fx:include source="githubLogin-view.fxml" fx:id="githubLogin" stylesheets="@../css/githubLogin.css"/>
+    <fx:include source="setupActions-view.fxml" fx:id="setupActionsVBox" stylesheets="@../css/setupActions.css"/>
 
 </VBox>

@@ -1,0 +1,23 @@
+#setupActionsArea {
+    -fx-padding: 8px 16px;
+    -fx-border-color: #FF0000;
+}
+
+#directoryArea {
+    -fx-border-color: #000000;
+    -fx-background-color: #00FF00;
+    -fx-padding: 8px 16px;
+    -fx-spacing: 10;
+}
+
+#repositoryArea {
+    -fx-border-color: #000000;
+    -fx-background-color: #008080;
+    -fx-padding: 8px 16px;
+    -fx-spacing: 10;
+}
+
+#statusLabelArea {
+    -fx-background-color: #FF00FF;
+    -fx-padding: 8px 16px;
+}

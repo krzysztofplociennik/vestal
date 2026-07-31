@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<?import javafx.scene.layout.HBox?>
+
+<?import javafx.scene.control.Button?>
+
+<VBox
+        alignment="CENTER"
+        fx:id="setupActionsArea"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.plociennik.vestal.controller.SetupActionsController"
+        stylesheets="@../css/setupActions.css"
+>
+
+    <HBox fx:id="statusLabelArea" alignment="CENTER">
+        <Text fx:id="statusLabelText"/>
+    </HBox>
+
+    <HBox alignment="CENTER" fx:id="setupActionsSubArea">
+        <VBox alignment="CENTER" fx:id="directoryArea" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+            <Text> directory </Text>
+                <Button fx:id="addChangeDirectoryButton"> add / change </Button>
+        </VBox>
+        <VBox alignment="CENTER" fx:id="repositoryArea" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+            <Text> repository </Text>
+                <Button fx:id="addChangeRepository"> add / change </Button>
+        </VBox>
+    </HBox>
+
+</VBox>

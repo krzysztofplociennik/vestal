@@ -6,6 +6,8 @@ import com.plociennik.vestal.git.CredentialType;
 import com.plociennik.vestal.git.GitHubDeviceFlow;
 import com.plociennik.vestal.git.TokenValidator;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -45,6 +47,12 @@ public class GithubLoginController extends VBox implements Initializable {
 
     private boolean clientIdSaved;
 
+    private BooleanProperty isUserLoggedIn = new SimpleBooleanProperty(false);
+
+    public BooleanProperty isUserLoggedInProperty() {
+        return isUserLoggedIn;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         clientIdSaved = credentialStorage.get(CredentialType.GITHUB_CLIENT_ID).isPresent();
@@ -59,6 +67,7 @@ public class GithubLoginController extends VBox implements Initializable {
             statusText.setText("Logged in as [%s]".formatted(credentialStorage.get(CredentialType.GITHUB_LOGIN).get()));
             loginButton.setVisible(false);
             logoutButton.setVisible(true);
+            isUserLoggedIn.set(true);
         } else {
             log.warn("Current token is not valid for login: [{}], reason: {}", authResult.login(), authResult.errorMessage());
             statusText.setText("Not logged in.");
@@ -115,6 +124,7 @@ public class GithubLoginController extends VBox implements Initializable {
                             userCodeArea.setVisible(false);
                             TokenValidator.AuthResult validate = tokenValidator.validate();
                             credentialStorage.save(CredentialType.GITHUB_LOGIN, validate.login());
+                            isUserLoggedIn.set(true);
                             statusText.setText("Logged in as [%s]".formatted(credentialStorage.get(CredentialType.GITHUB_LOGIN).get()));
                             log.info("Successfully logged in as [{}].", credentialStorage.get(CredentialType.GITHUB_LOGIN));
                         } else {
@@ -150,6 +160,7 @@ public class GithubLoginController extends VBox implements Initializable {
             loginButton.setDisable(false);
             logoutButton.setVisible(false);
             credentialStorage.clear();
+            isUserLoggedIn.set(false);
         });
     }
 
