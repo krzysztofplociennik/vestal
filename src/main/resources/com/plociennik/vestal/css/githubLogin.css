@@ -1,6 +1,7 @@
 #loginArea {
     -fx-border-color: #000000;
     -fx-spacing: 6;
+    -fx-background-color: #FFFF00;
 }
 
 #clientIdArea {

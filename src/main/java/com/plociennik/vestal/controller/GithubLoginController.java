@@ -6,8 +6,6 @@ import com.plociennik.vestal.git.CredentialType;
 import com.plociennik.vestal.git.GitHubDeviceFlow;
 import com.plociennik.vestal.git.TokenValidator;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -46,11 +44,14 @@ public class GithubLoginController extends VBox implements Initializable {
     private String verificationLink = "";
 
     private boolean clientIdSaved;
-    private final BooleanProperty loginInProcess = new SimpleBooleanProperty(false);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         clientIdSaved = credentialStorage.get(CredentialType.GITHUB_CLIENT_ID).isPresent();
+        clientIdArea.managedProperty().bind(clientIdArea.visibleProperty());
+        userCodeArea.managedProperty().bind(userCodeArea.visibleProperty());
+        loginButton.managedProperty().bind(loginButton.visibleProperty());
+        logoutButton.managedProperty().bind(logoutButton.visibleProperty());
 
         TokenValidator.AuthResult authResult = tokenValidator.validate();
         if (authResult.success()) {
@@ -76,7 +77,6 @@ public class GithubLoginController extends VBox implements Initializable {
             if (clientIdSaved) {
                 statusText.setText("Requesting device code...");
                 loginButton.setDisable(true);
-                loginInProcess.setValue(true);
                 userCodeArea.setVisible(true);
 
                 Task<GitHubDeviceFlow.PollResult> task = new Task<>() {
@@ -111,7 +111,6 @@ public class GithubLoginController extends VBox implements Initializable {
                         if (result.success()) {
                             credentialStorage.save(CredentialType.GITHUB_TOKEN, result.accessToken());
                             loginButton.setVisible(false);
-                            loginInProcess.setValue(false);
                             logoutButton.setVisible(true);
                             userCodeArea.setVisible(false);
                             TokenValidator.AuthResult validate = tokenValidator.validate();
