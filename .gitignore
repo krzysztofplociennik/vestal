@@ -45,3 +45,4 @@ bin/
 
 .idea
 gradle
+config.json
