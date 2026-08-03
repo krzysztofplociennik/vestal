@@ -18,6 +18,5 @@ public class MainController implements Initializable  {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupActionsVBox.visibleProperty().bind(githubLoginController.isUserLoggedInProperty());
-        log.info("[{}] Property #isUserLoggedIn: [{}]","1444_310726", githubLoginController.isUserLoggedInProperty());
     }
 }
