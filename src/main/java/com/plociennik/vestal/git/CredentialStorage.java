@@ -11,9 +11,9 @@ import java.util.prefs.Preferences;
 @Slf4j
 public class CredentialStorage {
 
-    private static final String PREF_KEY_GITHUB_TOKEN = "github_access_token";
-    private static final String PREF_KEY_GITHUB_LOGIN = "github_login";
     private static final String PREF_KEY_GITHUB_CLIENT_ID = "github_client_id";
+    private static final String PREF_KEY_GITHUB_LOGIN = "github_login";
+    private static final String PREF_KEY_GITHUB_TOKEN = "github_access_token";
     private final Preferences prefs = Preferences.userNodeForPackage(CredentialStorage.class);
 
     // todo: this code needs to change
