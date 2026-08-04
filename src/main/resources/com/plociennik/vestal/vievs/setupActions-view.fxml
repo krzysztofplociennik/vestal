@@ -2,9 +2,7 @@
 
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
-
 <?import javafx.scene.layout.HBox?>
-
 <?import javafx.scene.control.Button?>
 
 <VBox
@@ -22,11 +20,13 @@
     <HBox alignment="CENTER" fx:id="setupActionsSubArea">
         <VBox alignment="CENTER" fx:id="directoryArea" HBox.hgrow="ALWAYS" maxWidth="Infinity">
             <Text> directory </Text>
-                <Button fx:id="addChangeDirectoryButton"> add / change </Button>
+            <Text fx:id="directoryTitleText"/>
+            <Button fx:id="addChangeDirectoryButton"> add / change </Button>
         </VBox>
         <VBox alignment="CENTER" fx:id="repositoryArea" HBox.hgrow="ALWAYS" maxWidth="Infinity">
             <Text> repository </Text>
-                <Button fx:id="addChangeRepository"> add / change </Button>
+            <Text fx:id="repositoryTitleText"/>
+            <Button fx:id="addChangeRepositoryButton"> add / change </Button>
         </VBox>
     </HBox>
 

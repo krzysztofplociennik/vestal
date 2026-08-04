@@ -42,6 +42,7 @@ dependencies {
     implementation("org.eclipse.jgit:org.eclipse.jgit:7.7.0.202606012155-r")
     implementation("org.projectlombok:lombok:1.18.46")
     implementation("org.slf4j:slf4j-simple:2.0.18")
+    implementation("tools.jackson.core:jackson-databind:3.2.1")
     annotationProcessor("org.projectlombok:lombok:1.18.46")
 
     // testing

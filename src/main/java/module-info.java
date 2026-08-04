@@ -9,6 +9,9 @@ module com.plociennik.vestal {
     requires java.prefs;
     requires org.slf4j;
     requires org.slf4j.simple;
+    requires tools.jackson.databind;
+
+    opens com.plociennik.vestal.config to tools.jackson.databind;
 
     opens com.plociennik.vestal to javafx.fxml;
     exports com.plociennik.vestal;
