@@ -1,4 +1,4 @@
-package com.plociennik.vestal.git;
+package com.plociennik.vestal.login;
 
 import com.plociennik.vestal.common.VestalException;
 import lombok.extern.slf4j.Slf4j;

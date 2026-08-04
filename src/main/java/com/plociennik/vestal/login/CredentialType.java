@@ -1,4 +1,4 @@
-package com.plociennik.vestal.git;
+package com.plociennik.vestal.login;
 
 public enum CredentialType {
     GITHUB_CLIENT_ID,

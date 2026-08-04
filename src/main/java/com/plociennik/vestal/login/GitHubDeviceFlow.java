@@ -1,4 +1,4 @@
-package com.plociennik.vestal.git;
+package com.plociennik.vestal.login;
 
 import java.io.IOException;
 import java.net.URI;
