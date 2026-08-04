@@ -20,6 +20,7 @@ public class SetupActionsController extends VBox implements Initializable {
     @FXML private Button addChangeRepositoryButton;
     @FXML private Text repositoryTitleText;
 
+    // todo: potentially not really needed
     private String directoryPath = "";
     private String repositoryName = "";
 
@@ -51,6 +52,7 @@ public class SetupActionsController extends VBox implements Initializable {
             // todo: hardcoded path for testing
             configManager.saveDirectoryPath("example path");
             directoryTitleText.setText(configManager.getCurrentConfig().directory.path);
+            directoryPath = configManager.getCurrentConfig().directory.path;
             log.info("[{}] A new directory path: [{}] has been set.", "1544_020826", "EXAMPLE");
         });
     }
