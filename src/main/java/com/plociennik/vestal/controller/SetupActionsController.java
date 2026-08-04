@@ -29,8 +29,8 @@ public class SetupActionsController extends VBox implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         directoryPath = configManager.getCurrentConfig().directory.path;
         repositoryName = configManager.getCurrentConfig().repository.name;
-        boolean isDirectoryPathEmpty = directoryPath.isEmpty();
-        boolean isRepositoryNameEmpty = repositoryName.isEmpty();
+        boolean isDirectoryPathEmpty = directoryPath == null;
+        boolean isRepositoryNameEmpty = repositoryName == null;
         directoryTitleText.setText(isDirectoryPathEmpty ? "empty" : directoryPath);
         repositoryTitleText.setText(isRepositoryNameEmpty ? "empty" : repositoryName);
         if (isDirectoryPathEmpty || isRepositoryNameEmpty) {
