@@ -1,6 +1,5 @@
 package com.plociennik.vestal.login;
 
-import com.plociennik.vestal.common.VestalException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -15,24 +14,16 @@ public class TokenValidator {
 
     private static final String API_BASE = "https://api.github.com";
     private final HttpClient httpClient = HttpClient.newHttpClient();
-    private CredentialStorage credentialStorage = new CredentialStorage();
+    private CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
 
     public AuthResult validate() {
-        Optional<String> optionalToken = credentialStorage.get(CredentialType.GITHUB_TOKEN);
+        Optional<String> optionalToken = credentialsStorage.load(CredentialType.GITHUB_TOKEN);
         if (optionalToken.isEmpty()) {
-            log.info("Github token is empty.");
+            log.info("[{}] Github token is empty.", "1247_040826");
             return new AuthResult(false, "", "Github token is empty.");
         }
         String token = optionalToken.get();
-        AuthResult authResult = this.authorizeToken(token);
-        String savedLogin = credentialStorage.get(CredentialType.GITHUB_LOGIN).get();
-        if (!savedLogin.equals(authResult.login)) {
-            log.error("[{}] Saved login and authorized login from the token are not matching;\n" +
-                    "Saved: [{}] | AuthResult: [{}]", "1224_290726", savedLogin, authResult.login);
-            throw new VestalException("1224_290726", "Saved login and authorized login from the token are not " +
-                    "matching;\nSaved: [{}] | AuthResult: [{}]");
-        }
-        return authResult;
+        return this.authorizeToken(token);
     }
 
     private AuthResult authorizeToken(String candidateToken) {

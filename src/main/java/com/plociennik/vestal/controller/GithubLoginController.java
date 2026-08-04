@@ -1,9 +1,10 @@
 package com.plociennik.vestal.controller;
 
 import com.plociennik.vestal.login.BrowserLauncher;
-import com.plociennik.vestal.login.CredentialStorage;
 import com.plociennik.vestal.login.CredentialType;
+import com.plociennik.vestal.login.CredentialsStorage;
 import com.plociennik.vestal.login.GitHubDeviceFlow;
+import com.plociennik.vestal.login.KeyringCredentialsStorage;
 import com.plociennik.vestal.login.TokenValidator;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -40,7 +41,7 @@ public class GithubLoginController extends VBox implements Initializable {
     @FXML private Text verificationLinkInfo;
     @FXML private Button copyVerificationLinkButton;
 
-    private CredentialStorage credentialStorage = new CredentialStorage();
+    private CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
     private TokenValidator tokenValidator = new TokenValidator();
     private String userCode = "";
     private String verificationLink = "";
@@ -55,7 +56,7 @@ public class GithubLoginController extends VBox implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        clientIdSaved = credentialStorage.get(CredentialType.GITHUB_CLIENT_ID).isPresent();
+        clientIdSaved = credentialsStorage.load(CredentialType.GITHUB_CLIENT_ID).isPresent();
         clientIdArea.managedProperty().bind(clientIdArea.visibleProperty());
         userCodeArea.managedProperty().bind(userCodeArea.visibleProperty());
         loginButton.managedProperty().bind(loginButton.visibleProperty());
@@ -64,7 +65,7 @@ public class GithubLoginController extends VBox implements Initializable {
         TokenValidator.AuthResult authResult = tokenValidator.validate();
         if (authResult.success()) {
             log.info("Current token is valid for login: [{}]", authResult.login());
-            statusText.setText("Logged in as [%s]".formatted(credentialStorage.get(CredentialType.GITHUB_LOGIN).get()));
+            statusText.setText("Logged in as [%s]".formatted(credentialsStorage.get(CredentialType.GITHUB_LOGIN)));
             loginButton.setVisible(false);
             logoutButton.setVisible(true);
             isUserLoggedIn.set(true);
@@ -118,15 +119,17 @@ public class GithubLoginController extends VBox implements Initializable {
                         loginButton.setVisible(false);
                         var result = task.getValue();
                         if (result.success()) {
-                            credentialStorage.save(CredentialType.GITHUB_TOKEN, result.accessToken());
+                            credentialsStorage.save(CredentialType.GITHUB_TOKEN, result.accessToken());
                             loginButton.setVisible(false);
                             logoutButton.setVisible(true);
                             userCodeArea.setVisible(false);
+                            // todo: weird thing, i get the token, but in order to get the login i need to authorize
+                            // todo: which seems unnatural
                             TokenValidator.AuthResult validate = tokenValidator.validate();
-                            credentialStorage.save(CredentialType.GITHUB_LOGIN, validate.login());
+                            credentialsStorage.save(CredentialType.GITHUB_LOGIN, validate.login());
                             isUserLoggedIn.set(true);
-                            statusText.setText("Logged in as [%s]".formatted(credentialStorage.get(CredentialType.GITHUB_LOGIN).get()));
-                            log.info("Successfully logged in as [{}].", credentialStorage.get(CredentialType.GITHUB_LOGIN));
+                            statusText.setText("Logged in as [%s]".formatted(credentialsStorage.get(CredentialType.GITHUB_LOGIN)));
+                            log.info("Successfully logged in as [{}].", credentialsStorage.get(CredentialType.GITHUB_LOGIN));
                         } else {
                             statusText.setText(result.error());
                             log.warn("Login unsuccessful, error: {}", task.getException().getMessage());
@@ -140,7 +143,7 @@ public class GithubLoginController extends VBox implements Initializable {
                     statusText.setText("Login failed, check if your Client ID is correct.");
 
                     userCodeArea.setVisible(false);
-                    credentialStorage.clear();
+                    credentialsStorage.clear();
                     clientIdSaved = false;
                 });
                 new Thread(task, "github-device-login").start();
@@ -159,7 +162,7 @@ public class GithubLoginController extends VBox implements Initializable {
             loginButton.setVisible(true);
             loginButton.setDisable(false);
             logoutButton.setVisible(false);
-            credentialStorage.clear();
+            credentialsStorage.clear();
             isUserLoggedIn.set(false);
         });
     }
@@ -175,7 +178,7 @@ public class GithubLoginController extends VBox implements Initializable {
 
     private void setupSaveClientIdButton() {
         saveClientIdButton.setOnAction(e -> {
-            credentialStorage.save(CredentialType.GITHUB_CLIENT_ID, clientIdField.getText());
+            credentialsStorage.save(CredentialType.GITHUB_CLIENT_ID, clientIdField.getText());
             log.info("Client ID: [{}] has been saved.", clientIdField.getText());
             clientIdSaved = true;
             clientIdArea.setVisible(false);

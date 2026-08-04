@@ -10,14 +10,14 @@ public class GitHubDeviceFlow {
 
     private static final String SCOPE = "repo";
     private final HttpClient httpClient = HttpClient.newHttpClient();
-    private CredentialStorage credentialStorage = new CredentialStorage();
+    private CredentialsStorage credentialStorage = new KeyringCredentialsStorage();
 
     public record DeviceCodeResponse(
             String deviceCode, String userCode, String verificationUri,
             int expiresIn, int interval) {}
 
     public DeviceCodeResponse requestDeviceCode() throws IOException, InterruptedException {
-        String body = "client_id=" + credentialStorage.get(CredentialType.GITHUB_CLIENT_ID).get() + "&scope=" + SCOPE;
+        String body = "client_id=" + credentialStorage.get(CredentialType.GITHUB_CLIENT_ID) + "&scope=" + SCOPE;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://github.com/login/device/code"))
@@ -63,7 +63,7 @@ public class GitHubDeviceFlow {
         while (System.currentTimeMillis() < deadline) {
             Thread.sleep(intervalSeconds * 1000L);
 
-            String body = "client_id=" + credentialStorage.get(CredentialType.GITHUB_CLIENT_ID).get()
+            String body = "client_id=" + credentialStorage.get(CredentialType.GITHUB_CLIENT_ID)
                     + "&device_code=" + deviceCode.deviceCode()
                     + "&grant_type=urn:ietf:params:oauth:grant-type:device_code";
 
