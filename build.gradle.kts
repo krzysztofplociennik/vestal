@@ -28,8 +28,7 @@ tasks.withType<JavaCompile> {
 }
 
 application {
-    mainModule.set("com.plociennik.vestal")
-    mainClass.set("com.plociennik.vestal.HelloApplication")
+    mainClass.set("com.plociennik.vestal.VestalApplication")
 }
 
 javafx {
@@ -44,6 +43,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.18")
     implementation("tools.jackson.core:jackson-databind:3.2.1")
     annotationProcessor("org.projectlombok:lombok:1.18.46")
+    implementation("com.github.javakeyring:java-keyring:1.0.4")
 
     // testing
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
