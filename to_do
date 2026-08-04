@@ -5,4 +5,5 @@ TODOS
 1. creds storage needs to be safe
 2. delete remaining borders, colors, etc.
 3. visibility should be refactored, manual setting is quite bad, better to rely on binding
-4.
+4. token might need more handling (expiry, warning before expiring, better information/status of the token)
+5.
