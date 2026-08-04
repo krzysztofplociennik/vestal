@@ -33,6 +33,8 @@ public class SetupActionsController extends VBox implements Initializable {
         boolean isRepositoryNameEmpty = repositoryName == null;
         directoryTitleText.setText(isDirectoryPathEmpty ? "empty" : directoryPath);
         repositoryTitleText.setText(isRepositoryNameEmpty ? "empty" : repositoryName);
+        addChangeDirectoryButton.setText(isDirectoryPathEmpty ? "add" : "change");
+        addChangeRepositoryButton.setText(isRepositoryNameEmpty ? "add" : "change");
         if (isDirectoryPathEmpty || isRepositoryNameEmpty) {
             statusLabelText.setText("Both directory and repository needs to be set.");
             log.info("[{}] Both directory and repository needs to be set.", "1311_310726");
@@ -46,6 +48,7 @@ public class SetupActionsController extends VBox implements Initializable {
 
     private void setupAddChangeDirectoryButton() {
         addChangeDirectoryButton.setOnAction(e -> {
+            // todo: hardcoded path for testing
             configManager.saveDirectoryPath("example path");
             directoryTitleText.setText(configManager.getCurrentConfig().directory.path);
             log.info("[{}] A new directory path: [{}] has been set.", "1544_020826", "EXAMPLE");

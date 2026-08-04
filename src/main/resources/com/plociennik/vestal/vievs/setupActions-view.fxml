@@ -21,12 +21,12 @@
         <VBox alignment="CENTER" fx:id="directoryArea" HBox.hgrow="ALWAYS" maxWidth="Infinity">
             <Text> directory </Text>
             <Text fx:id="directoryTitleText"/>
-            <Button fx:id="addChangeDirectoryButton"> add / change </Button>
+            <Button fx:id="addChangeDirectoryButton"/>
         </VBox>
         <VBox alignment="CENTER" fx:id="repositoryArea" HBox.hgrow="ALWAYS" maxWidth="Infinity">
             <Text> repository </Text>
             <Text fx:id="repositoryTitleText"/>
-            <Button fx:id="addChangeRepositoryButton"> add / change </Button>
+            <Button fx:id="addChangeRepositoryButton"/>
         </VBox>
     </HBox>
 
