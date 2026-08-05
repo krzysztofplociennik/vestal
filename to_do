@@ -7,4 +7,4 @@ TODOS
 3. visibility should be refactored, manual setting is quite bad, better to rely on binding
 4. token might need more handling (expiry, warning before expiring, better information/status of the token)
 5. a check might be needed for choosing a normal, coding repository instead of just a text repository
-6.
+6. probably need a global status bar
