@@ -3,6 +3,8 @@ package com.plociennik.vestal.controller;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.git.fetch.GitHubRepository;
 import com.plociennik.vestal.git.fetch.GithubRepositoryFetcher;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -17,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -40,13 +43,17 @@ public class SetupActionsController extends VBox implements Initializable {
     private AppConfigManager configManager = new AppConfigManager();
     private final GithubRepositoryFetcher githubRepositoryFetcher = new GithubRepositoryFetcher();
 
+    private String directoryPath = null;
+    private String repositoryName = null;
+    @Getter private BooleanProperty isDirectoryRepositorySetupProperty = new SimpleBooleanProperty(false);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         directoryArea.prefWidthProperty().bind(setupActionsSubArea.widthProperty().divide(2));
         repositoryArea.prefWidthProperty().bind(setupActionsSubArea.widthProperty().divide(2));
 
-        String directoryPath = configManager.getCurrentConfig().directory.path;
-        String repositoryName = configManager.getCurrentConfig().repository.name;
+        directoryPath = configManager.getCurrentConfig().directory.path;
+        repositoryName = configManager.getCurrentConfig().repository.name;
 
         boolean isDirectoryPathEmpty = directoryPath == null;
         boolean isRepositoryNameEmpty = repositoryName == null;
@@ -61,6 +68,7 @@ public class SetupActionsController extends VBox implements Initializable {
             statusLabelText.setText("Both directory and repository need to be set.");
             log.info("[{}] Both directory and repository needs to be set.", "1311_310726");
         } else {
+            isDirectoryRepositorySetupProperty.set(true);
             statusLabelText.setText("All set, time to work.");
             log.info("[{}] The directory is set to: [{}] and the repository has been set to [{}]", "1313_310726", directoryPath, repositoryName);
         }
@@ -89,6 +97,8 @@ public class SetupActionsController extends VBox implements Initializable {
                 String selectedPath = selectedDirectory.getAbsolutePath();
                 configManager.saveDirectoryPath(selectedPath);
                 directoryTitleText.setText(selectedPath);
+                directoryPath = selectedPath;
+                setDirectoryRepositoryPropertyTrueIfBothPresent();
                 log.info("[{}] A new directory path: [{}] has been set.", "1122_040826", selectedPath);
             } else {
                 log.info("[{}] Directory selection was cancelled by the user.", "1123_040826");
@@ -125,6 +135,8 @@ public class SetupActionsController extends VBox implements Initializable {
                             configManager.saveRepositoryName(selectedRepo.name(), selectedRepo.cloneUrl());
                             repositoryTitleText.setText(selectedRepo.name());
                             addChangeRepositoryButton.setDisable(false);
+                            repositoryName = selectedRepo.name();
+                            setDirectoryRepositoryPropertyTrueIfBothPresent();
                             log.info("[{}] Repository [{}] has been saved.", "1602_040826", selectedRepo.name());
                         },
                         () -> {
@@ -176,5 +188,11 @@ public class SetupActionsController extends VBox implements Initializable {
                 buttonType == selectButtonType ? listView.getSelectionModel().getSelectedItem() : null);
 
         return dialog.showAndWait();
+    }
+
+    private void setDirectoryRepositoryPropertyTrueIfBothPresent() {
+        if (!directoryPath.isEmpty() && !repositoryName.isEmpty()) {
+            isDirectoryRepositorySetupProperty.set(true);
+        }
     }
 }

@@ -11,12 +11,16 @@ import java.util.ResourceBundle;
 @Slf4j
 public class MainController implements Initializable  {
 
-    // todo: this is some stupid inconsistency that probably needs to be fixed
-    @FXML private VBox setupActionsVBox;
+    @FXML private VBox githubLogin;
+    @FXML private VBox setupActions;
+    @FXML private VBox gitActions;
     @FXML private GithubLoginController githubLoginController;
+    @FXML private SetupActionsController setupActionsController;
+    @FXML private GitActionsController gitActionsController;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setupActionsVBox.visibleProperty().bind(githubLoginController.isUserLoggedInProperty());
+        setupActions.visibleProperty().bind(githubLoginController.isUserLoggedInProperty());
+        gitActions.visibleProperty().bind(setupActionsController.getIsDirectoryRepositorySetupProperty());
     }
 }

@@ -15,6 +15,7 @@
     </padding>
 
     <fx:include source="githubLogin-view.fxml" fx:id="githubLogin" stylesheets="@../css/githubLogin.css"/>
-    <fx:include source="setupActions-view.fxml" fx:id="setupActionsVBox" stylesheets="@../css/setupActions.css"/>
+    <fx:include source="setupActions-view.fxml" fx:id="setupActions" stylesheets="@../css/setupActions.css"/>
+    <fx:include source="gitActions-view.fxml" fx:id="gitActions" stylesheets="@../css/gitActions.css"/>
 
 </VBox>

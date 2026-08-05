@@ -1,0 +1,14 @@
+#gitActionsArea {
+    -fx-border-color: #FF0000;
+}
+
+#statusLabelArea {
+    -fx-background-color: #FF6647;
+    -fx-padding: 8px 16px;
+}
+
+#gitActionsSubArea{
+    -fx-background-color: #FF87CF;
+    -fx-padding: 8px 16px;
+    -fx-spacing: 10;
+}
