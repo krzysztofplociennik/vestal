@@ -4,13 +4,11 @@ import com.plociennik.vestal.common.VestalException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-
 
 @Slf4j
 public class AppConfigManager {
@@ -31,13 +29,16 @@ public class AppConfigManager {
     }
 
     public void saveDirectoryPath(String path) {
-        AppConfig appConfig = new AppConfig();
+        AppConfig appConfig = loadCurrentConfig();
         appConfig.directory.path = path;
         mapper.writeValue(configFile.toPath().toFile(), appConfig);
-        loadCurrentConfig();
     }
 
-    public void saveRepositoryName(String name) {
+    public void saveRepositoryName(String name, String url) {
+        AppConfig appConfig = loadCurrentConfig();
+        appConfig.repository.name = name;
+        appConfig.repository.url = url;
+        mapper.writeValue(configFile.toPath().toFile(), appConfig);
     }
 
     private void createFileIfDoesNotExist() {
