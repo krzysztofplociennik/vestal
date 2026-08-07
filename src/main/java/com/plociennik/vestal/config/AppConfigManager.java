@@ -19,13 +19,9 @@ public class AppConfigManager {
     @Getter private AppConfig currentConfig;
 
     public AppConfigManager() {
-        createFileIfDoesNotExist();
+        createConfigFileIfAbsent();
         mapper = new ObjectMapper();
         currentConfig = loadCurrentConfig();
-    }
-
-    private AppConfig loadCurrentConfig() {
-        return mapper.readValue(configFile, AppConfig.class);
     }
 
     public void saveDirectoryPath(String path) {
@@ -34,14 +30,14 @@ public class AppConfigManager {
         mapper.writeValue(configFile.toPath().toFile(), appConfig);
     }
 
-    public void saveRepositoryName(String name, String url) {
+    public void saveRepositoryNameAndUrl(String name, String url) {
         AppConfig appConfig = loadCurrentConfig();
-        appConfig.repository.name = name;
-        appConfig.repository.url = url;
+        appConfig.gitHubRepository.name = name;
+        appConfig.gitHubRepository.url = url;
         mapper.writeValue(configFile.toPath().toFile(), appConfig);
     }
 
-    private void createFileIfDoesNotExist() {
+    private void createConfigFileIfAbsent() {
         boolean notExists = Files.notExists(Path.of(CONFIG_FILE_NAME));
         if (notExists) {
             log.info("[{}] No config file exists, I am creating one now...", "1409_020826");
@@ -56,5 +52,9 @@ public class AppConfigManager {
         }
         this.configFile = new File(CONFIG_FILE_NAME);
         log.info("[{}] The config file has been successfully loaded.", "1417_020826");
+    }
+
+    private AppConfig loadCurrentConfig() {
+        return mapper.readValue(configFile, AppConfig.class);
     }
 }

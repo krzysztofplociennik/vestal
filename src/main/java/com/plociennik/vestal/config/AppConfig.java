@@ -6,10 +6,10 @@ import lombok.Data;
 public class AppConfig {
 
     public Directory directory;
-    public Repository repository;
+    public GitHubRepository gitHubRepository;
 
     public AppConfig() {
         this.directory = new Directory();
-        this.repository = new Repository();
+        this.gitHubRepository = new GitHubRepository();
     }
 }
