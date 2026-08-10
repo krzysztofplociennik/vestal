@@ -21,8 +21,8 @@
 
         <Text fx:id="areaHeader"> Actions </Text>
         <Button fx:id="checkStatusButton"> check status </Button>
-        <Button fx:id="pushChangesButton"> pull changes </Button>
-        <Button fx:id="pullChangesButton"> push changes </Button>
+        <Button fx:id="pullChangesButton"> pull changes </Button>
+        <Button fx:id="pushChangesButton"> push changes </Button>
 
     </HBox>
 
