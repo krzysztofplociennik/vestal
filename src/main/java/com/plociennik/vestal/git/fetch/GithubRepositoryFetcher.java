@@ -26,7 +26,7 @@ public class GithubRepositoryFetcher {
         this.credentialsStorage = new KeyringCredentialsStorage();
     }
 
-    public List<GitHubRepository> fetchAllRepositories() throws IOException, InterruptedException {
+    public List<GitFetchRepository> fetchAllRepositories() throws IOException, InterruptedException {
         String token = credentialsStorage.get(CredentialType.GITHUB_TOKEN);
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -45,9 +45,9 @@ public class GithubRepositoryFetcher {
                     response.statusCode(), response.body()));
         }
 
-        List<GitHubRepository> repositories = new ArrayList<>();
+        List<GitFetchRepository> repositories = new ArrayList<>();
         for (JsonNode node : objectMapper.readTree(response.body())) {
-            repositories.add(new GitHubRepository(node.get("full_name").asString(), node.get("clone_url").asString()));
+            repositories.add(new GitFetchRepository(node.get("full_name").asString(), node.get("clone_url").asString()));
         }
         return repositories;
     }

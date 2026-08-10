@@ -5,11 +5,11 @@ import lombok.Data;
 @Data
 public class AppConfig {
 
-    public Directory directory;
-    public GitHubRepository gitHubRepository;
+    public LocalRepository localRepository;
+    public RemoteRepository remoteRepository;
 
     public AppConfig() {
-        this.directory = new Directory();
-        this.gitHubRepository = new GitHubRepository();
+        this.localRepository = new LocalRepository();
+        this.remoteRepository = new RemoteRepository();
     }
 }

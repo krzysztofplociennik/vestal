@@ -16,25 +16,29 @@ public class AppConfigManager {
     private final static String CONFIG_FILE_NAME = "config.json";
     private File configFile = null;
     private final ObjectMapper mapper;
-    @Getter private AppConfig currentConfig;
+    private AppConfig currentConfig;
+
+    public AppConfig getCurrentConfig() {
+        return mapper.readValue(configFile, AppConfig.class);
+    }
 
     public AppConfigManager() {
         createConfigFileIfAbsent();
         mapper = new ObjectMapper();
-        currentConfig = loadCurrentConfig();
+        loadCurrentConfig();
     }
 
     public void saveDirectoryPath(String path) {
-        AppConfig appConfig = loadCurrentConfig();
-        appConfig.directory.path = path;
-        mapper.writeValue(configFile.toPath().toFile(), appConfig);
+        loadCurrentConfig();
+        currentConfig.localRepository.path = path;
+        mapper.writeValue(configFile.toPath().toFile(), currentConfig);
     }
 
     public void saveRepositoryNameAndUrl(String name, String url) {
-        AppConfig appConfig = loadCurrentConfig();
-        appConfig.gitHubRepository.name = name;
-        appConfig.gitHubRepository.url = url;
-        mapper.writeValue(configFile.toPath().toFile(), appConfig);
+        loadCurrentConfig();
+        currentConfig.remoteRepository.name = name;
+        currentConfig.remoteRepository.url = url;
+        mapper.writeValue(configFile.toPath().toFile(), currentConfig);
     }
 
     private void createConfigFileIfAbsent() {
@@ -54,7 +58,8 @@ public class AppConfigManager {
         log.info("[{}] The config file has been successfully loaded.", "1417_020826");
     }
 
-    private AppConfig loadCurrentConfig() {
-        return mapper.readValue(configFile, AppConfig.class);
+    private void loadCurrentConfig() {
+        this.configFile = new File(CONFIG_FILE_NAME);
+        this.currentConfig = mapper.readValue(configFile, AppConfig.class);
     }
 }

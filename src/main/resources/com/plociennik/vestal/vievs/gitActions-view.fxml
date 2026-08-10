@@ -20,6 +20,7 @@
     <HBox alignment="CENTER" fx:id="gitActionsSubArea">
 
         <Text fx:id="areaHeader"> Actions </Text>
+        <Button fx:id="checkStatusButton"> check status </Button>
         <Button fx:id="pushChangesButton"> pull changes </Button>
         <Button fx:id="pullChangesButton"> push changes </Button>
 

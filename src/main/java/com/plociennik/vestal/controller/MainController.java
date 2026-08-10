@@ -21,6 +21,6 @@ public class MainController implements Initializable  {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupActions.visibleProperty().bind(githubLoginController.isUserLoggedInProperty());
-        gitActions.visibleProperty().bind(setupActionsController.getIsDirectoryRepositorySetupProperty());
+        gitActions.visibleProperty().bind(setupActionsController.getAreDirectoryRepositoryPresent());
     }
 }
