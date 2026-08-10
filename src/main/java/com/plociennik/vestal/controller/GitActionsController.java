@@ -1,5 +1,6 @@
 package com.plociennik.vestal.controller;
 
+import com.plociennik.vestal.git.push.RepoPushChangesService;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -17,6 +18,8 @@ public class GitActionsController extends VBox implements Initializable {
     @FXML private Button checkStatusButton;
     @FXML private Button pushChangesButton;
     @FXML private Button pullChangesButton;
+
+    private RepoPushChangesService repoPushChangesService = new RepoPushChangesService();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -42,7 +45,9 @@ public class GitActionsController extends VBox implements Initializable {
     }
 
     private void setupPushChangesButton() {
-
+        pushChangesButton.setOnAction(e -> {
+            repoPushChangesService.push();
+        });
     }
 
     private void setupPullChangesButton() {
