@@ -1,6 +1,5 @@
 package com.plociennik.vestal.controller;
 
-import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.config.LocalRepository;
 import com.plociennik.vestal.config.RemoteRepository;
