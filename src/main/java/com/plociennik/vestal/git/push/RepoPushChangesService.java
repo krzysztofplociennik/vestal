@@ -33,7 +33,7 @@ import static com.plociennik.vestal.common.CommonUtils.logAndThrow;
 @Slf4j
 public class RepoPushChangesService {
 
-    private AppConfigManager configManager = new AppConfigManager();
+    private AppConfigManager configManager = AppConfigManager.getInstance();
     private CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
 
     public void push() {
@@ -45,11 +45,11 @@ public class RepoPushChangesService {
 //            throw new VestalException("1341_09082026", "Repository consists of files different than .txt files, push aborted.");
 //        }
 
-        AppConfig currentConfig = configManager.getCurrentConfig();
-        LocalRepository localRepository = currentConfig.localRepository;
+        Repository gitRepository = GitUtils.getExistingLocalRepo();
 
-        Repository gitRepository = GitUtils.getExistingLocalRepo(localRepository.path);
         try (Git git = new Git(gitRepository)) {
+            AppConfig currentConfig = configManager.getCurrentConfig();
+            LocalRepository localRepository = currentConfig.localRepository;
 
             Path workDir = Paths.get(localRepository.path);
             List<String> txtFiles = findTxtFiles(workDir);

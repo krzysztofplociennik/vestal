@@ -43,7 +43,7 @@ public class SetupActionsController extends VBox implements Initializable {
     @FXML private Button addChangeRepositoryButton;
     @FXML private Text repositoryTitleText;
 
-    private AppConfigManager configManager = new AppConfigManager();
+    private AppConfigManager configManager = AppConfigManager.getInstance();
     private final GithubRepositoryFetcher githubRepositoryFetcher = new GithubRepositoryFetcher();
     private final LocalRepoManager localRepoManager = new LocalRepoManager();
 
@@ -144,7 +144,7 @@ public class SetupActionsController extends VBox implements Initializable {
                             repositoryUrl = selectedRepo.cloneUrl();
                             configManager.saveRepositoryNameAndUrl(repositoryName, repositoryUrl);
                             repositoryTitleText.setText(repositoryName);
-                            localRepoManager.setRemoteOrigin(directoryPath, new RemoteRepository(repositoryName, repositoryUrl));
+                            localRepoManager.setRemoteOrigin(new RemoteRepository(repositoryName, repositoryUrl));
                             handleIfDirectoryAndRepositoryBothPresent();
                             log.info("[{}] Repository [{}] has been saved.", "1602_040826", repositoryName);
                         },

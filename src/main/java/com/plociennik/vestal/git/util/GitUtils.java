@@ -1,6 +1,8 @@
 package com.plociennik.vestal.git.util;
 
 import com.plociennik.vestal.common.VestalException;
+import com.plociennik.vestal.config.AppConfig;
+import com.plociennik.vestal.config.AppConfigManager;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -12,7 +14,11 @@ import java.nio.file.Path;
 @Slf4j
 public class GitUtils {
 
-    public static Repository getExistingLocalRepo(String pathAsString) {
+    private static AppConfigManager configManager = AppConfigManager.getInstance();
+
+    public static Repository getExistingLocalRepo() {
+        AppConfig currentConfig = configManager.getCurrentConfig();
+        String pathAsString = currentConfig.localRepository.path;
         Path path = Path.of(pathAsString);
         File gitDir = new File(path.toFile(), ".git");
 

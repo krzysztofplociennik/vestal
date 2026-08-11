@@ -1,8 +1,5 @@
 package com.plociennik.vestal.controller;
 
-import com.plociennik.vestal.config.AppConfig;
-import com.plociennik.vestal.config.AppConfigManager;
-import com.plociennik.vestal.config.LocalRepository;
 import com.plociennik.vestal.git.push.RepoPushChangesService;
 import com.plociennik.vestal.git.util.GitUtils;
 import javafx.fxml.FXML;
@@ -30,7 +27,6 @@ public class GitActionsController extends VBox implements Initializable {
     @FXML private Button pullChangesButton;
 
     private RepoPushChangesService repoPushChangesService = new RepoPushChangesService();
-    private AppConfigManager configManager = new AppConfigManager();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -42,17 +38,15 @@ public class GitActionsController extends VBox implements Initializable {
 
     private void setupCheckStatusButton() {
         checkStatusButton.setOnAction(e -> {
-            AppConfig currentConfig = configManager.getCurrentConfig();
-            LocalRepository localRepository = currentConfig.localRepository;
-            Repository gitRepository = GitUtils.getExistingLocalRepo(localRepository.path);
+            Repository gitRepository = GitUtils.getExistingLocalRepo();
 
             try (Git git = new Git(gitRepository)) {
 
                 Status status = git.status().call();
                 if (status.isClean()) {
-                    statusLabelText.setText("There are changes to be pushed.");
-                } else {
                     statusLabelText.setText("There are no changes to be pushed.");
+                } else {
+                    statusLabelText.setText("There are changes to be pushed.");
                 }
 
             } catch (GitAPIException error) {

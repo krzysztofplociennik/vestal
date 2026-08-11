@@ -9,25 +9,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-
-// todo: maybe singleton
-
 @Slf4j
 public class AppConfigManager {
 
     private final static String CONFIG_FILE_NAME = "config.json";
     private File configFile = null;
-    private final ObjectMapper mapper;
+    private final ObjectMapper mapper = new ObjectMapper();
     private AppConfig currentConfig;
+
+    private AppConfigManager() {
+        createConfigFileIfAbsent();
+        loadCurrentConfig();
+    }
+
+    public static AppConfigManager getInstance() {
+        return AppConfigManagerHelper.INSTANCE;
+    }
 
     public AppConfig getCurrentConfig() {
         return mapper.readValue(configFile, AppConfig.class);
-    }
-
-    public AppConfigManager() {
-        createConfigFileIfAbsent();
-        mapper = new ObjectMapper();
-        loadCurrentConfig();
     }
 
     public void saveDirectoryPath(String path) {
@@ -35,7 +35,6 @@ public class AppConfigManager {
         currentConfig.localRepository.path = path;
         mapper.writeValue(configFile.toPath().toFile(), currentConfig);
     }
-
     public void saveRepositoryNameAndUrl(String name, String url) {
         loadCurrentConfig();
         currentConfig.remoteRepository.name = name;
@@ -63,5 +62,9 @@ public class AppConfigManager {
     private void loadCurrentConfig() {
         this.configFile = new File(CONFIG_FILE_NAME);
         this.currentConfig = mapper.readValue(configFile, AppConfig.class);
+    }
+
+    private static class AppConfigManagerHelper {
+        private static final AppConfigManager INSTANCE = new AppConfigManager();
     }
 }

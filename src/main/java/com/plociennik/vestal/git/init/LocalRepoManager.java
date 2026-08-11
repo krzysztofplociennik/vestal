@@ -26,7 +26,7 @@ public class LocalRepoManager {
         File gitDir = new File(pathToLocalRepo.toFile(), ".git");
         Repository repository;
         if (gitDir.exists()) {
-            repository = GitUtils.getExistingLocalRepo(directory.path);
+            repository = GitUtils.getExistingLocalRepo();
             log.info("[{}] Local repo already exists, identifier [{}].", "1115_10082026", repository.getIdentifier());
         } else {
             log.info("[{}] Local repo does not exist for the directory [{}], I am creating it now.", "1112_10082026", directory.path);
@@ -45,10 +45,10 @@ public class LocalRepoManager {
         }
     }
 
-    public void setRemoteOrigin(String path, RemoteRepository remoteRepository) {
+    public void setRemoteOrigin(RemoteRepository remoteRepository) {
         log.info("[{}] Setting a new remote for the local repository.", "1121_10082026");
         final String ORIGIN = "origin";
-        Repository repository = GitUtils.getExistingLocalRepo(path);
+        Repository repository = GitUtils.getExistingLocalRepo();
         try (Git git = new Git(repository)) {
             List<RemoteConfig> remotes;
             try {
