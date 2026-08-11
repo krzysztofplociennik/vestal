@@ -30,16 +30,15 @@ public class LocalRepoManager {
             log.info("[{}] Local repo already exists, identifier [{}].", "1115_10082026", repository.getIdentifier());
         } else {
             log.info("[{}] Local repo does not exist for the directory [{}], I am creating it now.", "1112_10082026", directory.path);
-            repository = initRepo(pathToLocalRepo);
-            log.info("[{}] Local repo of identifier [{}] has been created.", "1116_10082026", repository.getIdentifier());
+            initRepo(pathToLocalRepo);
         }
     }
 
-    private Repository initRepo(Path directory) {
+    private void initRepo(Path directory) {
         try (Git git = Git.init()
                 .setDirectory(directory.toFile())
                 .call()) {
-            return git.getRepository();
+            log.info("[{}] Local repo of identifier [{}] has been created.", "1116_10082026", git.getRepository().getIdentifier());
         } catch (GitAPIException e) {
             log.error("[{}] Something happened when trying to create a new local repository, error: [{}].", "1120_10082026", e.toString());
             throw new VestalException("1120_10082026", "Something happened when trying to create a new local repository.", e);
