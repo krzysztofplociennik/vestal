@@ -63,7 +63,6 @@ public class RepoPushChangesService {
             txtFiles.forEach(add::addFilepattern);
             add.call();
 
-            // todo: not really working i guess?
             Status status = git.status().call();
             if (status.isClean()) {
                 log.info("[{}] There were no changes, cancelling the process.", "1232_10082026");
