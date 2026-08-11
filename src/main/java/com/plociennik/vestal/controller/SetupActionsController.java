@@ -144,7 +144,7 @@ public class SetupActionsController extends VBox implements Initializable {
                             repositoryUrl = selectedRepo.cloneUrl();
                             configManager.saveRepositoryNameAndUrl(repositoryName, repositoryUrl);
                             repositoryTitleText.setText(repositoryName);
-                            localRepoManager.setNewRemote(directoryPath, new RemoteRepository(repositoryName, repositoryUrl));
+                            localRepoManager.setRemoteOrigin(directoryPath, new RemoteRepository(repositoryName, repositoryUrl));
                             handleIfDirectoryAndRepositoryBothPresent();
                             log.info("[{}] Repository [{}] has been saved.", "1602_040826", repositoryName);
                         },

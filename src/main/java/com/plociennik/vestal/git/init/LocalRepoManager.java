@@ -45,7 +45,7 @@ public class LocalRepoManager {
         }
     }
 
-    public void setNewRemote(String path, RemoteRepository remoteRepository) {
+    public void setRemoteOrigin(String path, RemoteRepository remoteRepository) {
         log.info("[{}] Setting a new remote for the local repository.", "1121_10082026");
         final String ORIGIN = "origin";
         Repository repository = GitUtils.getExistingLocalRepo(path);
