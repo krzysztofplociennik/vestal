@@ -1,7 +1,6 @@
 package com.plociennik.vestal.config;
 
 import com.plociennik.vestal.common.VestalException;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -9,6 +8,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+
+
+// todo: maybe singleton
 
 @Slf4j
 public class AppConfigManager {
