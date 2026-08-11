@@ -1,15 +1,25 @@
 package com.plociennik.vestal.controller;
 
+import com.plociennik.vestal.config.AppConfig;
+import com.plociennik.vestal.config.AppConfigManager;
+import com.plociennik.vestal.config.LocalRepository;
 import com.plociennik.vestal.git.push.RepoPushChangesService;
+import com.plociennik.vestal.git.util.GitUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Repository;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static com.plociennik.vestal.common.CommonUtils.logAndThrow;
 
 @Slf4j
 public class GitActionsController extends VBox implements Initializable {
@@ -20,6 +30,7 @@ public class GitActionsController extends VBox implements Initializable {
     @FXML private Button pullChangesButton;
 
     private RepoPushChangesService repoPushChangesService = new RepoPushChangesService();
+    private AppConfigManager configManager = new AppConfigManager();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -30,18 +41,25 @@ public class GitActionsController extends VBox implements Initializable {
     }
 
     private void setupCheckStatusButton() {
+        checkStatusButton.setOnAction(e -> {
+            AppConfig currentConfig = configManager.getCurrentConfig();
+            LocalRepository localRepository = currentConfig.localRepository;
+            Repository gitRepository = GitUtils.getExistingLocalRepo(localRepository.path);
 
-    }
+            try (Git git = new Git(gitRepository)) {
 
-    private void checkStatus() {
+                Status status = git.status().call();
+                if (status.isClean()) {
+                    statusLabelText.setText("There are changes to be pushed.");
+                } else {
+                    statusLabelText.setText("There are no changes to be pushed.");
+                }
 
-        // simplest implementation so far (i dont think i need more, like merge changes or check status)
-        // if local is empty - one pull from remote
-        // if local is not empty - check dates only, pull if local is half empty or older than remote
-        // pull only newer files
-        // push - pretty much will always be newer than remote
-        // remote is usually a backup and should stay like that
-        // if both are empty - disable pull
+            } catch (GitAPIException error) {
+                logAndThrow("1218_10082026", "Something happened when trying to check changes.", error);
+            }
+
+        });
     }
 
     private void setupPushChangesButton() {
