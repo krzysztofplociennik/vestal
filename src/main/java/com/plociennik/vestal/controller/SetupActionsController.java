@@ -108,6 +108,7 @@ public class SetupActionsController extends VBox implements Initializable {
                 configManager.saveDirectoryPath(directoryPath);
                 localRepoManager.ensureLocalRepositoryInitialized(new LocalRepository(directoryPath));
                 directoryTitleText.setText(directoryPath);
+                isDirectoryAbsent.set(false);
                 handleIfDirectoryAndRepositoryBothPresent();
                 log.info("[{}] A new directory path: [{}] has been set.", "1122_040826", directoryPath);
             } else {
