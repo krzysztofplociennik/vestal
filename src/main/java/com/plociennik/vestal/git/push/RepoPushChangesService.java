@@ -94,7 +94,7 @@ public class RepoPushChangesService {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                 if (dir.getFileName() != null && dir.getFileName().toString().equals(".git")) {
-                    return FileVisitResult.SKIP_SUBTREE; // don't descend into .git at all
+                    return FileVisitResult.SKIP_SUBTREE;
                 }
                 return FileVisitResult.CONTINUE;
             }
