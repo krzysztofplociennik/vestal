@@ -50,6 +50,7 @@ public class SetupActionsController extends VBox implements Initializable {
     private String directoryPath = null;
     private String repositoryName = null;
     private String repositoryUrl = null;
+
     @Getter private BooleanProperty areDirectoryRepositoryPresent = new SimpleBooleanProperty(false);
     @Getter private BooleanProperty isDirectoryAbsent = new SimpleBooleanProperty(true);
 
