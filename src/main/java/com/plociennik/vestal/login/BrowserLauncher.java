@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
+// todo: logging
+
 public class BrowserLauncher {
 
     public static void openUrl(String url) {
