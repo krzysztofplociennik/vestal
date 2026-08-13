@@ -44,6 +44,7 @@ dependencies {
     implementation("tools.jackson.core:jackson-databind:3.2.1")
     annotationProcessor("org.projectlombok:lombok:1.18.46")
     implementation("com.github.javakeyring:java-keyring:1.0.4")
+    implementation("org.apache.commons:commons-lang3:3.20.0")
 
     // testing
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
