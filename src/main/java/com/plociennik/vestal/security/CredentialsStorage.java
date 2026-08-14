@@ -1,4 +1,4 @@
-package com.plociennik.vestal.login;
+package com.plociennik.vestal.security;
 
 import java.util.Optional;
 

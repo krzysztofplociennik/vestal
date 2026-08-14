@@ -1,4 +1,4 @@
-package com.plociennik.vestal.login;
+package com.plociennik.vestal.security;
 
 import com.github.javakeyring.BackendNotSupportedException;
 import com.github.javakeyring.Keyring;
@@ -14,6 +14,11 @@ import java.util.Optional;
 public class KeyringCredentialsStorage implements CredentialsStorage {
 
     private static final String VESTAL_SERVICE_NAME = "com.plociennik.vestal";
+
+    public KeyringCredentialsStorage() {
+        // todo: hardcoded encryption key for simplicity right now; will be properly implemented
+        save(CredentialType.ENCRYPTION_SECRET_KEY, "secret");
+    }
 
     @Override
     public void save(CredentialType type, String value) {
