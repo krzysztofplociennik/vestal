@@ -1,10 +1,10 @@
 package com.plociennik.vestal.controller;
 
 import com.plociennik.vestal.login.BrowserLauncher;
-import com.plociennik.vestal.login.CredentialType;
-import com.plociennik.vestal.login.CredentialsStorage;
+import com.plociennik.vestal.security.CredentialType;
+import com.plociennik.vestal.security.CredentialsStorage;
 import com.plociennik.vestal.login.GitHubDeviceFlow;
-import com.plociennik.vestal.login.KeyringCredentialsStorage;
+import com.plociennik.vestal.security.KeyringCredentialsStorage;
 import com.plociennik.vestal.login.TokenValidator;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;

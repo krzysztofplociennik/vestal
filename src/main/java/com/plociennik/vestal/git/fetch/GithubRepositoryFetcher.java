@@ -1,9 +1,9 @@
 package com.plociennik.vestal.git.fetch;
 
 import com.plociennik.vestal.common.VestalException;
-import com.plociennik.vestal.login.CredentialType;
-import com.plociennik.vestal.login.CredentialsStorage;
-import com.plociennik.vestal.login.KeyringCredentialsStorage;
+import com.plociennik.vestal.security.CredentialType;
+import com.plociennik.vestal.security.CredentialsStorage;
+import com.plociennik.vestal.security.KeyringCredentialsStorage;
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;

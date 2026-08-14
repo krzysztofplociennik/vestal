@@ -1,5 +1,9 @@
 package com.plociennik.vestal.login;
 
+import com.plociennik.vestal.security.CredentialType;
+import com.plociennik.vestal.security.CredentialsStorage;
+import com.plociennik.vestal.security.KeyringCredentialsStorage;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
