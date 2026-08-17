@@ -2,12 +2,28 @@ VESTAL
 
 
 TODOS
-1. creds storage needs to be safe
-2. delete remaining borders, colors, etc.
-3. visibility should be refactored, manual setting is quite bad, better to rely on binding
-4. token might need more handling (expiry, warning before expiring, better information/status of the token)
-5. a check might be needed for choosing a normal, coding repository instead of just a text repository
-6. probably need a global status bar
-7. the icon is changed when a dialog is opened
+1. current config implementation might need to be a little bit simplified
+2. delete remaining borders, colors, comments, todos, etc.
+3. naming conventions probably should be unified (directory = local repo, repo = remote repo)
+4. git status works on and off
+5. at least a minimal amount of tests would be nice
+6. probably should use isBlank from apache 3
+7. need tests
 8. when adding/changing a repository there should be an option to create a new remote repository
-9.
+9. important: secret key is hardcoded, needs implementation
+10. txt filtering does not work
+11.
+
+nice to haves
+1. token might need more handling (expiry, warning before expiring, better information/status of the token)
+2. a check might be needed for choosing a normal, coding repository instead of just a text repository
+3. probably need a global status bar
+4. the icon is changed when a dialog is opened
+5. feature: pull only specific files (for windows)
+6. a check for valid repository/localRepository combo
+7. maybe adding a custom commit message might be good, but probably not needed
+8. maybe a check for deleted/changed local/remote repository
+9. so far cloning every file and then encrypting would be the solution, later i can just setup a second local repository
+and look at git status to not clone files that were not changed (with git stash if that would work)
+10. progress bar would be nice
+11.
