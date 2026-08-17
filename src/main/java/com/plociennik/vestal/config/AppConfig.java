@@ -2,14 +2,16 @@ package com.plociennik.vestal.config;
 
 import lombok.Data;
 
+import java.nio.file.Path;
+
 @Data
 public class AppConfig {
 
-    public LocalRepository localRepository;
-    public RemoteRepository remoteRepository;
+    public VestalRepository vestalRepository;
+    public Path operatingSystemMainDirectory;
+    public byte[] encryptionSalt;
 
     public AppConfig() {
-        this.localRepository = new LocalRepository();
-        this.remoteRepository = new RemoteRepository();
+        this.vestalRepository = new VestalRepository();
     }
 }

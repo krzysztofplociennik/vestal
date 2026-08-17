@@ -30,16 +30,24 @@ public class AppConfigManager {
         return mapper.readValue(configFile, AppConfig.class);
     }
 
+    // todo: to delete, saveConfig should handle
     public void saveDirectoryPath(String path) {
         loadCurrentConfig();
-        currentConfig.localRepository.path = path;
+        currentConfig.vestalRepository.localRepository.sourcePath = path;
         mapper.writeValue(configFile.toPath().toFile(), currentConfig);
     }
+
+    // todo: to delete, saveConfig should handle
     public void saveRepositoryNameAndUrl(String name, String url) {
         loadCurrentConfig();
-        currentConfig.remoteRepository.name = name;
-        currentConfig.remoteRepository.url = url;
+        currentConfig.vestalRepository.remoteRepository.name = name;
+        currentConfig.vestalRepository.remoteRepository.url = url;
         mapper.writeValue(configFile.toPath().toFile(), currentConfig);
+    }
+
+    public void saveConfig(AppConfig updatedConfig) {
+        mapper.writeValue(configFile.toPath().toFile(), updatedConfig);
+        loadCurrentConfig();
     }
 
     private void createConfigFileIfAbsent() {

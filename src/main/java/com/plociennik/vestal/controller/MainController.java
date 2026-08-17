@@ -1,5 +1,6 @@
 package com.plociennik.vestal.controller;
 
+import com.plociennik.vestal.config.MainDirectoryInitService;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
@@ -11,15 +12,17 @@ import java.util.ResourceBundle;
 @Slf4j
 public class MainController implements Initializable  {
 
-    @FXML private VBox githubLogin;
     @FXML private VBox setupActions;
     @FXML private VBox gitActions;
     @FXML private GithubLoginController githubLoginController;
     @FXML private SetupActionsController setupActionsController;
-    @FXML private GitActionsController gitActionsController;
+    private MainDirectoryInitService mainDirectoryInitService = new MainDirectoryInitService();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // todo: init a vestal main directory for vestal repositories
+        mainDirectoryInitService.init();
+
         setupActions.visibleProperty().bind(githubLoginController.isUserLoggedInProperty());
         gitActions.visibleProperty().bind(setupActionsController.getAreDirectoryRepositoryPresent());
     }

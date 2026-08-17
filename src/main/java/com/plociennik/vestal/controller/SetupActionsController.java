@@ -12,18 +12,16 @@ import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -59,22 +57,22 @@ public class SetupActionsController extends VBox implements Initializable {
         directoryArea.prefWidthProperty().bind(setupActionsSubArea.widthProperty().divide(2));
         repositoryArea.prefWidthProperty().bind(setupActionsSubArea.widthProperty().divide(2));
 
-        directoryPath = configManager.getCurrentConfig().localRepository.path;
-        repositoryName = configManager.getCurrentConfig().remoteRepository.name;
+        directoryPath = configManager.getCurrentConfig().vestalRepository.localRepository.sourcePath;
+        repositoryName = configManager.getCurrentConfig().vestalRepository.remoteRepository.name;
         addChangeRepositoryButton.disableProperty().bind(isDirectoryAbsent);
 
-        boolean isDirectoryPathEmpty = directoryPath == null;
-        boolean isRepositoryNameEmpty = repositoryName == null;
+        boolean isDirectoryPathBlank = StringUtils.isBlank(directoryPath);
+        boolean isRepositoryNameBlank = StringUtils.isBlank(repositoryName);
 
-        isDirectoryAbsent.set(isDirectoryPathEmpty);
+        isDirectoryAbsent.set(isDirectoryPathBlank);
 
-        directoryTitleText.setText(isDirectoryPathEmpty ? "empty" : directoryPath);
-        repositoryTitleText.setText(isRepositoryNameEmpty ? "empty" : repositoryName);
+        directoryTitleText.setText(isDirectoryPathBlank ? "empty" : directoryPath);
+        repositoryTitleText.setText(isRepositoryNameBlank ? "empty" : repositoryName);
 
-        addChangeDirectoryButton.setText(isDirectoryPathEmpty ? "add" : "change");
-        addChangeRepositoryButton.setText(isRepositoryNameEmpty ? "add" : "change");
+        addChangeDirectoryButton.setText(isDirectoryPathBlank ? "add" : "change");
+        addChangeRepositoryButton.setText(isRepositoryNameBlank ? "add" : "change");
 
-        if (isDirectoryPathEmpty || isRepositoryNameEmpty) {
+        if (isDirectoryPathBlank || isRepositoryNameBlank) {
             statusLabelText.setText("Both directory and repository need to be set.");
             log.info("[{}] Both directory and repository needs to be set.", "1311_310726");
         } else {
@@ -93,7 +91,7 @@ public class SetupActionsController extends VBox implements Initializable {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Choose a directory");
 
-            String currentPath = configManager.getCurrentConfig().localRepository.path;
+            String currentPath = configManager.getCurrentConfig().vestalRepository.localRepository.sourcePath;
             if (currentPath != null && !currentPath.isBlank()) {
                 File currentDir = new File(currentPath);
                 if (currentDir.isDirectory()) {
@@ -106,7 +104,7 @@ public class SetupActionsController extends VBox implements Initializable {
             if (selectedDirectory != null) {
                 directoryPath = selectedDirectory.getAbsolutePath();
                 configManager.saveDirectoryPath(directoryPath);
-                localRepoManager.ensureLocalRepositoryInitialized(new LocalRepository(directoryPath));
+                localRepoManager.setupLocalRepository(new LocalRepository(directoryPath));
                 directoryTitleText.setText(directoryPath);
                 isDirectoryAbsent.set(false);
                 handleIfDirectoryAndRepositoryBothPresent();
@@ -141,17 +139,17 @@ public class SetupActionsController extends VBox implements Initializable {
                 }
 
                 showRepositoryPickerDialog(repositories).ifPresentOrElse(
-                        selectedRepo -> {
-                            repositoryName = selectedRepo.name();
-                            repositoryUrl = selectedRepo.cloneUrl();
+                        result -> {
+                            repositoryName = result.repository.name();
+                            repositoryUrl = result.repository.cloneUrl();
                             configManager.saveRepositoryNameAndUrl(repositoryName, repositoryUrl);
-                            repositoryTitleText.setText(repositoryName);
                             localRepoManager.setRemoteOrigin(new RemoteRepository(repositoryName, repositoryUrl));
+                            repositoryTitleText.setText(repositoryName);
                             handleIfDirectoryAndRepositoryBothPresent();
                             log.info("[{}] Repository [{}] has been saved.", "1602_040826", repositoryName);
                         },
                         () -> {
-                            repositoryTitleText.setText(configManager.getCurrentConfig().remoteRepository.name);
+                            repositoryTitleText.setText(configManager.getCurrentConfig().vestalRepository.remoteRepository.name);
                             log.info("[{}] Repository selection was cancelled.", "1603_040826");
                         }
                 );
@@ -167,8 +165,10 @@ public class SetupActionsController extends VBox implements Initializable {
         });
     }
 
-    private Optional<GitFetchRepository> showRepositoryPickerDialog(List<GitFetchRepository> repositories) {
-        Dialog<GitFetchRepository> dialog = new Dialog<>();
+    public record RepositorySelection(GitFetchRepository repository, boolean checkboxValue) {}
+
+    private Optional<RepositorySelection> showRepositoryPickerDialog(List<GitFetchRepository> repositories) {
+        Dialog<RepositorySelection> dialog = new Dialog<>();
         dialog.setTitle("Choose a repository");
         dialog.getDialogPane().setPrefSize(600, 700);
         dialog.getDialogPane().setMinSize(400, 400);
@@ -182,8 +182,13 @@ public class SetupActionsController extends VBox implements Initializable {
                 setText(empty || repo == null ? null : repo.name());
             }
         });
+        CheckBox checkBox = new CheckBox("Encrypt notes in this repository");
 
-        dialog.getDialogPane().setContent(listView);
+        VBox.setVgrow(listView, Priority.ALWAYS);
+        VBox content = new VBox(10, listView, checkBox);
+        content.setPadding(new Insets(10));
+        dialog.getDialogPane().setContent(content);
+
         ButtonType selectButtonType = new ButtonType("Select", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(selectButtonType, ButtonType.CANCEL);
 
@@ -195,7 +200,9 @@ public class SetupActionsController extends VBox implements Initializable {
                 .bind(listView.getSelectionModel().selectedItemProperty().isNull());
 
         dialog.setResultConverter(buttonType ->
-                buttonType == selectButtonType ? listView.getSelectionModel().getSelectedItem() : null);
+                buttonType == selectButtonType
+                        ? new RepositorySelection(listView.getSelectionModel().getSelectedItem(), checkBox.isSelected())
+                        : null);
 
         return dialog.showAndWait();
     }

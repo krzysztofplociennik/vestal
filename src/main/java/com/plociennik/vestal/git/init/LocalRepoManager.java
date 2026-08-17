@@ -1,9 +1,16 @@
 package com.plociennik.vestal.git.init;
 
 import com.plociennik.vestal.common.VestalException;
+import com.plociennik.vestal.config.AppConfig;
+import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.config.LocalRepository;
 import com.plociennik.vestal.config.RemoteRepository;
+import com.plociennik.vestal.encryption.FileEncryptor;
+import com.plociennik.vestal.encryption.KeyDerivation;
 import com.plociennik.vestal.git.util.GitUtils;
+import com.plociennik.vestal.security.CredentialType;
+import com.plociennik.vestal.security.CredentialsStorage;
+import com.plociennik.vestal.security.KeyringCredentialsStorage;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -11,26 +18,93 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 
+import javax.crypto.SecretKey;
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class LocalRepoManager {
 
-    public void ensureLocalRepositoryInitialized(LocalRepository directory) {
-        log.info("[{}] I am checking if the local git repository is present.", "1416_07082026");
+    public void setupLocalRepository(LocalRepository localRepository) {
 
-        Path pathToLocalRepo = Path.of(directory.path);
+        log.info("[{}] I am checking if the local git repository is present.", "1416_07082026");
+        Path pathToLocalRepo = Path.of(localRepository.encryptionPath);
         File gitDir = new File(pathToLocalRepo.toFile(), ".git");
+
         Repository repository;
         if (gitDir.exists()) {
             repository = GitUtils.getExistingLocalRepo();
             log.info("[{}] Local repo already exists, identifier [{}].", "1115_10082026", repository.getIdentifier());
         } else {
-            log.info("[{}] Local repo does not exist for the directory [{}], I am creating it now.", "1112_10082026", directory.path);
+            createEncryptionPath(localRepository);
+            List<Path> filesToEncrypt = findTxtFiles(Path.of(localRepository.sourcePath));
+            FileEncryptor fileEncryptor = new FileEncryptor();
+            Path destinationPath = Path.of(localRepository.encryptionPath);
+
+            SecretKey secretKey = null;
+            try {
+                CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
+                AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
+                secretKey = KeyDerivation.deriveKey(credentialsStorage.get(CredentialType.ENCRYPTION_SECRET_KEY).toCharArray(), currentConfig.getEncryptionSalt());
+            } catch (GeneralSecurityException e) {
+                throw new RuntimeException(e);
+            }
+
+            for (Path sourcePath : filesToEncrypt) {
+                FileEncryptor.EncryptResult encryptResult = fileEncryptor.encryptFile(sourcePath, destinationPath, secretKey);
+                try {
+                    // todo: not encrypted filename
+                    Files.write(encryptResult.destFile(), encryptResult.output());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println(encryptResult);
+            }
+            log.info("[{}] Local repo does not exist for the localRepository [{}], I am creating it now.", "1112_10082026", localRepository.sourcePath);
             initRepo(pathToLocalRepo);
+            log.info("[{}] Setup local repository has been a success.", "1559_17082026");
+        }
+    }
+
+    // todo: i think it does not exactly work
+    private List<Path> findTxtFiles(Path workDir) {
+        List<Path> txtFiles = new ArrayList<>();
+
+        try {
+            Files.walkFileTree(workDir, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    if (dir.getFileName() != null && dir.getFileName().toString().equals(".git")) {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    log.info("Visiting: {}", file);
+                    txtFiles.add(file);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return txtFiles;
+    }
+
+    private void createEncryptionPath(LocalRepository repository) {
+        try {
+            Files.createDirectories(Path.of(repository.encryptionPath));
+        } catch (IOException e) {
+            throw new VestalException("1837_13082026", "Could not create repository of [%s].".formatted(repository.encryptionPath), e);
         }
     }
 

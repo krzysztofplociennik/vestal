@@ -49,9 +49,9 @@ public class RepoPushChangesService {
 
         try (Git git = new Git(gitRepository)) {
             AppConfig currentConfig = configManager.getCurrentConfig();
-            LocalRepository localRepository = currentConfig.localRepository;
+            LocalRepository localRepository = currentConfig.vestalRepository.localRepository;
 
-            Path workDir = Paths.get(localRepository.path);
+            Path workDir = Paths.get(localRepository.encryptionPath);
             List<String> txtFiles = findTxtFiles(workDir);
 
             if (txtFiles.isEmpty()) {
@@ -81,31 +81,36 @@ public class RepoPushChangesService {
                     .setCredentialsProvider(credentialsProvider)
                     .call();
 
-        } catch (GitAPIException | IOException e) {
+        } catch (GitAPIException e) {
             logAndThrow("1218_10082026", "Something happened when trying to push changes.", e);
         }
         log.info("[{}] Push successful.", "1225_10082026");
     }
 
-    private List<String> findTxtFiles(Path workDir) throws IOException {
+    private List<String> findTxtFiles(Path workDir) {
         List<String> txtFiles = new ArrayList<>();
 
-        Files.walkFileTree(workDir, new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                if (dir.getFileName() != null && dir.getFileName().toString().equals(".git")) {
-                    return FileVisitResult.SKIP_SUBTREE;
+        try {
+            Files.walkFileTree(workDir, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    if (dir.getFileName() != null && dir.getFileName().toString().equals(".git")) {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    return FileVisitResult.CONTINUE;
                 }
-                return FileVisitResult.CONTINUE;
-            }
 
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                log.info("Visiting: {}", file);
-                txtFiles.add(workDir.relativize(file).toString().replace(File.separatorChar, '/'));
-                return FileVisitResult.CONTINUE;
-            }
-        });
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    log.info("Visiting: {}", file);
+                    txtFiles.add(workDir.relativize(file).toString().replace(File.separatorChar, '/'));
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            // todo: log
+            throw new RuntimeException(e);
+        }
 
         return txtFiles;
     }
