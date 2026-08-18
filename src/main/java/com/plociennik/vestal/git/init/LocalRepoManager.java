@@ -22,7 +22,10 @@ import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -31,8 +34,9 @@ import java.util.List;
 @Slf4j
 public class LocalRepoManager {
 
-    public void setupLocalRepository(LocalRepository localRepository) {
+    // todo: structure maybe should be delegated, there are many functions here
 
+    public void setupLocalRepository(LocalRepository localRepository) {
         log.info("[{}] I am checking if the local git repository is present.", "1416_07082026");
         Path pathToLocalRepo = Path.of(localRepository.encryptionPath);
         File gitDir = new File(pathToLocalRepo.toFile(), ".git");
@@ -42,33 +46,44 @@ public class LocalRepoManager {
             repository = GitUtils.getExistingLocalRepo();
             log.info("[{}] Local repo already exists, identifier [{}].", "1115_10082026", repository.getIdentifier());
         } else {
+            log.info("[{}] Local repo does not exist, I am creating it now.", "1305_18082026");
             createEncryptionPath(localRepository);
+            // todo: findTextFiles should be delegated, will be used at least 2 times
+            // todo 2: if there are no files - maybe ignore code below
             List<Path> filesToEncrypt = findTxtFiles(Path.of(localRepository.sourcePath));
             FileEncryptor fileEncryptor = new FileEncryptor();
             Path destinationPath = Path.of(localRepository.encryptionPath);
 
-            SecretKey secretKey = null;
+            CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
+            AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
+            String secretAsString = credentialsStorage.get(CredentialType.ENCRYPTION_SECRET_KEY);
+            byte[] encryptionSalt = currentConfig.getEncryptionSalt();
+            SecretKey secretKeyContent;
+            SecretKey secretKeyFilename;
             try {
-                CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
-                AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
-                secretKey = KeyDerivation.deriveKey(credentialsStorage.get(CredentialType.ENCRYPTION_SECRET_KEY).toCharArray(), currentConfig.getEncryptionSalt());
+                secretKeyContent = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_CONTENT);
+                secretKeyFilename = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_FILENAME);
             } catch (GeneralSecurityException e) {
-                throw new RuntimeException(e);
+                throw new VestalException("1141_18082026", "Something happened when trying to retrieve secret keys.", e);
             }
 
             for (Path sourcePath : filesToEncrypt) {
-                FileEncryptor.EncryptResult encryptResult = fileEncryptor.encryptFile(sourcePath, destinationPath, secretKey);
                 try {
-                    // todo: not encrypted filename
+                    FileEncryptor.EncryptResult encryptResult = fileEncryptor.encryptFile(sourcePath, destinationPath, secretKeyContent, secretKeyFilename);
                     Files.write(encryptResult.destFile(), encryptResult.output());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new VestalException("1142_18082026", "Something happened when trying to encrypt a file.", e);
                 }
-                System.out.println(encryptResult);
             }
-            log.info("[{}] Local repo does not exist for the localRepository [{}], I am creating it now.", "1112_10082026", localRepository.sourcePath);
             initRepo(pathToLocalRepo);
-            log.info("[{}] Setup local repository has been a success.", "1559_17082026");
+        }
+    }
+
+    private void createEncryptionPath(LocalRepository repository) {
+        try {
+            Files.createDirectories(Path.of(repository.encryptionPath));
+        } catch (IOException e) {
+            throw new VestalException("1837_13082026", "Could not create repository of [%s].".formatted(repository.encryptionPath), e);
         }
     }
 
@@ -94,27 +109,18 @@ public class LocalRepoManager {
                 }
             });
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new VestalException("1140_18082026", "Something happened while filtering txt files.", e);
         }
 
         return txtFiles;
-    }
-
-    private void createEncryptionPath(LocalRepository repository) {
-        try {
-            Files.createDirectories(Path.of(repository.encryptionPath));
-        } catch (IOException e) {
-            throw new VestalException("1837_13082026", "Could not create repository of [%s].".formatted(repository.encryptionPath), e);
-        }
     }
 
     private void initRepo(Path directory) {
         try (Git git = Git.init()
                 .setDirectory(directory.toFile())
                 .call()) {
-            log.info("[{}] Local repo of identifier [{}] has been created.", "1116_10082026", git.getRepository().getIdentifier());
+            log.info("[{}] A git repo of the identifier [{}] has been created.", "1116_10082026", git.getRepository().getIdentifier());
         } catch (GitAPIException e) {
-            log.error("[{}] Something happened when trying to create a new local repository, error: [{}].", "1120_10082026", e.toString());
             throw new VestalException("1120_10082026", "Something happened when trying to create a new local repository.", e);
         }
     }
@@ -128,7 +134,6 @@ public class LocalRepoManager {
             try {
                 remotes = git.remoteList().call();
             } catch (GitAPIException e) {
-                log.error("[{}] Something happened when trying to retrieve the list of remote repositories, error: [{}].", "1123_10082026", e.toString());
                 throw new VestalException("1123_10082026", "Something happened when trying to retrieve the list of remote repositories.", e);
             }
 
@@ -139,7 +144,6 @@ public class LocalRepoManager {
                                 .setRemoteName(remote.getName())
                                 .call();
                     } catch (GitAPIException e) {
-                        log.error("[{}] Something happened when trying to remove a remote repository, error: [{}].", "1124_10082026", e.toString());
                         throw new VestalException("1124_10082026", "Something happened when trying to remove a remote repository.", e);
                     }
                 }
@@ -160,7 +164,6 @@ public class LocalRepoManager {
                             .call();
                 }
             } catch (GitAPIException | URISyntaxException e) {
-                log.error("[{}] Something happened when trying to set the new remote repository, error: [{}].", "1125_10082026", e.toString());
                 throw new VestalException("1125_10082026", "Something happened when trying to set the new remote repository.", e);
             }
         }
