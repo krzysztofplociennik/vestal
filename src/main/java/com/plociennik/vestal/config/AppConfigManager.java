@@ -12,9 +12,9 @@ import java.nio.file.StandardOpenOption;
 @Slf4j
 public class AppConfigManager {
 
+    private final ObjectMapper mapper = new ObjectMapper();
     private final static String CONFIG_FILE_NAME = "config.json";
     private File configFile = null;
-    private final ObjectMapper mapper = new ObjectMapper();
     private AppConfig currentConfig;
 
     private AppConfigManager() {
@@ -30,20 +30,20 @@ public class AppConfigManager {
         return mapper.readValue(configFile, AppConfig.class);
     }
 
-    // todo: to delete, saveConfig should handle
-    public void saveDirectoryPath(String path) {
-        loadCurrentConfig();
-        currentConfig.vestalRepository.localRepository.sourcePath = path;
-        mapper.writeValue(configFile.toPath().toFile(), currentConfig);
-    }
+//    // todo: to delete, saveConfig should handle
+//    public void saveDirectoryPath(String path) {
+//        loadCurrentConfig();
+//        currentConfig.vestalRepository.localRepository.sourcePath = path;
+//        mapper.writeValue(configFile.toPath().toFile(), currentConfig);
+//    }
 
-    // todo: to delete, saveConfig should handle
-    public void saveRepositoryNameAndUrl(String name, String url) {
-        loadCurrentConfig();
-        currentConfig.vestalRepository.remoteRepository.name = name;
-        currentConfig.vestalRepository.remoteRepository.url = url;
-        mapper.writeValue(configFile.toPath().toFile(), currentConfig);
-    }
+//    // todo: to delete, saveConfig should handle
+//    public void saveRepositoryNameAndUrl(String name, String url) {
+//        loadCurrentConfig();
+//        currentConfig.vestalRepository.remoteRepository.name = name;
+//        currentConfig.vestalRepository.remoteRepository.url = url;
+//        mapper.writeValue(configFile.toPath().toFile(), currentConfig);
+//    }
 
     public void saveConfig(AppConfig updatedConfig) {
         mapper.writeValue(configFile.toPath().toFile(), updatedConfig);
@@ -58,7 +58,6 @@ public class AppConfigManager {
             try {
                 Files.writeString(configFile, "{}", StandardOpenOption.CREATE);
             } catch (IOException e) {
-                log.warn("[{}] Something happened while trying to create a config file. Error: [{}]", "1411_020826", e.toString());
                 throw new VestalException("1411_020826", "Something happened while trying to create a config file.", e);
             }
             log.info("[{}] The file [{}] has been successfully created.", "1409_020826", CONFIG_FILE_NAME);

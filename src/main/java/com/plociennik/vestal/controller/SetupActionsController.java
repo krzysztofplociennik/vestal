@@ -1,5 +1,6 @@
 package com.plociennik.vestal.controller;
 
+import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.config.LocalRepository;
 import com.plociennik.vestal.config.RemoteRepository;
@@ -103,8 +104,10 @@ public class SetupActionsController extends VBox implements Initializable {
 
             if (selectedDirectory != null) {
                 directoryPath = selectedDirectory.getAbsolutePath();
-                configManager.saveDirectoryPath(directoryPath);
-                localRepoManager.setupLocalRepository(new LocalRepository(directoryPath));
+                AppConfig currentConfig = configManager.getCurrentConfig();
+                currentConfig.vestalRepository.localRepository = new LocalRepository(directoryPath);
+                configManager.saveConfig(currentConfig);
+                localRepoManager.setupLocalRepository(currentConfig.vestalRepository.localRepository);
                 directoryTitleText.setText(directoryPath);
                 isDirectoryAbsent.set(false);
                 handleIfDirectoryAndRepositoryBothPresent();
@@ -142,7 +145,10 @@ public class SetupActionsController extends VBox implements Initializable {
                         result -> {
                             repositoryName = result.repository.name();
                             repositoryUrl = result.repository.cloneUrl();
-                            configManager.saveRepositoryNameAndUrl(repositoryName, repositoryUrl);
+                            AppConfig currentConfig = configManager.getCurrentConfig();
+                            currentConfig.vestalRepository.remoteRepository.name = repositoryName;
+                            currentConfig.vestalRepository.remoteRepository.url = repositoryUrl;
+                            configManager.saveConfig(currentConfig);
                             localRepoManager.setRemoteOrigin(new RemoteRepository(repositoryName, repositoryUrl));
                             repositoryTitleText.setText(repositoryName);
                             handleIfDirectoryAndRepositoryBothPresent();

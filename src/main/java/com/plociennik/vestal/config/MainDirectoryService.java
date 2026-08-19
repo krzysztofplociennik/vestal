@@ -3,7 +3,6 @@ package com.plociennik.vestal.config;
 import com.plociennik.vestal.common.VestalException;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,19 +10,22 @@ import java.nio.file.Paths;
 import java.util.Locale;
 
 @Slf4j
-public class MainDirectoryInitService {
+public class MainDirectoryService {
 
     private final AppConfigManager appConfigManager = AppConfigManager.getInstance();
 
     public void init() {
-        OperatingSystem os = establishOs();
-        Path establishedDirectory = establishRepositoriesDirectory(os);
-        if (isMainDirectoryPresent(establishedDirectory)) {
+        log.info("[{}] Checking if the main directory is present.", "1448_18082026");
+
+        AppConfig currentConfig = appConfigManager.getCurrentConfig();
+        if (currentConfig.operatingSystemMainDirectory != null) {
             log.info("[{}] Main directory is present.", "1625_13082026");
             return;
         }
 
-        AppConfig currentConfig = appConfigManager.getCurrentConfig();
+        log.info("[{}] Main directory is not present, creating it now.", "1449_18082026");
+        OperatingSystem os = establishOs();
+        Path establishedDirectory = establishMainDirectoryPath(os);
         currentConfig.operatingSystemMainDirectory = establishedDirectory;
         appConfigManager.saveConfig(currentConfig);
 
@@ -35,12 +37,7 @@ public class MainDirectoryInitService {
         log.info("[{}] Main directory has been created successfully, path: [{}].", "1630_13082026", establishedDirectory);
     }
 
-    private boolean isMainDirectoryPresent(Path path) {
-        File mainPath = new File(path.toString());
-        return mainPath.exists();
-    }
-
-    private Path establishRepositoriesDirectory(OperatingSystem operatingSystem) {
+    private Path establishMainDirectoryPath(OperatingSystem operatingSystem) {
         return switch (operatingSystem) {
             case WINDOWS -> Paths.get(
                     System.getenv("LOCALAPPDATA"),

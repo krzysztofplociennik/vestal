@@ -1,6 +1,9 @@
 package com.plociennik.vestal.controller;
 
-import com.plociennik.vestal.config.MainDirectoryInitService;
+import com.plociennik.vestal.config.AppConfig;
+import com.plociennik.vestal.config.AppConfigManager;
+import com.plociennik.vestal.config.MainDirectoryService;
+import com.plociennik.vestal.encryption.SaltGenerator;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
@@ -16,14 +19,21 @@ public class MainController implements Initializable  {
     @FXML private VBox gitActions;
     @FXML private GithubLoginController githubLoginController;
     @FXML private SetupActionsController setupActionsController;
-    private MainDirectoryInitService mainDirectoryInitService = new MainDirectoryInitService();
+    private MainDirectoryService mainDirectoryService = new MainDirectoryService();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // todo: init a vestal main directory for vestal repositories
-        mainDirectoryInitService.init();
-
+        mainDirectoryService.init();
+        generateAndSaveSalt();
         setupActions.visibleProperty().bind(githubLoginController.isUserLoggedInProperty());
         gitActions.visibleProperty().bind(setupActionsController.getAreDirectoryRepositoryPresent());
+    }
+
+    private void generateAndSaveSalt() {
+        AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
+        if (currentConfig.encryptionSalt == null) {
+            currentConfig.encryptionSalt = SaltGenerator.generateSalt();
+            AppConfigManager.getInstance().saveConfig(currentConfig);
+        }
     }
 }

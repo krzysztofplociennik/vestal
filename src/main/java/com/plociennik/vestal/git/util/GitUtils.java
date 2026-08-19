@@ -18,7 +18,7 @@ public class GitUtils {
 
     public static Repository getExistingLocalRepo() {
         AppConfig currentConfig = configManager.getCurrentConfig();
-        String pathAsString = currentConfig.vestalRepository.localRepository.sourcePath;
+        String pathAsString = currentConfig.vestalRepository.localRepository.encryptionPath;
         Path path = Path.of(pathAsString);
         File gitDir = new File(path.toFile(), ".git");
 
