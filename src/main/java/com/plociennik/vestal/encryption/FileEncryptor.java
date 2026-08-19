@@ -27,7 +27,7 @@ public class FileEncryptor {
     private static final int IV_LENGTH_BYTES = 12;
     private static final int TAG_LENGTH_BITS = 128;
 
-    public EncryptResult encryptFile(Path fileToEncrypt, Path destination,
+    EncryptResult encryptFile(Path fileToEncrypt, Path destination,
                                      SecretKey contentKey, SecretKey nameKey) throws IOException {
         String originalName = fileToEncrypt.getFileName().toString();
         byte[] nameBytes = originalName.getBytes(StandardCharsets.UTF_8);
