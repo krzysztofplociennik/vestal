@@ -14,14 +14,15 @@ import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -32,12 +33,6 @@ public class RepoPushChangesService {
 
     public void push() {
         log.info("[{}] Pushing current state to remote.", "1222_10082026");
-
-        // maybe check not needed, at least now
-//        if (isRepositoryNotTextBased()) {
-//            log.error("[{}] Repository consists of files different than .txt files, operation aborted.", "1341_09082026");
-//            throw new VestalException("1341_09082026", "Repository consists of files different than .txt files, push aborted.");
-//        }
 
         Repository gitRepository = GitUtils.getExistingLocalRepo();
 
@@ -63,17 +58,23 @@ public class RepoPushChangesService {
             }
 
             String customCommitMessage = createCustomCommitMessage();
-            RevCommit commit = git.commit()
+            git.commit()
                     .setMessage(customCommitMessage)
                     .call();
 
             CredentialsProvider credentialsProvider =
                     new UsernamePasswordCredentialsProvider(credentialsStorage.get(CredentialType.GITHUB_TOKEN), "");
 
-            // todo: push result has to be handled, otherwise can silently fail without logging anything
-            Iterable<PushResult> pushResults = git.push()
+            Iterable<PushResult> pushResults = git
+                    .push()
                     .setCredentialsProvider(credentialsProvider)
                     .call();
+
+            PushSummary pushSummary = processResults(pushResults, currentConfig.vestalRepository.remoteRepository.url);
+            if (!pushSummary.success) {
+                log.error("[{}] Push not successful, reasons: [{}]", "1027_20082026", pushSummary.errorMessages);
+                throw new VestalException("1027_20082026", "Push not successful, check logs.");
+            }
         } catch (Exception e) {
             throw new VestalException("1218_10082026", "Something happened when trying to push changes.", e);
         }
@@ -84,4 +85,43 @@ public class RepoPushChangesService {
         LocalDateTime now = LocalDateTime.now();
         return now.toString();
     }
+
+    private PushSummary processResults(Iterable<PushResult> pushResults, String remoteUrl) {
+        if (pushResults == null) {
+            return new PushSummary(false, "PushResults are null.", null);
+        }
+
+        PushResult pushResult = null;
+        for (PushResult pr : pushResults) {
+            String uri = pr.getURI().toString();
+            if (remoteUrl.equals(uri)) {
+                pushResult = pr;
+            } else {
+                log.warn("[{}] There are push results with a wrong URI of: [{}]", "1146_20082026", uri);
+                return new PushSummary(
+                        false,
+                        "URIs do not match, expected: [%s], actual: [%s].".formatted(remoteUrl, uri),
+                        new ArrayList<>());
+            }
+        }
+
+        if (pushResult == null) {
+            throw new VestalException("1356_20082026", "PushResult is null.");
+        }
+
+        List<PushResultError> pushResultErrors = new ArrayList<>();
+
+        pushResult.getRemoteUpdates().stream()
+                .filter(r -> !r.getStatus().equals(RemoteRefUpdate.Status.OK))
+                .forEach(r -> pushResultErrors.add(new PushResultError(r.getStatus().toString(), r.getMessage())));
+
+        if (pushResultErrors.isEmpty()) {
+            return new PushSummary(true, "", null);
+        }
+        return new PushSummary(false, "There were problems with the push.", pushResultErrors);
+    }
+
+    private record PushSummary(boolean success, String reason, List<PushResultError> errorMessages) {}
+
+    private record PushResultError(String status, String message) {}
 }
