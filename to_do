@@ -12,7 +12,10 @@ TODOS
 8. when adding/changing a repository there should be an option to create a new remote repository
 9. important: secret key is hardcoded, needs implementation
 10. txt filtering does not work
-11.
+11. decrypting, obviously
+12. right now encrypting works with just one level (no folders, just files)
+13. i think hardcoding file/path separators is not a good idea (windows != linux)
+14.
 
 nice to haves
 1. token might need more handling (expiry, warning before expiring, better information/status of the token)
