@@ -16,7 +16,7 @@ public class LocalRepository {
         this.encryptionPath = setupEncryptionPath();
     }
 
-    // todo: login in a POJO, weird
+    // todo: logic in a POJO, weird
 
     private String setupEncryptionPath() {
         AppConfigManager appConfigManager = AppConfigManager.getInstance();
