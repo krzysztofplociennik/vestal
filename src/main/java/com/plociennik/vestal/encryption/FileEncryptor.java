@@ -76,5 +76,6 @@ public class FileEncryptor {
         }
     }
 
-    public record EncryptResult(Path destFile, byte[] output) {}
+    public record EncryptResult(Path destinationFile, byte[] output) {
+    }
 }

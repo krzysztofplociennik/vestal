@@ -14,7 +14,13 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -143,6 +149,7 @@ public class SetupActionsController extends VBox implements Initializable {
 
                 showRepositoryPickerDialog(repositories).ifPresentOrElse(
                         result -> {
+                            // todo: maybe a good idea would be to have a check for not selecting a wrong repository
                             repositoryName = result.repository.name();
                             repositoryUrl = result.repository.cloneUrl();
                             AppConfig currentConfig = configManager.getCurrentConfig();
@@ -170,8 +177,6 @@ public class SetupActionsController extends VBox implements Initializable {
             new Thread(fetchTask, "github-fetch-repos").start();
         });
     }
-
-    public record RepositorySelection(GitFetchRepository repository, boolean checkboxValue) {}
 
     private Optional<RepositorySelection> showRepositoryPickerDialog(List<GitFetchRepository> repositories) {
         Dialog<RepositorySelection> dialog = new Dialog<>();
@@ -218,4 +223,6 @@ public class SetupActionsController extends VBox implements Initializable {
             areDirectoryRepositoryPresent.set(true);
         }
     }
+
+    private record RepositorySelection(GitFetchRepository repository, boolean checkboxValue) {}
 }
