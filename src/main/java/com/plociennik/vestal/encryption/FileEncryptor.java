@@ -28,10 +28,15 @@ public class FileEncryptor {
     private static final int TAG_LENGTH_BITS = 128;
 
     EncryptResult encryptFile(Path fileToEncrypt, Path destination,
-                                     SecretKey contentKey, SecretKey nameKey) throws IOException {
+                              SecretKey contentKey, SecretKey nameKey) {
         String originalName = fileToEncrypt.getFileName().toString();
         byte[] nameBytes = originalName.getBytes(StandardCharsets.UTF_8);
-        byte[] contentBytes = Files.readAllBytes(fileToEncrypt);
+        byte[] contentBytes = null;
+        try {
+            contentBytes = Files.readAllBytes(fileToEncrypt);
+        } catch (IOException e) {
+            throw new VestalException("1343_22082026", "Something happened while trying to read contents of a file.", e);
+        }
 
         ByteBuffer buffer = ByteBuffer.allocate(4 + nameBytes.length + contentBytes.length);
         buffer.putInt(nameBytes.length);
