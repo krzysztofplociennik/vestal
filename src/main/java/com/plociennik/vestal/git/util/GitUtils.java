@@ -29,7 +29,6 @@ public class GitUtils {
                     .findGitDir()
                     .build();
         } catch (IOException e) {
-            log.error("[{}] Something happened when trying to retrieve existing local repository, error: [{}].", "1118_10082026", e.toString());
             throw new VestalException("1118_10082026", "Something happened when trying to retrieve existing local repository.", e);
         }
     }
