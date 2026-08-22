@@ -2,6 +2,8 @@ package com.plociennik.vestal.common;
 
 import lombok.extern.slf4j.Slf4j;
 
+// todo: for deletion
+
 @Slf4j
 public class CommonUtils {
 
