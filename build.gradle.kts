@@ -4,7 +4,7 @@ plugins {
     java
     application
     id("org.javamodularity.moduleplugin") version "1.8.15"
-    id("org.openjfx.javafxplugin") version "0.0.13"
+    id("org.openjfx.javafxplugin") version "0.1.0"
     id("org.beryx.jlink") version "2.25.0"
 }
 
@@ -39,16 +39,19 @@ javafx {
 dependencies {
     implementation("org.controlsfx:controlsfx:11.2.1")
     implementation("org.eclipse.jgit:org.eclipse.jgit:7.7.0.202606012155-r")
-    implementation("org.projectlombok:lombok:1.18.46")
     implementation("org.slf4j:slf4j-simple:2.0.18")
     implementation("tools.jackson.core:jackson-databind:3.2.1")
-    annotationProcessor("org.projectlombok:lombok:1.18.46")
     implementation("com.github.javakeyring:java-keyring:1.0.4")
     implementation("org.apache.commons:commons-lang3:3.20.0")
+
+    compileOnly("org.projectlombok:lombok:1.18.46")
+    annotationProcessor("org.projectlombok:lombok:1.18.46")
 
     // testing
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testCompileOnly("org.projectlombok:lombok:1.18.46")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.46")
 }
 
 tasks.withType<Test> {
