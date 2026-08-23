@@ -46,3 +46,6 @@ bin/
 .idea
 gradle
 config.json
+!gradle/wrapper/gradle-wrapper.properties
+gradlew
+gradlew.bat
