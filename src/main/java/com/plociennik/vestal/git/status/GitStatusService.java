@@ -74,7 +74,6 @@ public class GitStatusService {
                     if (file.endsWith(MANIFEST_FILE_NAME)) {
                         return FileVisitResult.CONTINUE;
                     }
-                    log.info("Visiting: {}", file);
                     filenamesAndHashes.put(file.toString(), hashFile(file));
                     return FileVisitResult.CONTINUE;
                 }

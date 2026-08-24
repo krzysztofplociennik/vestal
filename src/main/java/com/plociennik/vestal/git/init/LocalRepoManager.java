@@ -4,6 +4,7 @@ import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.LocalRepository;
 import com.plociennik.vestal.config.RemoteRepository;
 import com.plociennik.vestal.encryption.EncryptionService;
+import com.plociennik.vestal.encryption.FileEncryptor;
 import com.plociennik.vestal.git.util.GitUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
@@ -38,7 +39,14 @@ public class LocalRepoManager {
             createEncryptionPath(localRepository);
             Path sourcePath = Path.of(localRepository.sourcePath);
             Path destinationPath = Path.of(localRepository.encryptionPath);
-            encryptionService.encryptPath(sourcePath, destinationPath);
+            List<FileEncryptor.EncryptResult> encryptResults = encryptionService.encryptPath(sourcePath, destinationPath);
+            for (FileEncryptor.EncryptResult path : encryptResults) {
+                try {
+                    Files.write(path.destinationFile(), path.output());
+                } catch (IOException e) {
+                    throw new VestalException("1324_19082026", "Something happened when trying to move encrypted files into destination.", e);
+                }
+            }
             initRepo(pathToLocalRepo);
         }
     }
