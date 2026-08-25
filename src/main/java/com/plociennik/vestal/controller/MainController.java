@@ -25,6 +25,7 @@ public class MainController implements Initializable  {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // todo: need to think about, maybe state implementation9
         mainDirectoryService.init();
         generateAndSaveSalt();
         gitStatusService.init();
