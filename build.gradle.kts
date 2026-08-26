@@ -16,6 +16,7 @@ repositories {
 }
 
 val junitVersion = "5.12.1"
+val lombokVersion = "1.18.46"
 
 java {
     toolchain {
@@ -44,14 +45,15 @@ dependencies {
     implementation("com.github.javakeyring:java-keyring:1.0.4")
     implementation("org.apache.commons:commons-lang3:3.20.0")
 
-    compileOnly("org.projectlombok:lombok:1.18.46")
-    annotationProcessor("org.projectlombok:lombok:1.18.46")
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
     // testing
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-    testCompileOnly("org.projectlombok:lombok:1.18.46")
-    testAnnotationProcessor("org.projectlombok:lombok:1.18.46")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.withType<Test> {
