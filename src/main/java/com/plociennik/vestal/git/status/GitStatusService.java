@@ -8,6 +8,7 @@ import com.plociennik.vestal.config.AppConfigManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -17,7 +18,13 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HexFormat;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Slf4j
 public class GitStatusService {
@@ -27,25 +34,86 @@ public class GitStatusService {
 
     private AppConfigManager configManager = AppConfigManager.getInstance();
 
-    public void checkChanges() {
-        // fetch manifest
-        // create a map out of file
-        // create a map out of directory
-        // compare maps
+    // todo: needs to be tested
+    public boolean isStatusChanged() {
+
+        Map<String, String> currentMap = createCurrentFilenamesHashesMap();
+        Map<String, String> manifestMap = getManifestMap();
+
+        Set<Map.Entry<String, String>> currentMapEntries = currentMap.entrySet();
+        Set<Map.Entry<String, String>> manifestMapEntries = manifestMap.entrySet();
+        if (currentMapEntries.size() != manifestMapEntries.size()) {
+            return false;
+        }
+
+        Iterator<Map.Entry<String, String>> currentEntriesIterator = currentMapEntries.iterator();
+        Iterator<Map.Entry<String, String>> manifestEntriesIterator = manifestMapEntries.iterator();
+
+        Map.Entry<String, String> currentEntry = currentEntriesIterator.next();
+        Map.Entry<String, String> manifestEntry = manifestEntriesIterator.next();
+
+        while (currentEntriesIterator.hasNext()) {
+            boolean hasCurrentEntry = checkIfMapHasMatchingEntry(currentEntry, manifestMap);
+            if (!hasCurrentEntry) {
+                return false;
+            }
+            boolean hasManifestEntry = checkIfMapHasMatchingEntry(manifestEntry, currentMap);
+            if (!hasManifestEntry) {
+                return false;
+            }
+            currentEntry = currentEntriesIterator.next();
+            manifestEntry = manifestEntriesIterator.next();
+        }
+        return true;
+    }
+
+    private boolean checkIfMapHasMatchingEntry(Map.Entry<String, String> currentEntry, Map<String, String> map) {
+
+        String key = currentEntry.getKey();
+        String value = currentEntry.getValue();
+
+        if (!map.containsKey(key)) {
+            return false;
+        }
+        String searchedValue = map.get(key);
+        return searchedValue != null && searchedValue.equals(value);
+    }
+
+    private File getManifestFile() {
+        String destinationPath = configManager.getCurrentConfig().vestalRepository.localRepository.sourcePath + "/" + MANIFEST_FILE_NAME;
+        return new File(destinationPath);
+    }
+
+    private Map<String, String> getManifestMap() {
+        File manifestFile = getManifestFile();
+        if (!manifestFile.exists()) {
+            throw new VestalException("1334_26082026", "The status manifest file is not present.");
+        }
+
+        Map<String, String> lastSavedMap = new HashMap<>();
+        try (Scanner scanner = new Scanner(manifestFile)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] split = line.split(SEPARATOR);
+                lastSavedMap.put(split[0], split[1]);
+            }
+        } catch (FileNotFoundException e) {
+            throw new VestalException("1406_26082026", "The file has not been found on the path: [%s].". formatted(manifestFile.getPath()), e);
+        }
+
+        return lastSavedMap;
     }
 
     public void init() {
         log.info("[{}] Checking if the status manifest is present.", "1419_21082026");
 
-        String sourcePath = configManager.getCurrentConfig().vestalRepository.localRepository.sourcePath;
-        String destinationPath = configManager.getCurrentConfig().vestalRepository.localRepository.sourcePath + "/" + MANIFEST_FILE_NAME;
-        File manifestFile = new File(destinationPath);
+        File manifestFile = getManifestFile();
         if (manifestFile.exists()) {
             log.info("[{}] The file is present, cancelling the process.", "1419_21082026");
         } else {
             log.info("[{}] The file is missing, creating it now.", "1416_21082026");
-            Map<String, String> filenamesAndHashes = createFilenamesHashesMap(Path.of(sourcePath));
-            Path manifestPath = Path.of(destinationPath);
+            Map<String, String> filenamesAndHashes = createCurrentFilenamesHashesMap();
+            Path manifestPath = Path.of(manifestFile.getPath());
             String fileContents = parseMapIntoString(filenamesAndHashes);
             try {
                 Files.writeString(manifestPath, fileContents, StandardOpenOption.CREATE);
@@ -56,7 +124,9 @@ public class GitStatusService {
         }
     }
 
-    private Map<String, String> createFilenamesHashesMap(Path path) {
+    private Map<String, String> createCurrentFilenamesHashesMap() {
+        Path path = Path.of(configManager.getCurrentConfig().vestalRepository.localRepository.sourcePath);
+
         Map<String, String> filenamesAndHashes = new HashMap<>();
 
         try {
