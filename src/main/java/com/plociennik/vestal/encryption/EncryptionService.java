@@ -10,7 +10,6 @@ import com.plociennik.vestal.security.KeyringCredentialsStorage;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -38,12 +37,9 @@ public class EncryptionService {
         FileEncryptor fileEncryptor = new FileEncryptor();
         List<FileEncryptor.EncryptResult> results = new ArrayList<>();
         for (Path file : filesToEncrypt) {
-            try {
-                FileEncryptor.EncryptResult encryptResult = fileEncryptor.encryptFile(file, destination, secretKeyContent, secretKeyFilename);
-                results.add(encryptResult);
-            } catch (IOException e) {
-                throw new VestalException("1142_18082026", "Something happened when trying to encrypt a file.", e);
-            }
+            log.info("[{}] Encrypting a file of a path: [{}].", "1456_24082026", file.toString());
+            FileEncryptor.EncryptResult encryptResult = fileEncryptor.encryptFile(file, destination, secretKeyContent, secretKeyFilename);
+            results.add(encryptResult);
         }
         log.info("[{}] Encryption process finished successfully.", "1318_19082026");
         return results;
