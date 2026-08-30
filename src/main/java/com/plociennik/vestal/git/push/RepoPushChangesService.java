@@ -71,6 +71,7 @@ public class RepoPushChangesService {
                     .call();
 
             PushSummary pushSummary = processResults(pushResults, currentConfig.vestalRepository.remoteRepository.url);
+            // todo: maybe some of the statuses should be handled visibly
             if (!pushSummary.success) {
                 log.error("[{}] Push not successful, reasons: [{}]", "1027_20082026", pushSummary.errorMessages);
                 throw new VestalException("1027_20082026", "Push not successful, check logs.");
