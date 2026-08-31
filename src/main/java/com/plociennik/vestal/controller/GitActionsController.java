@@ -34,6 +34,7 @@ public class GitActionsController extends VBox implements Initializable {
 
     private RepoPushChangesService repoPushChangesService = new RepoPushChangesService();
     private EncryptionService encryptionService = new EncryptionService();
+    private GitStatusService gitStatusService = new GitStatusService();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -45,19 +46,13 @@ public class GitActionsController extends VBox implements Initializable {
 
     private void setupCheckStatusButton() {
         checkStatusButton.setOnAction(e -> {
-            Repository gitRepository = GitUtils.getExistingLocalRepo();
-
-            try (Git git = new Git(gitRepository)) {
-
-                Status status = git.status().call();
-                if (status.isClean()) {
-                    statusLabelText.setText("There are no changes to be pushed.");
-                } else {
-                    statusLabelText.setText("There are changes to be pushed.");
-                }
-
-            } catch (GitAPIException error) {
-                logAndThrow("1218_10082026", "Something happened when trying to check changes.", error);
+            boolean statusChanged = gitStatusService.isStatusChanged();
+            if (statusChanged) {
+                log.info("[{}] There are changes to be pushed.", "1257_31082026");
+                statusLabelText.setText("There are changes to be pushed.");
+            } else {
+                log.info("[{}] There are no changes to be pushed.", "1258_31082026");
+                statusLabelText.setText("There are no changes to be pushed.");
             }
 
         });
