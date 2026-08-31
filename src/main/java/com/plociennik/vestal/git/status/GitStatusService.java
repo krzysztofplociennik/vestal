@@ -89,4 +89,15 @@ public class GitStatusService {
             log.info("[{}] The manifest has been created at the path: [{}].", "1417_21082026", manifestFile.toPath());
         }
     }
+
+    public void updateManifest() {
+        log.info("[{}] Status manifest is being updated.", "1335_31082026");
+        File currentFile = manifestHelper.getManifestFile();
+        Path manifestPath = currentFile.toPath();
+        FilesUtils.delete(manifestPath);
+        Map<String, String> currentManifestMap = manifestHelper.createCurrentFilenamesHashesMap();
+        String fileContents = manifestHelper.parseMapIntoString(currentManifestMap);
+        FilesUtils.write(manifestPath, fileContents);
+        log.info("[{}] Status manifest has been successfully updated.", "1336_31082026");
+    }
 }

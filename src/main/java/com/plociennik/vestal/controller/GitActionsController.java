@@ -54,7 +54,6 @@ public class GitActionsController extends VBox implements Initializable {
                 log.info("[{}] There are no changes to be pushed.", "1258_31082026");
                 statusLabelText.setText("There are no changes to be pushed.");
             }
-
         });
     }
 
@@ -73,6 +72,7 @@ public class GitActionsController extends VBox implements Initializable {
             );
             // push updated files
             repoPushChangesService.push();
+            gitStatusService.updateManifest();
         });
     }
 
@@ -115,6 +115,9 @@ public class GitActionsController extends VBox implements Initializable {
     }
 
     private void setupPullChangesButton() {
-
+        pullChangesButton.setOnAction(e -> {
+            // todo: to implement
+            gitStatusService.updateManifest();
+        });
     }
 }
