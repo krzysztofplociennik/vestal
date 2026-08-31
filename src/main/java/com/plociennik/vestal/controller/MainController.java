@@ -28,7 +28,6 @@ public class MainController implements Initializable  {
         // todo: need to think about, maybe state implementation9
         mainDirectoryService.init();
         generateAndSaveSalt();
-        gitStatusService.init();
         setupActions.visibleProperty().bind(githubLoginController.isUserLoggedInProperty());
         gitActions.visibleProperty().bind(setupActionsController.getAreDirectoryRepositoryPresent());
     }
