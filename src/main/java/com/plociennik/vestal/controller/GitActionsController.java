@@ -6,18 +6,14 @@ import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.encryption.EncryptionService;
 import com.plociennik.vestal.encryption.FileEncryptor;
 import com.plociennik.vestal.git.push.RepoPushChangesService;
-import com.plociennik.vestal.git.util.GitUtils;
+import com.plociennik.vestal.git.status.GitStatusService;
+import com.plociennik.vestal.git.util.FilesUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.Repository;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
@@ -27,8 +23,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import static com.plociennik.vestal.common.CommonUtils.logAndThrow;
 
 @Slf4j
 public class GitActionsController extends VBox implements Initializable {
@@ -102,7 +96,7 @@ public class GitActionsController extends VBox implements Initializable {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     log.info("Deleting: {}", file);
-                    Files.delete(file);
+                    FilesUtils.delete(file);
                     return FileVisitResult.CONTINUE;
                 }
             });

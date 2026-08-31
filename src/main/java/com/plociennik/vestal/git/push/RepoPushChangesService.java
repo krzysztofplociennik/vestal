@@ -4,7 +4,7 @@ import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.config.LocalRepository;
-import com.plociennik.vestal.git.util.FilesCollector;
+import com.plociennik.vestal.git.util.FilesUtils;
 import com.plociennik.vestal.git.util.GitUtils;
 import com.plociennik.vestal.security.CredentialType;
 import com.plociennik.vestal.security.CredentialsStorage;
@@ -39,7 +39,7 @@ public class RepoPushChangesService {
         try (Git git = new Git(gitRepository)) {
             AppConfig currentConfig = configManager.getCurrentConfig();
             LocalRepository localRepository = currentConfig.vestalRepository.localRepository;
-            List<Path> files = FilesCollector.from(Path.of(localRepository.encryptionPath));
+            List<Path> files = FilesUtils.collectFrom((Path.of(localRepository.encryptionPath)));
             AddCommand add = git.add();
 
             Path repoRoot = gitRepository.getWorkTree().toPath();

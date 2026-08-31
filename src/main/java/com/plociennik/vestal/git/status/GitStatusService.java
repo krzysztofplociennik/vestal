@@ -3,6 +3,7 @@ package com.plociennik.vestal.git.status;
 // todo: generally the package should be somewhere else since it's not really using git
 
 import com.plociennik.vestal.common.VestalException;
+import com.plociennik.vestal.git.util.FilesUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -19,7 +20,6 @@ public class GitStatusService {
 
     private ManifestHelper manifestHelper = new ManifestHelper();
 
-    // todo: needs to be tested
     public boolean isStatusChanged() {
         if (manifestHelper.isManifestFileNotPresent()) {
             init();

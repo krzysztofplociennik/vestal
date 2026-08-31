@@ -2,8 +2,7 @@ package com.plociennik.vestal.git.status;
 
 import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfigManager;
-import com.plociennik.vestal.git.util.FileHasher;
-import com.plociennik.vestal.git.util.FilesCollector;
+import com.plociennik.vestal.git.util.FilesUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,13 +51,13 @@ public class ManifestHelper {
 
     Map<String, String> createCurrentFilenamesHashesMap() {
         Path path = Path.of(configManager.getCurrentConfig().vestalRepository.localRepository.sourcePath);
-        List<Path> filesFromPath = FilesCollector.from(path);
+        List<Path> filesFromPath = FilesUtils.collectFrom(path);
 
         Map<String, String> filenamesAndHashes = new HashMap<>();
 
         filesFromPath.stream()
                 .filter(p -> !p.endsWith(MANIFEST_FILE_NAME))
-                .forEach(p -> filenamesAndHashes.put(p.toString(), FileHasher.hashFile(p)));
+                .forEach(p -> filenamesAndHashes.put(p.toString(), FilesUtils.hash(p)));
 
         return filenamesAndHashes;
     }

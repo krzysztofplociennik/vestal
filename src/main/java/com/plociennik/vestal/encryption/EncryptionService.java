@@ -3,7 +3,7 @@ package com.plociennik.vestal.encryption;
 import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
-import com.plociennik.vestal.git.util.FilesCollector;
+import com.plociennik.vestal.git.util.FilesUtils;
 import com.plociennik.vestal.security.CredentialType;
 import com.plociennik.vestal.security.CredentialsStorage;
 import com.plociennik.vestal.security.KeyringCredentialsStorage;
@@ -33,7 +33,7 @@ public class EncryptionService {
             throw new VestalException("1141_18082026", "Something happened when trying to retrieve secret keys.", e);
         }
 
-        List<Path> filesToEncrypt = FilesCollector.from(source);
+        List<Path> filesToEncrypt = FilesUtils.collectFrom(source);
         FileEncryptor fileEncryptor = new FileEncryptor();
         List<FileEncryptor.EncryptResult> results = new ArrayList<>();
         for (Path file : filesToEncrypt) {
