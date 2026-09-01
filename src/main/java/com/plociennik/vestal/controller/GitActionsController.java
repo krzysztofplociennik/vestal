@@ -46,13 +46,13 @@ public class GitActionsController extends VBox implements Initializable {
 
     private void setupCheckStatusButton() {
         checkStatusButton.setOnAction(e -> {
-            boolean statusChanged = gitStatusService.isStatusChanged();
-            if (statusChanged) {
-                log.info("[{}] There are changes to be pushed.", "1257_31082026");
-                statusLabelText.setText("There are changes to be pushed.");
-            } else {
+            boolean isClean = gitStatusService.isClean();
+            if (isClean) {
                 log.info("[{}] There are no changes to be pushed.", "1258_31082026");
                 statusLabelText.setText("There are no changes to be pushed.");
+            } else {
+                log.info("[{}] There are changes to be pushed.", "1257_31082026");
+                statusLabelText.setText("There are changes to be pushed.");
             }
         });
     }
@@ -72,7 +72,7 @@ public class GitActionsController extends VBox implements Initializable {
             );
             // push updated files
             repoPushChangesService.push();
-            gitStatusService.updateManifest();
+//            gitStatusService.updateManifest();
         });
     }
 
