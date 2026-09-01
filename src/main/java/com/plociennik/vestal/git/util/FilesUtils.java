@@ -1,6 +1,8 @@
 package com.plociennik.vestal.git.util;
 
 import com.plociennik.vestal.common.VestalException;
+import com.plociennik.vestal.config.AppConfigManager;
+import com.plociennik.vestal.config.OperatingSystem;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -78,5 +80,13 @@ public class FilesUtils {
                     "Something happened while trying to delete a file of the path: [%s].".formatted(path.toString()),
                     e);
         }
+    }
+
+    public static String getOperatingSystemFolderSeparator() {
+        OperatingSystem operatingSystem = AppConfigManager.getInstance().getCurrentConfig().operatingSystem;
+        return switch (operatingSystem) {
+            case LINUX -> "/";
+            case WINDOWS -> "\\";
+        };
     }
 }
