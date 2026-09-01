@@ -20,7 +20,7 @@ public class GitStatusService {
 
     private ManifestHelper manifestHelper = new ManifestHelper();
 
-    public boolean isStatusChanged() {
+    public boolean isClean() {
         if (manifestHelper.isManifestFileNotPresent()) {
             init();
         }
@@ -30,7 +30,7 @@ public class GitStatusService {
         Set<Map.Entry<String, String>> currentMapEntries = currentMap.entrySet();
         Set<Map.Entry<String, String>> manifestMapEntries = manifestMap.entrySet();
         if (currentMapEntries.size() != manifestMapEntries.size()) {
-            return true;
+            return false;
         }
 
         Iterator<Map.Entry<String, String>> currentEntriesIterator = currentMapEntries.iterator();
@@ -42,11 +42,11 @@ public class GitStatusService {
         while (currentEntry != null) {
             boolean hasCurrentEntry = checkIfMapHasMatchingEntry(currentEntry, manifestMap);
             if (!hasCurrentEntry) {
-                return true;
+                return false;
             }
             boolean hasManifestEntry = checkIfMapHasMatchingEntry(manifestEntry, currentMap);
             if (!hasManifestEntry) {
-                return true;
+                return false;
             }
 
             if (currentEntriesIterator.hasNext()) {
@@ -56,7 +56,7 @@ public class GitStatusService {
                 currentEntry = null;
             }
         }
-        return false;
+        return true;
     }
 
     private boolean checkIfMapHasMatchingEntry(Map.Entry<String, String> currentEntry, Map<String, String> map) {

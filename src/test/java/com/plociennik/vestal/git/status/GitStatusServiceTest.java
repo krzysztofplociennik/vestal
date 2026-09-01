@@ -30,10 +30,10 @@ class GitStatusServiceTest {
         when(manifestHelper.getManifestMap()).thenReturn(manifestMap);
 
         // Act
-        boolean statusChanged = gitStatusService.isStatusChanged();
+        boolean isStatusClean = gitStatusService.isClean();
 
         // Assert
-        Assertions.assertFalse(statusChanged);
+        Assertions.assertTrue(isStatusClean);
     }
 
     @Test
@@ -46,10 +46,10 @@ class GitStatusServiceTest {
         when(manifestHelper.getManifestMap()).thenReturn(manifestMap);
 
         // Act
-        boolean statusChanged = gitStatusService.isStatusChanged();
+        boolean isStatusClean = gitStatusService.isClean();
 
         // Assert
-        Assertions.assertTrue(statusChanged);
+        Assertions.assertFalse(isStatusClean);
     }
 
     @Test
@@ -62,10 +62,10 @@ class GitStatusServiceTest {
         when(manifestHelper.getManifestMap()).thenReturn(manifestMap);
 
         // Act
-        boolean statusChanged = gitStatusService.isStatusChanged();
+        boolean isStatusClean = gitStatusService.isClean();
 
         // Assert
-        Assertions.assertTrue(statusChanged);
+        Assertions.assertFalse(isStatusClean);
     }
 
     @Test
@@ -78,10 +78,10 @@ class GitStatusServiceTest {
         when(manifestHelper.getManifestMap()).thenReturn(manifestMap);
 
         // Act
-        boolean statusChanged = gitStatusService.isStatusChanged();
+        boolean isStatusClean = gitStatusService.isClean();
 
         // Assert
-        Assertions.assertTrue(statusChanged);
+        Assertions.assertFalse(isStatusClean);
     }
 
 }
