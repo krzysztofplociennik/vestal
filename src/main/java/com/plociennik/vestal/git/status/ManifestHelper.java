@@ -17,7 +17,7 @@ public class ManifestHelper {
 
     private AppConfigManager configManager = AppConfigManager.getInstance();
     private static final String MANIFEST_FILE_NAME = ".status-manifest";
-    private static final String SEPARATOR = "||";
+    private static final String SEPARATOR = "\\|";
 
     File getManifestFile() {
         String destinationPath = configManager.getCurrentConfig().vestalRepository.localRepository.sourcePath + "/" + MANIFEST_FILE_NAME;
