@@ -27,6 +27,7 @@ public class MainDirectoryService {
         OperatingSystem os = establishOs();
         Path establishedDirectory = establishMainDirectoryPath(os);
         currentConfig.operatingSystemMainDirectory = establishedDirectory;
+        currentConfig.operatingSystem = os;
         appConfigManager.saveConfig(currentConfig);
 
         try {
@@ -63,10 +64,5 @@ public class MainDirectoryService {
             return OperatingSystem.LINUX;
         }
         throw new VestalException("1452_13082026", "Unsupported operating system of [%s]".formatted(os));
-    }
-
-    private enum OperatingSystem {
-        WINDOWS,
-        LINUX
     }
 }

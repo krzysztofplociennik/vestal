@@ -9,6 +9,7 @@ public class AppConfig {
 
     public VestalRepository vestalRepository;
     public Path operatingSystemMainDirectory;
+    public OperatingSystem operatingSystem;
     public byte[] encryptionSalt;
 
     public AppConfig() {
