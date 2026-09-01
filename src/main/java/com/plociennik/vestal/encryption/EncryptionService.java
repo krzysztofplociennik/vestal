@@ -33,7 +33,9 @@ public class EncryptionService {
             throw new VestalException("1141_18082026", "Something happened when trying to retrieve secret keys.", e);
         }
 
-        List<Path> filesToEncrypt = FilesUtils.collectFrom(source);
+        List<Path> filesToEncrypt = FilesUtils.collectFrom(source).stream()
+                .filter(p -> !isHiddenFile(p))
+                .toList();
         FileEncryptor fileEncryptor = new FileEncryptor();
         List<FileEncryptor.EncryptResult> results = new ArrayList<>();
         for (Path file : filesToEncrypt) {
@@ -43,5 +45,14 @@ public class EncryptionService {
         }
         log.info("[{}] Encryption process finished successfully.", "1318_19082026");
         return results;
+    }
+
+    private boolean isHiddenFile(Path path) {
+        String pathAsString = path.toString();
+        final String separator = FilesUtils.getOperatingSystemFolderSeparator();
+        String[] split = pathAsString.split(separator);
+        int length = split.length;
+        String lastSplit = split[length - 1];
+        return lastSplit.startsWith(".");
     }
 }
