@@ -17,7 +17,7 @@ public class ManifestHelper {
 
     private AppConfigManager configManager = AppConfigManager.getInstance();
     private static final String MANIFEST_FILE_NAME = ".status-manifest";
-    private static final String SEPARATOR = "\\|";
+    private static final String SEPARATOR = "|||";
 
     File getManifestFile() {
         String destinationPath = configManager.getCurrentConfig().vestalRepository.localRepository.sourcePath + "/" + MANIFEST_FILE_NAME;
@@ -39,8 +39,10 @@ public class ManifestHelper {
         try (Scanner scanner = new Scanner(manifestFile)) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                String[] split = line.split(SEPARATOR);
-                lastSavedMap.put(split[0], split[1]);
+                int indexOfSeparator = line.indexOf(SEPARATOR);
+                String pathSubString = line.substring(0, indexOfSeparator);
+                String hashSubString = line.substring(indexOfSeparator + SEPARATOR.length());
+                lastSavedMap.put(pathSubString, hashSubString);
             }
         } catch (FileNotFoundException e) {
             throw new VestalException("1406_26082026", "The file has not been found on the path: [%s].". formatted(manifestFile.getPath()), e);
