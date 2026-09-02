@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+// todo: to be improved, string splitting could produce an error when f.e. the file is edited
+
 public class ManifestHelper {
 
     private AppConfigManager configManager = AppConfigManager.getInstance();
@@ -26,7 +28,7 @@ public class ManifestHelper {
 
     boolean isManifestFileNotPresent() {
         File manifestFile = getManifestFile();
-        return manifestFile.exists();
+        return !manifestFile.exists();
     }
 
     Map<String, String> getManifestMap() {
