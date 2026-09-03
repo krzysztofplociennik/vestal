@@ -72,6 +72,7 @@ public class GitActionsController extends VBox implements Initializable {
         });
     }
 
+    // todo: DRY
     private void clearExistingFiles(Path path) {
         log.info("[{}] Deleting existing files to make space for new files.", "1336_19082026");
         try {
