@@ -61,18 +61,14 @@ public class GitActionsController extends VBox implements Initializable {
         pushChangesButton.setOnAction(e -> {
             // todo: these methods maybe should be in a different class
             AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
+            Path sourcePath = Path.of(currentConfig.vestalRepository.localRepository.sourcePath);
+            Path encryptionPath = Path.of(currentConfig.vestalRepository.localRepository.encryptionPath);
             // clear existing files from the local encrypted repository
-            clearExistingFiles(
-                    Path.of(currentConfig.vestalRepository.localRepository.encryptionPath)
-            );
+            clearExistingFiles(encryptionPath);
             // copy and encrypt current state
-            encryptAndPaste(
-                    Path.of(currentConfig.vestalRepository.localRepository.sourcePath),
-                    Path.of(currentConfig.vestalRepository.localRepository.encryptionPath)
-            );
+            encryptAndPaste(sourcePath, encryptionPath);
             // push updated files
             repoPushChangesService.push();
-//            gitStatusService.updateManifest();
         });
     }
 
