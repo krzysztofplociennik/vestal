@@ -18,8 +18,9 @@ public class MainDirectoryService {
         log.info("[{}] Checking if the main directory is present.", "1448_18082026");
 
         AppConfig currentConfig = appConfigManager.getCurrentConfig();
-        if (currentConfig.operatingSystemMainDirectory != null) {
-            log.info("[{}] Main directory is present.", "1625_13082026");
+        Path operatingSystemMainDirectory = currentConfig.operatingSystemMainDirectory;
+        if (operatingSystemMainDirectory != null) {
+            log.info("[{}] Main directory is present, path: [{}].", "1625_13082026", operatingSystemMainDirectory);
             return;
         }
 
