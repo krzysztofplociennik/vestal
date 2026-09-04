@@ -5,6 +5,7 @@ import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.encryption.EncryptionService;
 import com.plociennik.vestal.encryption.FileEncryptor;
+import com.plociennik.vestal.git.pull.RepoPullChangesService;
 import com.plociennik.vestal.git.push.RepoPushChangesService;
 import com.plociennik.vestal.git.status.GitStatusService;
 import com.plociennik.vestal.git.util.FilesUtils;
@@ -35,6 +36,7 @@ public class GitActionsController extends VBox implements Initializable {
     private RepoPushChangesService repoPushChangesService = new RepoPushChangesService();
     private EncryptionService encryptionService = new EncryptionService();
     private GitStatusService gitStatusService = new GitStatusService();
+    private RepoPullChangesService repoPullChangesService = new RepoPullChangesService();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -63,11 +65,8 @@ public class GitActionsController extends VBox implements Initializable {
             AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
             Path sourcePath = Path.of(currentConfig.vestalRepository.localRepository.sourcePath);
             Path encryptionPath = Path.of(currentConfig.vestalRepository.localRepository.encryptionPath);
-            // clear existing files from the local encrypted repository
             clearExistingFiles(encryptionPath);
-            // copy and encrypt current state
             encryptAndPaste(sourcePath, encryptionPath);
-            // push updated files
             repoPushChangesService.push();
         });
     }
@@ -86,7 +85,7 @@ public class GitActionsController extends VBox implements Initializable {
                 }
 
                 @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     log.info("Deleting: {}", file);
                     FilesUtils.delete(file);
                     return FileVisitResult.CONTINUE;
@@ -113,8 +112,7 @@ public class GitActionsController extends VBox implements Initializable {
 
     private void setupPullChangesButton() {
         pullChangesButton.setOnAction(e -> {
-            // todo: to implement
-            gitStatusService.updateManifest();
+            repoPullChangesService.pull();
         });
     }
 }

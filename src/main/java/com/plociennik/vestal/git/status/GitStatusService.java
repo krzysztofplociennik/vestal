@@ -78,8 +78,8 @@ public class GitStatusService {
             log.info("[{}] The file is present, cancelling the process.", "1419_21082026");
         } else {
             log.info("[{}] The file is missing, creating it now.", "1416_21082026");
-            Map<String, String> filenamesAndHashes = manifestHelper.createCurrentFilenamesHashesMap();
             Path manifestPath = Path.of(manifestFile.getPath());
+            Map<String, String> filenamesAndHashes = manifestHelper.createCurrentFilenamesHashesMap();
             String fileContents = manifestHelper.parseMapIntoString(filenamesAndHashes);
             try {
                 Files.writeString(manifestPath, fileContents, StandardOpenOption.CREATE);
@@ -94,7 +94,10 @@ public class GitStatusService {
         log.info("[{}] Status manifest is being updated.", "1335_31082026");
         File currentFile = manifestHelper.getManifestFile();
         Path manifestPath = currentFile.toPath();
-        FilesUtils.delete(manifestPath);
+        boolean exists = currentFile.exists();
+        if (exists) {
+            FilesUtils.delete(manifestPath);
+        }
         Map<String, String> currentManifestMap = manifestHelper.createCurrentFilenamesHashesMap();
         String fileContents = manifestHelper.parseMapIntoString(currentManifestMap);
         FilesUtils.write(manifestPath, fileContents);

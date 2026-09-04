@@ -1,7 +1,6 @@
 package com.plociennik.vestal.encryption;
 
 import com.plociennik.vestal.common.VestalException;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -18,10 +17,8 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
 
-// todo: pure LLM, review, refactor
 // todo: a test would be nice, to make sure it works
 
-@Slf4j
 public class FileEncryptor {
     private static final String CIPHER_ALGO = "AES/GCM/NoPadding";
     private static final int IV_LENGTH_BYTES = 12;
@@ -31,7 +28,7 @@ public class FileEncryptor {
                               SecretKey contentKey, SecretKey nameKey) {
         String originalName = fileToEncrypt.getFileName().toString();
         byte[] nameBytes = originalName.getBytes(StandardCharsets.UTF_8);
-        byte[] contentBytes = null;
+        byte[] contentBytes;
         try {
             contentBytes = Files.readAllBytes(fileToEncrypt);
         } catch (IOException e) {

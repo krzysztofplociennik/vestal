@@ -71,6 +71,17 @@ public class FilesUtils {
         }
     }
 
+    public static void write(Path path, byte[] fileContents) {
+        try {
+            Files.write(path, fileContents, StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            throw new VestalException(
+                    "1444_21082026",
+                    "Something happened while trying to create a file of path: [%s].".formatted(path.toString()),
+                    e);
+        }
+    }
+
     public static void delete(Path path) {
         try {
             Files.delete(path);

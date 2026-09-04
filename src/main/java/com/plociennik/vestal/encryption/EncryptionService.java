@@ -1,6 +1,5 @@
 package com.plociennik.vestal.encryption;
 
-import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.git.util.FilesUtils;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import java.nio.file.Path;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,12 +24,8 @@ public class EncryptionService {
         byte[] encryptionSalt = currentConfig.getEncryptionSalt();
         SecretKey secretKeyContent;
         SecretKey secretKeyFilename;
-        try {
-            secretKeyContent = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_CONTENT);
-            secretKeyFilename = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_FILENAME);
-        } catch (GeneralSecurityException e) {
-            throw new VestalException("1141_18082026", "Something happened when trying to retrieve secret keys.", e);
-        }
+        secretKeyContent = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_CONTENT);
+        secretKeyFilename = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_FILENAME);
 
         List<Path> filesToEncrypt = FilesUtils.collectFrom(source).stream()
                 .filter(p -> !isHiddenFile(p))
