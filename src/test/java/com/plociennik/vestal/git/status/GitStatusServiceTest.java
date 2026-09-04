@@ -21,7 +21,7 @@ class GitStatusServiceTest {
     private GitStatusService gitStatusService;
 
     @Test
-    void isStatusChanged_returnsFalse_whenCurrentAndManifestMapsAreIdentical() {
+    void isStatusClean_returnsTrue_whenCurrentAndManifestMapsAreIdentical() {
         // Arrange
         Map<String, String> currentMap = Map.of("file1.txt", "hash1", "file2.txt", "hash2");
         Map<String, String> manifestMap = Map.of("file1.txt", "hash1", "file2.txt", "hash2");
@@ -37,7 +37,7 @@ class GitStatusServiceTest {
     }
 
     @Test
-    void isStatusChanged_returnsTrue_whenOneValueIsDifferent() {
+    void isStatusClean_returnsFalse_whenOneValueIsDifferent() {
         // Arrange
         Map<String, String> currentMap = Map.of("file1.txt", "hash1", "file2.txt", "hash2");
         Map<String, String> manifestMap = Map.of("file1.txt", "hash1[different]", "file2.txt", "hash2");
@@ -53,7 +53,7 @@ class GitStatusServiceTest {
     }
 
     @Test
-    void isStatusChanged_returnsTrue_whenMapsAreOfDifferentSizes() {
+    void isStatusClean_returnsFalse_whenMapsAreOfDifferentSizes() {
         // Arrange
         Map<String, String> currentMap = Map.of("file1.txt", "hash1", "file2.txt", "hash2");
         Map<String, String> manifestMap = Map.of("file1.txt", "hash1");
@@ -69,7 +69,7 @@ class GitStatusServiceTest {
     }
 
     @Test
-    void isStatusChanged_returnsTrue_whenOneKeyIsDifferent() {
+    void isStatusClean_returnsFalse_whenOneKeyIsDifferent() {
         // Arrange
         Map<String, String> currentMap = Map.of("file1[different].txt", "hash1", "file2.txt", "hash2");
         Map<String, String> manifestMap = Map.of("file1.txt", "hash1", "file2.txt", "hash2");
