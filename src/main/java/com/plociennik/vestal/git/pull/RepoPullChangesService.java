@@ -36,6 +36,10 @@ public class RepoPullChangesService {
         log.info("[{}] Starting the pull process.", "1208_03092026");
         fetchFiles();
         List<FileDecryptor.DecryptResult> decryptResults = decryptFiles();
+        if (decryptResults.isEmpty()) {
+            log.info("[{}] Remote repository is empty, cancelling the process.", "1441_04092026");
+            return;
+        }
         Path sourcePath = Path.of(appConfigManager.getCurrentConfig().vestalRepository.localRepository.sourcePath);
         // todo: potentially, there could always be a backup stored somewhere, limit to a specific number, like 3 or 4
         deleteOldFiles(sourcePath);
