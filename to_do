@@ -15,7 +15,12 @@ TODOS
 11. decrypting, obviously
 12. right now encrypting works with just one level (no folders, just files)
 13. i think hardcoding file/path separators is not a good idea (windows != linux)
-14.
+14. there is a possibility that force pushing from a new OS/local repository might delete (???) previous commits,
+maybe force is a no-no and should be handled via pulling first
+15. updating manifest does not really work, changes are still being registered
+16. even when adding untracking old files status check is very unstable/not working
+17. need to add a test that checks if encryption and decryption are not transforming contents
+-
 
 nice to haves
 1. token might need more handling (expiry, warning before expiring, better information/status of the token)
