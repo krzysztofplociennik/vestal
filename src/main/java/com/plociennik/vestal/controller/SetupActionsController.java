@@ -150,6 +150,7 @@ public class SetupActionsController extends VBox implements Initializable {
                 showRepositoryPickerDialog(repositories).ifPresentOrElse(
                         result -> {
                             // todo: maybe a good idea would be to have a check for not selecting a wrong repository
+                            // todo 2: maybe automatic pull should happen?
                             repositoryName = result.repository.name();
                             repositoryUrl = result.repository.cloneUrl();
                             AppConfig currentConfig = configManager.getCurrentConfig();
