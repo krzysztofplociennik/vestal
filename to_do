@@ -5,33 +5,26 @@ TODOS
 1. current config implementation might need to be a little bit simplified
 2. delete remaining borders, colors, comments, todos, etc.
 3. naming conventions probably should be unified (directory = local repo, repo = remote repo)
-4. git status works on and off
 5. at least a minimal amount of tests would be nice
-6. probably should use isBlank from apache 3
 7. need tests
 8. when adding/changing a repository there should be an option to create a new remote repository
 9. important: secret key is hardcoded, needs implementation
-10. txt filtering does not work
-11. decrypting, obviously
 12. right now encrypting works with just one level (no folders, just files)
-13. i think hardcoding file/path separators is not a good idea (windows != linux)
+13. windows separator needs to be tested
 14. there is a possibility that force pushing from a new OS/local repository might delete (???) previous commits,
 maybe force is a no-no and should be handled via pulling first
-15. updating manifest does not really work, changes are still being registered
-16. even when adding untracking old files status check is very unstable/not working
 17. need to add a test that checks if encryption and decryption are not transforming contents
 -
 
-nice to haves
+
+NICE TO HAVES
 1. token might need more handling (expiry, warning before expiring, better information/status of the token)
 2. a check might be needed for choosing a normal, coding repository instead of just a text repository
 3. probably need a global status bar
 4. the icon is changed when a dialog is opened
 5. feature: pull only specific files (for windows)
 6. a check for valid repository/localRepository combo
-7. maybe adding a custom commit message might be good, but probably not needed
+7.
 8. maybe a check for deleted/changed local/remote repository
 9. so far cloning every file and then encrypting would be the solution, later i can just setup a second local repository
 and look at git status to not clone files that were not changed (with git stash if that would work)
-10. progress bar would be nice
-11.
