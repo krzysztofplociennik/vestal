@@ -4,6 +4,8 @@ import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.config.LocalRepository;
+import com.plociennik.vestal.encryption.EncryptionService;
+import com.plociennik.vestal.encryption.FileEncryptor;
 import com.plociennik.vestal.git.status.GitStatusService;
 import com.plociennik.vestal.git.util.FilesUtils;
 import com.plociennik.vestal.git.util.GitUtils;
@@ -24,6 +26,7 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,6 +38,7 @@ public class RepoPushChangesService {
     private AppConfigManager configManager = AppConfigManager.getInstance();
     private CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
     private GitStatusService gitStatusService = new GitStatusService();
+    private EncryptionService encryptionService = new EncryptionService();
 
     public void push() {
         log.info("[{}] Checking if there are any changes that warrant a push.", "1130_01092026");
@@ -45,9 +49,14 @@ public class RepoPushChangesService {
         }
         log.info("[{}] There are changes, pushing current state to remote.", "1222_10082026");
 
+        AppConfig currentConfig = configManager.getCurrentConfig();
+        Path sourcePath = Path.of(currentConfig.vestalRepository.localRepository.sourcePath);
+        Path encryptionPath = Path.of(currentConfig.vestalRepository.localRepository.encryptionPath);
+        clearExistingFiles(encryptionPath);
+        encryptAndPaste(sourcePath, encryptionPath);
+
         Repository gitRepository = GitUtils.getExistingLocalRepo();
         try (Git git = new Git(gitRepository)) {
-            AppConfig currentConfig = configManager.getCurrentConfig();
             LocalRepository localRepository = currentConfig.vestalRepository.localRepository;
             removeExistingFilesFromTracking(git, gitRepository);
             addNewFilesToTracking(git, gitRepository, localRepository);
@@ -66,9 +75,29 @@ public class RepoPushChangesService {
         gitStatusService.updateManifest();
     }
 
+    private void clearExistingFiles(Path path) {
+        log.info("[{}] Deleting existing files to make space for new files.", "1336_19082026");
+        List<Path> files = FilesUtils.collectFrom(path);
+        files.forEach(FilesUtils::delete);
+        log.info("[{}] The files have been deleted.", "1337_19082026");
+    }
+
+    private void encryptAndPaste(Path source, Path destination) {
+        log.info("[{}] I am trying to move encrypted files into destination.", "1325_19082026");
+        List<FileEncryptor.EncryptResult> paths = encryptionService.encryptPath(source, destination);
+        for (FileEncryptor.EncryptResult path : paths) {
+            try {
+                Files.write(path.destinationFile(), path.output());
+            } catch (IOException e) {
+                throw new VestalException("1324_19082026", "Something happened when trying to move encrypted files into destination.", e);
+            }
+        }
+        log.info("[{}] Encrypted files have been moved into destination.", "1332_19082026");
+    }
+
     private void removeExistingFilesFromTracking(Git git, Repository gitRepository) {
         log.info("[{}] Untracking all existing files.", "1252_01092026");
-        DirCache dirCache = null;
+        DirCache dirCache;
         try {
             dirCache = gitRepository.readDirCache();
         } catch (IOException e) {

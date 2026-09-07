@@ -34,7 +34,6 @@ public class GitActionsController extends VBox implements Initializable {
     @FXML private Button pullChangesButton;
 
     private RepoPushChangesService repoPushChangesService = new RepoPushChangesService();
-    private EncryptionService encryptionService = new EncryptionService();
     private GitStatusService gitStatusService = new GitStatusService();
     private RepoPullChangesService repoPullChangesService = new RepoPullChangesService();
 
@@ -61,12 +60,6 @@ public class GitActionsController extends VBox implements Initializable {
 
     private void setupPushChangesButton() {
         pushChangesButton.setOnAction(e -> {
-            // todo: these methods maybe should be in a different class
-            AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
-            Path sourcePath = Path.of(currentConfig.vestalRepository.localRepository.sourcePath);
-            Path encryptionPath = Path.of(currentConfig.vestalRepository.localRepository.encryptionPath);
-            clearExistingFiles(encryptionPath);
-            encryptAndPaste(sourcePath, encryptionPath);
             repoPushChangesService.push();
         });
     }
