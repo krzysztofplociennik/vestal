@@ -1,6 +1,9 @@
 package com.plociennik.vestal.encryption;
 
 import com.plociennik.vestal.common.VestalException;
+import com.plociennik.vestal.config.AppConfig;
+import com.plociennik.vestal.config.AppConfigManager;
+import com.plociennik.vestal.git.util.FilesUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -16,16 +19,21 @@ import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Map;
 
-// todo: a test would be nice, to make sure it works
+// todo: tests would be nice, to make sure it works
+// todo: maybe a refactor
 
 public class FileEncryptor {
     private static final String CIPHER_ALGO = "AES/GCM/NoPadding";
     private static final int IV_LENGTH_BYTES = 12;
     private static final int TAG_LENGTH_BITS = 128;
+    private static final String SEPARATOR = FilesUtils.getOperatingSystemFolderSeparator();
 
     EncryptResult encryptFile(Path fileToEncrypt, Path destination,
-                              SecretKey contentKey, SecretKey nameKey) {
+                              SecretKey contentKey, SecretKey nameKey, Map<String, String> folderNormalNamesAndEncryptedNames) {
+
+        // encrypt output
         String originalName = fileToEncrypt.getFileName().toString();
         byte[] nameBytes = originalName.getBytes(StandardCharsets.UTF_8);
         byte[] contentBytes;
@@ -43,20 +51,72 @@ public class FileEncryptor {
 
         byte[] iv = new byte[IV_LENGTH_BYTES];
         new SecureRandom().nextBytes(iv);
-        byte[] ciphertext = encrypt(plaintext, contentKey, iv);
+        byte[] ciphertext = encryptContent(plaintext, contentKey, iv);
         Arrays.fill(plaintext, (byte) 0);
 
-        byte[] output = new byte[iv.length + ciphertext.length];
-        System.arraycopy(iv, 0, output, 0, iv.length);
-        System.arraycopy(ciphertext, 0, output, iv.length, ciphertext.length);
+        byte[] fileOutput = new byte[iv.length + ciphertext.length];
+        System.arraycopy(iv, 0, fileOutput, 0, iv.length);
+        System.arraycopy(ciphertext, 0, fileOutput, iv.length, ciphertext.length);
 
-        String encryptedName = deriveFileName(originalName, nameKey);
-        Path destinationFile = destination.resolve(encryptedName);
+        // encrypt folder names on the source path
+        String[] fileFoldersOnPath = splitFolders(fileToEncrypt);
+        String[] fileFolders = encryptFolderNames(fileFoldersOnPath, nameKey, folderNormalNamesAndEncryptedNames);
 
-        return new EncryptResult(destinationFile, output);
+        // encrypt the file destination with folders and the name itself
+        StringBuilder encryptedFoldersOnPath = new StringBuilder(destination.toString());
+        for (String fileEncryptedFoldersName : fileFolders) {
+            encryptedFoldersOnPath.append(SEPARATOR).append(fileEncryptedFoldersName);
+        }
+
+        Path pathWithEncryptedFolders = Path.of(encryptedFoldersOnPath.toString());
+        String encryptedFilename = encryptName(originalName, nameKey) + ".enc";
+        Path fileDestination = pathWithEncryptedFolders.resolve(encryptedFilename);
+
+        return new EncryptResult(fileDestination, fileFolders, fileOutput);
     }
 
-    private byte[] encrypt(byte[] plaintext, SecretKey key, byte[] iv) {
+    private String[] splitFolders(Path file) {
+        String filePath = file.toString();
+
+        AppConfigManager appConfigManager = AppConfigManager.getInstance();
+        AppConfig currentConfig = appConfigManager.getCurrentConfig();
+        String rootFolder = currentConfig.vestalRepository.localRepository.rootFolder;
+
+        int i = filePath.indexOf(rootFolder);
+        if (i == 0) {
+            throw new VestalException(
+                    "1320_07092026",
+                    "Root folder: [%s] is not present on the path: [%s].".formatted(rootFolder, filePath));
+        }
+        String substring = filePath.substring(i + rootFolder.length() + 1);
+
+        String[] folders = substring.split(SEPARATOR);
+        if (folders.length == 1) {
+            return new String[0];
+        }
+        return Arrays.copyOfRange(folders, 0, folders.length - 1);
+    }
+
+    private String[] encryptFolderNames(String[] originalFolders, SecretKey key, Map<String, String> folderNormalNamesAndEncryptedNames) {
+        if (originalFolders.length == 0) {
+            return new String[0];
+        }
+        String[] encryptedFoldersNames = new String[originalFolders.length];
+        for (int i = 0; i < originalFolders.length; i++) {
+            String originalFolderName = originalFolders[i];
+            String possibleEncryptedName = folderNormalNamesAndEncryptedNames.get(originalFolderName);
+            if (possibleEncryptedName == null) {
+                String encryptedFolderName = encryptName(originalFolderName, key);
+                encryptedFoldersNames[i] = encryptedFolderName;
+                folderNormalNamesAndEncryptedNames.put(originalFolderName, encryptedFolderName);
+            } else {
+                encryptedFoldersNames[i] = possibleEncryptedName;
+            }
+        }
+        return encryptedFoldersNames;
+    }
+
+    private byte[] encryptContent(byte[] plaintext, SecretKey key, byte[] iv) {
         try {
             Cipher cipher = Cipher.getInstance(CIPHER_ALGO);
             cipher.init(Cipher.ENCRYPT_MODE, key, new GCMParameterSpec(TAG_LENGTH_BITS, iv));
@@ -66,18 +126,17 @@ public class FileEncryptor {
         }
     }
 
-    private String deriveFileName(String originalName, SecretKey nameKey) {
+    private String encryptName(String originalName, SecretKey nameKey) {
         try {
             final String algorithm = "HmacSHA256";
             Mac mac = Mac.getInstance(algorithm);
             mac.init(new SecretKeySpec(nameKey.getEncoded(), algorithm));
             byte[] digest = mac.doFinal(originalName.getBytes(StandardCharsets.UTF_8));
-            return Base64.getUrlEncoder().withoutPadding().encodeToString(digest) + ".enc";
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(digest);
         } catch (GeneralSecurityException e) {
             throw new VestalException("1338_18082026", "Something happened while deriving filename.", e);
         }
     }
 
-    public record EncryptResult(Path destinationFile, byte[] output) {
-    }
+    public record EncryptResult(Path fileDestination, String[] fileEncryptedPath, byte[] fileOutput) {}
 }

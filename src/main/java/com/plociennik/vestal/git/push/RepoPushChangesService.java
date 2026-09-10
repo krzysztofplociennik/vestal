@@ -26,7 +26,6 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,8 +51,10 @@ public class RepoPushChangesService {
         AppConfig currentConfig = configManager.getCurrentConfig();
         Path sourcePath = Path.of(currentConfig.vestalRepository.localRepository.sourcePath);
         Path encryptionPath = Path.of(currentConfig.vestalRepository.localRepository.encryptionPath);
-        clearExistingFiles(encryptionPath);
-        encryptAndPaste(sourcePath, encryptionPath);
+
+        clearOldFiles(encryptionPath);
+        List<FileEncryptor.EncryptResult> encryptionResults = encryptionService.encryptPath(sourcePath, encryptionPath);
+        paste(encryptionResults);
 
         Repository gitRepository = GitUtils.getExistingLocalRepo();
         try (Git git = new Git(gitRepository)) {
@@ -75,22 +76,33 @@ public class RepoPushChangesService {
         gitStatusService.updateManifest();
     }
 
-    private void clearExistingFiles(Path path) {
+    private void clearOldFiles(Path path) {
         log.info("[{}] Deleting existing files to make space for new files.", "1336_19082026");
         List<Path> files = FilesUtils.collectFrom(path);
         files.forEach(FilesUtils::delete);
         log.info("[{}] The files have been deleted.", "1337_19082026");
     }
 
-    private void encryptAndPaste(Path source, Path destination) {
+    private void paste(List<FileEncryptor.EncryptResult> encryptResults) {
         log.info("[{}] I am trying to move encrypted files into destination.", "1325_19082026");
-        List<FileEncryptor.EncryptResult> paths = encryptionService.encryptPath(source, destination);
-        for (FileEncryptor.EncryptResult path : paths) {
-            try {
-                Files.write(path.destinationFile(), path.output());
-            } catch (IOException e) {
-                throw new VestalException("1324_19082026", "Something happened when trying to move encrypted files into destination.", e);
+
+        AppConfig currentConfig = configManager.getCurrentConfig();
+        String encryptionPath = currentConfig.vestalRepository.localRepository.encryptionPath;
+        String separator = FilesUtils.getOperatingSystemFolderSeparator();
+
+        for (FileEncryptor.EncryptResult result : encryptResults) {
+            String[] encryptedPath = result.fileEncryptedPath();
+            StringBuilder sb = new StringBuilder();
+            for (String encryptedFolderName : encryptedPath) {
+                String basePath = encryptionPath + sb;
+                String fullPath = basePath + separator + encryptedFolderName;
+                boolean exists = FilesUtils.doesPathExist(fullPath);
+                if (!exists) {
+                    FilesUtils.createEmptyDirectory(basePath, encryptedFolderName);
+                }
+                sb.append(separator).append(encryptedFolderName);
             }
+            FilesUtils.write(result.fileDestination(), result.fileOutput());
         }
         log.info("[{}] Encrypted files have been moved into destination.", "1332_19082026");
     }

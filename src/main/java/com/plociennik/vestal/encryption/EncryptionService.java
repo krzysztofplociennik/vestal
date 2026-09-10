@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import javax.crypto.SecretKey;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class EncryptionService {
@@ -32,9 +34,10 @@ public class EncryptionService {
                 .toList();
         FileEncryptor fileEncryptor = new FileEncryptor();
         List<FileEncryptor.EncryptResult> results = new ArrayList<>();
+        Map<String, String> folderNormalNamesAndEncryptedNames = new HashMap<>();
         for (Path file : filesToEncrypt) {
             log.info("[{}] Encrypting a file of a path: [{}].", "1456_24082026", file.toString());
-            FileEncryptor.EncryptResult encryptResult = fileEncryptor.encryptFile(file, destination, secretKeyContent, secretKeyFilename);
+            FileEncryptor.EncryptResult encryptResult = fileEncryptor.encryptFile(file, destination, secretKeyContent, secretKeyFilename, folderNormalNamesAndEncryptedNames);
             results.add(encryptResult);
         }
         log.info("[{}] Encryption process finished successfully.", "1318_19082026");

@@ -100,4 +100,18 @@ public class FilesUtils {
             case WINDOWS -> "\\";
         };
     }
+
+    public static boolean doesPathExist(String path) {
+        return Files.exists(Path.of(path));
+    }
+
+    public static void createEmptyDirectory(String path, String name) {
+        Path directory = Path.of(path);
+        Path folder = directory.resolve(name);
+        try {
+            Files.createDirectory(folder);
+        } catch (IOException e) {
+            throw new VestalException("1354_09092026", "Something happened while trying to create an empty folder.", e);
+        }
+    }
 }

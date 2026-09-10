@@ -42,7 +42,7 @@ public class LocalRepoManager {
             List<FileEncryptor.EncryptResult> encryptResults = encryptionService.encryptPath(sourcePath, destinationPath);
             for (FileEncryptor.EncryptResult path : encryptResults) {
                 try {
-                    Files.write(path.destinationFile(), path.output());
+                    Files.write(path.fileDestination(), path.fileOutput());
                 } catch (IOException e) {
                     throw new VestalException("1324_19082026", "Something happened when trying to move encrypted files into destination.", e);
                 }
