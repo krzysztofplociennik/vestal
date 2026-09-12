@@ -1,5 +1,7 @@
 package com.plociennik.vestal.config;
 
+import com.plociennik.vestal.common.VestalException;
+import com.plociennik.vestal.git.util.FilesUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,14 +27,15 @@ public class LocalRepository {
     }
 
     private String extractRootFolder(String sourcePath) {
-        final char SLASH = '/';
+        String separator = FilesUtils.getOperatingSystemFolderSeparator();
         String[] split = sourcePath.split("/");
         int length = split.length;
         if (length == 0) {
-            // something wrong
-            return SLASH + "dummy";
+            throw new VestalException(
+                    "1138_07092026",
+                    "There is something wrong with the source path: [%s].". formatted(sourcePath));
         } else {
-            return SLASH + split[length - 1];
+            return separator + split[length - 1];
         }
     }
 }
