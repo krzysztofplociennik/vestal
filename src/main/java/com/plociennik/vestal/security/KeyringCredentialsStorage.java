@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
-// todo: more logging
-
 @Slf4j
 public class KeyringCredentialsStorage implements CredentialsStorage {
 
@@ -17,7 +15,10 @@ public class KeyringCredentialsStorage implements CredentialsStorage {
 
     public KeyringCredentialsStorage() {
         // todo: hardcoded encryption key for simplicity right now; will be properly implemented
-        save(CredentialType.ENCRYPTION_SECRET_KEY, "secret");
+        Optional<String> optionalSecretKey = load(CredentialType.ENCRYPTION_SECRET_KEY);
+        if (optionalSecretKey.isEmpty()) {
+            save(CredentialType.ENCRYPTION_SECRET_KEY, "secret");
+        }
     }
 
     @Override
@@ -25,9 +26,12 @@ public class KeyringCredentialsStorage implements CredentialsStorage {
         try (Keyring keyring = Keyring.create()) {
             keyring.setPassword(VESTAL_SERVICE_NAME, type.name(), value);
         } catch (BackendNotSupportedException e) {
-            throw new IllegalStateException("No OS credential store available on this system.", e);
+            throw new VestalException("1118_07092026", "This OS does not support keyring implementation.", e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new VestalException(
+                    "1117_07092026",
+                    "Something happened while trying to save credentials of type: [%s]".formatted(type),
+                    e);
         }
     }
 
@@ -35,10 +39,11 @@ public class KeyringCredentialsStorage implements CredentialsStorage {
     public Optional<String> load(CredentialType type) {
         try (Keyring keyring = Keyring.create()) {
             return Optional.of(keyring.getPassword(VESTAL_SERVICE_NAME, type.name()));
-        } catch (BackendNotSupportedException | PasswordAccessException e) {
-            return Optional.empty();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new VestalException(
+                    "1115_07092026",
+                    "Something happened while trying to retrieve credentials of type: [%s].".formatted(type),
+                    e);
         }
     }
 
@@ -46,7 +51,6 @@ public class KeyringCredentialsStorage implements CredentialsStorage {
     public String get(CredentialType type) {
         Optional<String> optionalCredential = load(type);
         if (optionalCredential.isEmpty()) {
-            log.error("[{}] Credential type of [{}] is actually empty.", "1253_040826", type);
             throw new VestalException("1253_040826", "Credential type of [%s] is actually empty.".formatted(type));
         }
         return optionalCredential.get();
@@ -67,12 +71,9 @@ public class KeyringCredentialsStorage implements CredentialsStorage {
                             "1504_040826", type, VESTAL_SERVICE_NAME);
                 }
             }
-        } catch (BackendNotSupportedException ignored) {
-            log.warn("[{}] This OS does not support keyring implementation.", "1505_040826");
+        } catch (BackendNotSupportedException e) {
+            throw new VestalException("1113_07092026", "This OS does not support keyring implementation.", e);
         } catch (Exception e) {
-            log.error(
-                    "[{}] Something happened while trying to clear all stored passwords, error: [{}]",
-                    "1506_040826", e.toString());
             throw new VestalException(
                     "1506_040826", "Something happened while trying to clear all stored passwords.", e);
         }
