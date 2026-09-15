@@ -11,31 +11,36 @@ import lombok.extern.slf4j.Slf4j;
 import javax.crypto.SecretKey;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class DecryptionService {
-    public List<FileDecryptor.DecryptResult> decryptPath(Path encryptionPath, Path destination) {
+    public List<DecryptResult> decryptPath(Path encryptionPath, Path destination) {
         log.info("[{}] Starting decryption process.", "1058_03092026");
         CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
         String secretAsString = credentialsStorage.get(CredentialType.ENCRYPTION_SECRET_KEY);
         AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
         byte[] encryptionSalt = currentConfig.getEncryptionSalt();
-
-        SecretKey secretKey;
-        secretKey = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_CONTENT);
+        SecretKey secretKeyContent = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_CONTENT);
+        SecretKey secretKeyName = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_FILENAME);
 
         List<Path> filesToDecrypt = FilesUtils.collectFrom(encryptionPath).stream()
                 .filter(p -> p.toString().endsWith(".enc"))
                 .toList();
 
         FileDecryptor fileDecryptor = new FileDecryptor();
-        List<FileDecryptor.DecryptResult> results = new ArrayList<>();
+        List<DecryptResult> results = new ArrayList<>();
+
+        Map<String, String> foldersNamesDecryptionsMap = new HashMap<>();
+
         for (Path file : filesToDecrypt) {
             log.info("[{}] Decrypting a file of a path: [{}].", "1100_03092026", file.toString());
-            FileDecryptor.DecryptResult decryptResult = fileDecryptor.decryptFile(file, destination, secretKey);
+            DecryptResult decryptResult = fileDecryptor.decryptFile(file, destination, secretKeyContent, secretKeyName, foldersNamesDecryptionsMap);
             results.add(decryptResult);
         }
+
         log.info("[{}] Decryption process finished successfully.", "1101_03092026");
         return results;
     }

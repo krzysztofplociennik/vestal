@@ -44,6 +44,7 @@ dependencies {
     implementation("tools.jackson.core:jackson-databind:3.2.1")
     implementation("com.github.javakeyring:java-keyring:1.0.4")
     implementation("org.apache.commons:commons-lang3:3.20.0")
+    implementation("org.cryptomator:siv-mode:1.6.1")
 
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${lombokVersion}")

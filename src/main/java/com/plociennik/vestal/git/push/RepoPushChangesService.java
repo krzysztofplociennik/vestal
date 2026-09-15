@@ -4,8 +4,8 @@ import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.config.LocalRepository;
+import com.plociennik.vestal.encryption.EncryptResult;
 import com.plociennik.vestal.encryption.EncryptionService;
-import com.plociennik.vestal.encryption.FileEncryptor;
 import com.plociennik.vestal.git.status.GitStatusService;
 import com.plociennik.vestal.git.util.FilesUtils;
 import com.plociennik.vestal.git.util.GitUtils;
@@ -53,7 +53,7 @@ public class RepoPushChangesService {
         Path encryptionPath = Path.of(currentConfig.vestalRepository.localRepository.encryptionPath);
 
         clearOldFiles(encryptionPath);
-        List<FileEncryptor.EncryptResult> encryptionResults = encryptionService.encryptPath(sourcePath, encryptionPath);
+        List<EncryptResult> encryptionResults = encryptionService.encryptPath(sourcePath, encryptionPath);
         paste(encryptionResults);
 
         Repository gitRepository = GitUtils.getExistingLocalRepo();
@@ -73,6 +73,7 @@ public class RepoPushChangesService {
             throw new VestalException("1218_10082026", "Something happened when trying to push changes.", e);
         }
         log.info("[{}] Push successful.", "1225_10082026");
+        // todo: update manifest should be higher
         gitStatusService.updateManifest();
     }
 
@@ -83,14 +84,14 @@ public class RepoPushChangesService {
         log.info("[{}] The files have been deleted.", "1337_19082026");
     }
 
-    private void paste(List<FileEncryptor.EncryptResult> encryptResults) {
+    private void paste(List<EncryptResult> encryptResults) {
         log.info("[{}] I am trying to move encrypted files into destination.", "1325_19082026");
 
         AppConfig currentConfig = configManager.getCurrentConfig();
         String encryptionPath = currentConfig.vestalRepository.localRepository.encryptionPath;
         String separator = FilesUtils.getOperatingSystemFolderSeparator();
 
-        for (FileEncryptor.EncryptResult result : encryptResults) {
+        for (EncryptResult result : encryptResults) {
             String[] encryptedPath = result.fileEncryptedPath();
             StringBuilder sb = new StringBuilder();
             for (String encryptedFolderName : encryptedPath) {

@@ -3,8 +3,8 @@ package com.plociennik.vestal.git.pull;
 import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
+import com.plociennik.vestal.encryption.DecryptResult;
 import com.plociennik.vestal.encryption.DecryptionService;
-import com.plociennik.vestal.encryption.FileDecryptor;
 import com.plociennik.vestal.git.status.GitStatusService;
 import com.plociennik.vestal.git.util.FilesUtils;
 import com.plociennik.vestal.git.util.GitUtils;
@@ -35,7 +35,7 @@ public class RepoPullChangesService {
     public void pull() {
         log.info("[{}] Starting the pull process.", "1208_03092026");
         fetchFiles();
-        List<FileDecryptor.DecryptResult> decryptResults = decryptFiles();
+        List<DecryptResult> decryptResults = decryptFiles();
         if (decryptResults.isEmpty()) {
             log.info("[{}] Remote repository is empty, cancelling the process.", "1441_04092026");
             return;
@@ -82,7 +82,7 @@ public class RepoPullChangesService {
         log.info("[{}] Fetching process successful.", "1211_03092026");
     }
 
-    private List<FileDecryptor.DecryptResult> decryptFiles() {
+    private List<DecryptResult> decryptFiles() {
         AppConfig currentConfig = appConfigManager.getCurrentConfig();
         Path encryptionPath = Path.of(currentConfig.vestalRepository.localRepository.encryptionPath);
         Path sourcePath = Path.of(currentConfig.vestalRepository.localRepository.sourcePath);
@@ -98,10 +98,10 @@ public class RepoPullChangesService {
         log.info("[{}] Deleting old files was successful.", "1213_03092026");
     }
 
-    private void pasteNewFiles(List<FileDecryptor.DecryptResult> decryptResults, Path destination) {
+    private void pasteNewFiles(List<DecryptResult> decryptResults, Path destination) {
         String separator = FilesUtils.getOperatingSystemFolderSeparator();
         decryptResults.forEach(r -> {
-            Path fullPath = Path.of(destination.toString() + separator + r.originalName());
+            Path fullPath = Path.of(destination.toString() + separator + r.destinationFile().toString());
             FilesUtils.write(fullPath, r.content());
         });
     }

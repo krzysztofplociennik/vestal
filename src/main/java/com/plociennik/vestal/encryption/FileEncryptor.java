@@ -4,12 +4,11 @@ import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.git.util.FilesUtils;
+import com.plociennik.vestal.git.util.StringUtils;
 
 import javax.crypto.Cipher;
-import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +17,6 @@ import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Map;
 
 // todo: tests would be nice, to make sure it works
@@ -69,7 +67,7 @@ public class FileEncryptor {
         }
 
         Path pathWithEncryptedFolders = Path.of(encryptedFoldersOnPath.toString());
-        String encryptedFilename = encryptName(originalName, nameKey) + ".enc";
+        String encryptedFilename = EncryptionUtils.encrypt(originalName, nameKey) + ".enc";
         Path fileDestination = pathWithEncryptedFolders.resolve(encryptedFilename);
 
         return new EncryptResult(fileDestination, fileFolders, fileOutput);
@@ -82,13 +80,8 @@ public class FileEncryptor {
         AppConfig currentConfig = appConfigManager.getCurrentConfig();
         String rootFolder = currentConfig.vestalRepository.localRepository.rootFolder;
 
-        int i = filePath.indexOf(rootFolder);
-        if (i == 0) {
-            throw new VestalException(
-                    "1320_07092026",
-                    "Root folder: [%s] is not present on the path: [%s].".formatted(rootFolder, filePath));
-        }
-        String substring = filePath.substring(i + rootFolder.length() + 1);
+        int rootFolderIndex = StringUtils.indexOf(rootFolder, filePath);
+        String substring = filePath.substring(rootFolderIndex + rootFolder.length() + 1);
 
         String[] folders = substring.split(SEPARATOR);
         if (folders.length == 1) {
@@ -106,7 +99,7 @@ public class FileEncryptor {
             String originalFolderName = originalFolders[i];
             String possibleEncryptedName = folderNormalNamesAndEncryptedNames.get(originalFolderName);
             if (possibleEncryptedName == null) {
-                String encryptedFolderName = encryptName(originalFolderName, key);
+                String encryptedFolderName = EncryptionUtils.encrypt(originalFolderName, key);
                 encryptedFoldersNames[i] = encryptedFolderName;
                 folderNormalNamesAndEncryptedNames.put(originalFolderName, encryptedFolderName);
             } else {
@@ -125,18 +118,4 @@ public class FileEncryptor {
             throw new VestalException("1312_18082026", "Something happened while trying to encrypt a file.", e);
         }
     }
-
-    private String encryptName(String originalName, SecretKey nameKey) {
-        try {
-            final String algorithm = "HmacSHA256";
-            Mac mac = Mac.getInstance(algorithm);
-            mac.init(new SecretKeySpec(nameKey.getEncoded(), algorithm));
-            byte[] digest = mac.doFinal(originalName.getBytes(StandardCharsets.UTF_8));
-            return Base64.getUrlEncoder().withoutPadding().encodeToString(digest);
-        } catch (GeneralSecurityException e) {
-            throw new VestalException("1338_18082026", "Something happened while deriving filename.", e);
-        }
-    }
-
-    public record EncryptResult(Path fileDestination, String[] fileEncryptedPath, byte[] fileOutput) {}
 }

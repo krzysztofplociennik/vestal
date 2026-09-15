@@ -18,26 +18,25 @@ import java.util.Map;
 @Slf4j
 public class EncryptionService {
 
-    public List<FileEncryptor.EncryptResult> encryptPath(Path source, Path destination) {
+    public List<EncryptResult> encryptPath(Path source, Path destination) {
         log.info("[{}] Starting encryption process.", "1316_19082026");
         CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
         String secretAsString = credentialsStorage.get(CredentialType.ENCRYPTION_SECRET_KEY);
         AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
         byte[] encryptionSalt = currentConfig.getEncryptionSalt();
-        SecretKey secretKeyContent;
-        SecretKey secretKeyFilename;
-        secretKeyContent = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_CONTENT);
-        secretKeyFilename = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_FILENAME);
+
+        SecretKey secretKeyContent = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_CONTENT);
+        SecretKey secretKeyFilename = KeyDerivation.deriveKey(secretAsString.toCharArray(), encryptionSalt, KeyDerivation.PURPOSE_FILENAME);
 
         List<Path> filesToEncrypt = FilesUtils.collectFrom(source).stream()
                 .filter(p -> !isHiddenFile(p))
                 .toList();
         FileEncryptor fileEncryptor = new FileEncryptor();
-        List<FileEncryptor.EncryptResult> results = new ArrayList<>();
+        List<EncryptResult> results = new ArrayList<>();
         Map<String, String> folderNormalNamesAndEncryptedNames = new HashMap<>();
         for (Path file : filesToEncrypt) {
             log.info("[{}] Encrypting a file of a path: [{}].", "1456_24082026", file.toString());
-            FileEncryptor.EncryptResult encryptResult = fileEncryptor.encryptFile(file, destination, secretKeyContent, secretKeyFilename, folderNormalNamesAndEncryptedNames);
+            EncryptResult encryptResult = fileEncryptor.encryptFile(file, destination, secretKeyContent, secretKeyFilename, folderNormalNamesAndEncryptedNames);
             results.add(encryptResult);
         }
         log.info("[{}] Encryption process finished successfully.", "1318_19082026");
