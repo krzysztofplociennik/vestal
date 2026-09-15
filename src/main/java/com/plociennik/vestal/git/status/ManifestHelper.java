@@ -3,6 +3,7 @@ package com.plociennik.vestal.git.status;
 import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.git.util.FilesUtils;
+import com.plociennik.vestal.git.util.StringUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,7 +42,7 @@ public class ManifestHelper {
         try (Scanner scanner = new Scanner(manifestFile)) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                int indexOfSeparator = line.indexOf(SEPARATOR);
+                int indexOfSeparator = StringUtils.indexOf(SEPARATOR, line);
                 String pathSubString = line.substring(0, indexOfSeparator);
                 String hashSubString = line.substring(indexOfSeparator + SEPARATOR.length());
                 lastSavedMap.put(pathSubString, hashSubString);
