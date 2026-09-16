@@ -72,9 +72,8 @@ public class RepoPushChangesService {
         } catch (Exception e) {
             throw new VestalException("1218_10082026", "Something happened when trying to push changes.", e);
         }
-        log.info("[{}] Push successful.", "1225_10082026");
-        // todo: update manifest should be higher
         gitStatusService.updateManifest();
+        log.info("[{}] Push successful.", "1225_10082026");
     }
 
     private void clearOldFiles(Path path) {
