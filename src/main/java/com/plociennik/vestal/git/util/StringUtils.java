@@ -19,8 +19,13 @@ public class StringUtils {
     }
 
     public static int indexOf(String substring, String string, int start) {
-        String startSubstring = string.substring(start);
-        return indexOf(substring, startSubstring);
+        int i = string.indexOf(substring, start);
+        if (i == -1) {
+            throw new VestalException(
+                    "1024_15092026",
+                    "The substring of [%s] has not been found in the string of [%s]".formatted(substring, string));
+        }
+        return i;
     }
 
     public static int indexOf(char substring, String string, int start) {

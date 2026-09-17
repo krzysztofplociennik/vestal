@@ -60,9 +60,11 @@ public class TokenValidator {
 
     private String extractLogin(String jsonBody) {
         char quotationMarks = '"';
-        String loginSubstring = "\"login\"";
-        int idx = StringUtils.indexOf(loginSubstring, jsonBody);
-        int loginValueStartIndex = StringUtils.indexOf(quotationMarks, jsonBody, idx + 8) + 1;
+        char colon = ':';
+        String loginLabel = "\"login\"";
+        int loginLabelStartIndex = StringUtils.indexOf(loginLabel, jsonBody);
+        int firstColonIndex = StringUtils.indexOf(colon, jsonBody, loginLabelStartIndex);
+        int loginValueStartIndex = StringUtils.indexOf(quotationMarks, jsonBody, firstColonIndex) + 1;
         int loginValueEndIndex = StringUtils.indexOf(quotationMarks, jsonBody, loginValueStartIndex);
         return jsonBody.substring(loginValueStartIndex, loginValueEndIndex);
     }
