@@ -31,4 +31,22 @@ public class StringUtils {
     public static int indexOf(char substring, String string, int start) {
         return indexOf(String.valueOf(substring), string, start);
     }
+
+    public static String substring(String string, int start, int end) {
+        try {
+            return string.substring(start, end);
+        } catch (Exception e) {
+            throw new VestalException(
+                    "1237_17092026",
+                    "Deriving a substring from the string of: [%s] was impossible. Start: [%s], end: [%s]."
+                            .formatted(string, start, end),
+                    e
+            );
+        }
+    }
+
+    public static String substring(String string, int start) {
+        int length = string.length();
+        return substring(string, start, length);
+    }
 }

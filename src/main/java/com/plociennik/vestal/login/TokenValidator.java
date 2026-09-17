@@ -66,7 +66,7 @@ public class TokenValidator {
         int firstColonIndex = StringUtils.indexOf(colon, jsonBody, loginLabelStartIndex);
         int loginValueStartIndex = StringUtils.indexOf(quotationMarks, jsonBody, firstColonIndex) + 1;
         int loginValueEndIndex = StringUtils.indexOf(quotationMarks, jsonBody, loginValueStartIndex);
-        return jsonBody.substring(loginValueStartIndex, loginValueEndIndex);
+        return StringUtils.substring(jsonBody, loginLabelStartIndex, loginValueEndIndex);
     }
 
     public record AuthResult(boolean success, String login, String errorMessage) {}
