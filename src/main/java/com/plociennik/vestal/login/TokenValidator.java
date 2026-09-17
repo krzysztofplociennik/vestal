@@ -1,5 +1,6 @@
 package com.plociennik.vestal.login;
 
+import com.plociennik.vestal.git.util.StringUtils;
 import com.plociennik.vestal.security.CredentialType;
 import com.plociennik.vestal.security.CredentialsStorage;
 import com.plociennik.vestal.security.KeyringCredentialsStorage;
@@ -58,10 +59,12 @@ public class TokenValidator {
     }
 
     private String extractLogin(String jsonBody) {
-        int idx = jsonBody.indexOf("\"login\"");
-        int start = jsonBody.indexOf('"', idx + 8) + 1;
-        int end = jsonBody.indexOf('"', start);
-        return jsonBody.substring(start, end);
+        char quotationMarks = '"';
+        String loginSubstring = "\"login\"";
+        int idx = StringUtils.indexOf(loginSubstring, jsonBody);
+        int loginValueStartIndex = StringUtils.indexOf(quotationMarks, jsonBody, idx + 8) + 1;
+        int loginValueEndIndex = StringUtils.indexOf(quotationMarks, jsonBody, loginValueStartIndex);
+        return jsonBody.substring(loginValueStartIndex, loginValueEndIndex);
     }
 
     public record AuthResult(boolean success, String login, String errorMessage) {}

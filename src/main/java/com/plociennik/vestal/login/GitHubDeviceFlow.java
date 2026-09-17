@@ -1,5 +1,6 @@
 package com.plociennik.vestal.login;
 
+import com.plociennik.vestal.git.util.StringUtils;
 import com.plociennik.vestal.security.CredentialType;
 import com.plociennik.vestal.security.CredentialsStorage;
 import com.plociennik.vestal.security.KeyringCredentialsStorage;
@@ -45,14 +46,16 @@ public class GitHubDeviceFlow {
     }
 
     private String extract(String json, String key) {
-        int idx = json.indexOf("\"" + key + "\"");
-        int colon = json.indexOf(':', idx);
-        int firstQuoteOrDigit = colon + 1;
+        char quotationMarks = '"';
+        char colon = ':';
+        int keyLabelIndex = StringUtils.indexOf("\"" + key + "\"", json);
+        int colonIndex = StringUtils.indexOf(colon, json, keyLabelIndex);
+        int firstQuoteOrDigit = colonIndex + 1;
         while (json.charAt(firstQuoteOrDigit) == ' ') firstQuoteOrDigit++;
         if (json.charAt(firstQuoteOrDigit) == '"') {
-            int start = firstQuoteOrDigit + 1;
-            int end = json.indexOf('"', start);
-            return json.substring(start, end);
+            int keyValueStartIndex = firstQuoteOrDigit + 1;
+            int keyValueEndIndex = StringUtils.indexOf(quotationMarks, json, keyValueStartIndex);
+            return json.substring(keyValueStartIndex, keyValueEndIndex);
         } else {
             int end = firstQuoteOrDigit;
             while (end < json.length() && Character.isDigit(json.charAt(end))) end++;
