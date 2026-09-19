@@ -1,9 +1,6 @@
 package com.plociennik.vestal.controller;
 
-import com.plociennik.vestal.config.AppConfig;
-import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.config.MainDirectoryService;
-import com.plociennik.vestal.encryption.SaltGenerator;
 import com.plociennik.vestal.git.status.GitStatusService;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,7 +24,6 @@ public class MainController implements Initializable  {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // todo: need to think about, maybe state implementation9
         mainDirectoryService.init();
-        generateAndSaveSalt();
         setupActions.visibleProperty().bind(githubLoginController.isUserLoggedInProperty());
         gitActions.visibleProperty().bind(setupActionsController.getAreDirectoryRepositoryPresent());
     }

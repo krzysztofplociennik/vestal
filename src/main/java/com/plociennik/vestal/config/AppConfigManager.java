@@ -1,6 +1,7 @@
 package com.plociennik.vestal.config;
 
 import com.plociennik.vestal.common.VestalException;
+import com.plociennik.vestal.encryption.SaltGenerator;
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -20,6 +21,9 @@ public class AppConfigManager {
     private AppConfigManager() {
         createConfigFileIfAbsent();
         loadCurrentConfig();
+        if (currentConfig.encryptionSalt == null) {
+            currentConfig.encryptionSalt = SaltGenerator.generateSalt();
+        }
     }
 
     public static AppConfigManager getInstance() {
