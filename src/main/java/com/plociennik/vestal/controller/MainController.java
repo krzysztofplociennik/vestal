@@ -26,13 +26,6 @@ public class MainController implements Initializable  {
         mainDirectoryService.init();
         setupActions.visibleProperty().bind(githubLoginController.isUserLoggedInProperty());
         gitActions.visibleProperty().bind(setupActionsController.getAreDirectoryRepositoryPresent());
-    }
-
-    private void generateAndSaveSalt() {
-        AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
-        if (currentConfig.encryptionSalt == null) {
-            currentConfig.encryptionSalt = SaltGenerator.generateSalt();
-            AppConfigManager.getInstance().saveConfig(currentConfig);
-        }
+        log.info("[{}] App initialized, ready to work.", "1251_17092026");
     }
 }
