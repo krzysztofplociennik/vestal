@@ -5,6 +5,7 @@ import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.config.OperatingSystem;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -13,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Scanner;
 
 @Slf4j
 public class FilesUtils {
@@ -113,5 +115,26 @@ public class FilesUtils {
         } catch (IOException e) {
             throw new VestalException("1354_09092026", "Something happened while trying to create an empty folder.", e);
         }
+    }
+
+    public static File getFile(Path path) {
+        boolean b = doesPathExist(path.toString());
+        if (!b) {
+            throw new VestalException("1651_21092026", "The file on the path: [%s] is missing.".formatted(path.toString()));
+        }
+        return new File(path.toString());
+    }
+
+    public static List<String> getFileContents(File file) {
+        List<String> lines = new ArrayList<>();
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                lines.add(line);
+            }
+        } catch (Exception e) {
+            throw new VestalException("1656_21092026", "Something happened while trying to read file contents.", e);
+        }
+        return lines;
     }
 }

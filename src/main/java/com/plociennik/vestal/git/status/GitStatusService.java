@@ -1,16 +1,13 @@
 package com.plociennik.vestal.git.status;
 
 // todo: generally the package should be somewhere else since it's not really using git
+// todo: the name probably should be just changed
 
-import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.git.util.FilesUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -21,9 +18,12 @@ public class GitStatusService {
     private ManifestHelper manifestHelper = new ManifestHelper();
 
     public boolean isClean() {
-        if (manifestHelper.isManifestFileNotPresent()) {
-            init();
+        boolean manifestEmpty = manifestHelper.isManifestEmpty();
+        if (manifestEmpty) {
+            // todo: or potentially send info to global bar that there are no items locally now
+            return true;
         }
+
         Map<String, String> currentMap = manifestHelper.createCurrentFilenamesHashesMap();
         Map<String, String> manifestMap = manifestHelper.getManifestMap();
 
@@ -68,26 +68,6 @@ public class GitStatusService {
         }
         String searchedValue = map.get(key);
         return searchedValue != null && searchedValue.equals(value);
-    }
-
-    private void init() {
-        log.info("[{}] Checking if the status manifest is present.", "1419_21082026");
-
-        File manifestFile = manifestHelper.getManifestFile();
-        if (manifestFile.exists()) {
-            log.info("[{}] The file is present, cancelling the process.", "1419_21082026");
-        } else {
-            log.info("[{}] The file is missing, creating it now.", "1416_21082026");
-            Path manifestPath = Path.of(manifestFile.getPath());
-            Map<String, String> filenamesAndHashes = manifestHelper.createCurrentFilenamesHashesMap();
-            String fileContents = manifestHelper.parseMapIntoString(filenamesAndHashes);
-            try {
-                Files.writeString(manifestPath, fileContents, StandardOpenOption.CREATE);
-            } catch (IOException e) {
-                throw new VestalException("1443_21082026", "Something happened while trying to create the status manifest file.", e);
-            }
-            log.info("[{}] The manifest has been created at the path: [{}].", "1417_21082026", manifestFile.toPath());
-        }
     }
 
     public void updateManifest() {
