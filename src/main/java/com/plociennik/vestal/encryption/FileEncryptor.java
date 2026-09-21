@@ -4,7 +4,7 @@ import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.git.util.FilesUtils;
-import com.plociennik.vestal.git.util.StringUtils;
+import com.plociennik.vestal.git.util.CustomStringUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -80,7 +80,7 @@ public class FileEncryptor {
         AppConfig currentConfig = appConfigManager.getCurrentConfig();
         String rootFolder = currentConfig.vestalRepository.localRepository.rootFolder;
 
-        int rootFolderIndex = StringUtils.indexOf(rootFolder, filePath);
+        int rootFolderIndex = CustomStringUtils.indexOf(rootFolder, filePath);
         String substring = filePath.substring(rootFolderIndex + rootFolder.length() + 1);
 
         String[] folders = substring.split(SEPARATOR);

@@ -1,6 +1,6 @@
 package com.plociennik.vestal.login;
 
-import com.plociennik.vestal.git.util.StringUtils;
+import com.plociennik.vestal.git.util.CustomStringUtils;
 import com.plociennik.vestal.security.CredentialType;
 import com.plociennik.vestal.security.CredentialsStorage;
 import com.plociennik.vestal.security.KeyringCredentialsStorage;
@@ -62,11 +62,11 @@ public class TokenValidator {
         char quotationMarks = '"';
         char colon = ':';
         String loginLabel = "\"login\"";
-        int loginLabelStartIndex = StringUtils.indexOf(loginLabel, jsonBody);
-        int firstColonIndex = StringUtils.indexOf(colon, jsonBody, loginLabelStartIndex);
-        int loginValueStartIndex = StringUtils.indexOf(quotationMarks, jsonBody, firstColonIndex) + 1;
-        int loginValueEndIndex = StringUtils.indexOf(quotationMarks, jsonBody, loginValueStartIndex);
-        return StringUtils.substring(jsonBody, loginLabelStartIndex, loginValueEndIndex);
+        int loginLabelStartIndex = CustomStringUtils.indexOf(loginLabel, jsonBody);
+        int firstColonIndex = CustomStringUtils.indexOf(colon, jsonBody, loginLabelStartIndex);
+        int loginValueStartIndex = CustomStringUtils.indexOf(quotationMarks, jsonBody, firstColonIndex) + 1;
+        int loginValueEndIndex = CustomStringUtils.indexOf(quotationMarks, jsonBody, loginValueStartIndex);
+        return CustomStringUtils.substring(jsonBody, loginLabelStartIndex, loginValueEndIndex);
     }
 
     public record AuthResult(boolean success, String login, String errorMessage) {}

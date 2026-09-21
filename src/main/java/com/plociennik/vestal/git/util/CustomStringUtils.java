@@ -2,7 +2,7 @@ package com.plociennik.vestal.git.util;
 
 import com.plociennik.vestal.common.VestalException;
 
-public class StringUtils {
+public class CustomStringUtils {
 
     public static int indexOf(String substring, String string) {
         int i = string.indexOf(substring);

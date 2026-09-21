@@ -4,7 +4,7 @@ import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.git.util.FilesUtils;
-import com.plociennik.vestal.git.util.StringUtils;
+import com.plociennik.vestal.git.util.CustomStringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.AEADBadTagException;
@@ -75,7 +75,7 @@ public class FileDecryptor {
         AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
         String rootFolder = currentConfig.vestalRepository.localRepository.rootFolder;
 
-        int indexOfRootFolder = StringUtils.indexOf(rootFolder, encryptedPath);
+        int indexOfRootFolder = CustomStringUtils.indexOf(rootFolder, encryptedPath);
         String pathToBeDecrypted = encryptedPath.substring(indexOfRootFolder + rootFolder.length() + 1);
 
         String separator = FilesUtils.getOperatingSystemFolderSeparator();
