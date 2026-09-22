@@ -7,7 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -64,6 +68,7 @@ public class FilesUtils {
 
     public static void write(Path path, String fileContents) {
         try {
+            createMissingDirectories(path);
             Files.writeString(path, fileContents, StandardOpenOption.CREATE);
         } catch (IOException e) {
             throw new VestalException(
@@ -75,11 +80,29 @@ public class FilesUtils {
 
     public static void write(Path path, byte[] fileContents) {
         try {
+            createMissingDirectories(path);
             Files.write(path, fileContents, StandardOpenOption.CREATE);
         } catch (IOException e) {
             throw new VestalException(
                     "1444_21082026",
                     "Something happened while trying to create a file of path: [%s].".formatted(path.toString()),
+                    e);
+        }
+    }
+
+    // todo: test
+    private static void createMissingDirectories(Path path) {
+        String separator = getOperatingSystemFolderSeparator();
+        // todo: method to be implemented in CustomStringUtils
+        int lastSeparator = path.toString().lastIndexOf(separator);
+        String substring = CustomStringUtils.substring(path.toString(), 0, lastSeparator);
+        try {
+            Files.createDirectories(Path.of(substring));
+        } catch (IOException e) {
+            throw new VestalException(
+                    "1936_22092026",
+                    "Something happened while trying to create missing directories from path: [%s]"
+                            .formatted(path.toString()),
                     e);
         }
     }
