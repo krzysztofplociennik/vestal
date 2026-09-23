@@ -24,7 +24,7 @@ NICE TO HAVES
 4. the icon is changed when a dialog is opened
 5. feature: pull only specific files (for windows)
 6. a check for valid repository/localRepository combo
-7.
+7. CI/CD
 8. maybe a check for deleted/changed local/remote repository
 9. so far cloning every file and then encrypting would be the solution, later i can just setup a second local repository
 and look at git status to not clone files that were not changed (with git stash if that would work)
