@@ -4,6 +4,7 @@ import com.plociennik.vestal.config.MainDirectoryService;
 import com.plociennik.vestal.git.status.GitStatusService;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +18,9 @@ public class MainController implements Initializable  {
     @FXML private VBox gitActions;
     @FXML private GithubLoginController githubLoginController;
     @FXML private SetupActionsController setupActionsController;
+
+    @FXML private HBox dummyTest;
+
     private MainDirectoryService mainDirectoryService = new MainDirectoryService();
     private GitStatusService gitStatusService = new GitStatusService();
 

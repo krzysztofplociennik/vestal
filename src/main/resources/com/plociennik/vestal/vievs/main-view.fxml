@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.layout.StackPane?>
 <VBox
         alignment="TOP_CENTER"
         xmlns:fx="http://javafx.com/fxml"
@@ -14,8 +15,18 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
 
+    <StackPane>
+
+    </StackPane>
+
     <fx:include source="githubLogin-view.fxml" fx:id="githubLogin" stylesheets="@../css/githubLogin.css"/>
     <fx:include source="setupActions-view.fxml" fx:id="setupActions" stylesheets="@../css/setupActions.css"/>
     <fx:include source="gitActions-view.fxml" fx:id="gitActions" stylesheets="@../css/gitActions.css"/>
+
+    <fx:include source="dummytest-view.fxml" fx:id="dummyTest"/>
+
+<!--    // todo: make status bar component/view-->
+
+<!--    // todo: make dummy buttons that control the sections visibility-->
 
 </VBox>
