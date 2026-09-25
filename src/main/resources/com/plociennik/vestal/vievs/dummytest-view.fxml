@@ -69,4 +69,6 @@
         </tooltip>
     </Button>
 
+<!--    todo: a button that resets everything -->
+
 </HBox>

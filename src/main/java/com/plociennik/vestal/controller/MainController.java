@@ -1,13 +1,16 @@
 package com.plociennik.vestal.controller;
 
 import com.plociennik.vestal.config.MainDirectoryService;
+import com.plociennik.vestal.state.State;
 import com.plociennik.vestal.state.StateService;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 @Slf4j
@@ -34,6 +37,8 @@ public class MainController implements Initializable  {
         gitActions.visibleProperty().bind(stateService.getActionsVisible());
         landingPage.visibleProperty().bind(stateService.getLandingVisible());
         encryptionKey.visibleProperty().bind(stateService.getEncryptionKeyVisible());
+
+        stateService.setState(State.LOGGED_OUT);
 
         log.info("[{}] App initialized, ready to work.", "1251_17092026");
     }

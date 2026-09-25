@@ -32,7 +32,7 @@ public class KeyringCredentialsStorage implements CredentialsStorage {
         try (Keyring keyring = Keyring.create()) {
             return Optional.of(keyring.getPassword(VESTAL_SERVICE_NAME, type.name()));
         } catch (PasswordAccessException e) {
-            log.warn("[{}] 1244_25092026", "No present credentials for [%s] with type: [%s].".formatted(VESTAL_SERVICE_NAME, type.name()));
+            log.warn("[{}] No present credentials for [{}] with type: [{}].", "1244_25092026", VESTAL_SERVICE_NAME, type.name());
             return Optional.empty();
         } catch (Exception e) {
             throw new VestalException(

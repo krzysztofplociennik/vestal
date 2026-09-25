@@ -1,0 +1,22 @@
+#landingArea {
+    -fx-background-color: #242424;
+    -fx-fill-width: false;
+    -fx-fill-height: false;
+}
+
+#loginButton {
+    -fx-max-width: 200px;
+    -fx-background-color: #242424;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-font-family: Hack;
+    -fx-border-radius: 13px;
+    -fx-border-width: 0.5px;
+    -fx-border-color: #C4C4C4;
+    -fx-background-radius: 13px;
+    -fx-text-fill: #F2F2F2;
+}
+
+#loginButton:hover {
+    -fx-background-color: #0D0D0D;
+}
