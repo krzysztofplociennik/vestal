@@ -64,11 +64,11 @@ HBox {
 
 /* 2. REPOS BUTTON (#reposButton) - Slate / Neutral Modern */
 #reposButton {
-    -fx-background-color: linear-gradient(to bottom, #30363d, #21262d);
+    -fx-background-color: #BBFCF6;
 }
 
 #reposButton:hover {
-    -fx-background-color: linear-gradient(to bottom, #3c444d, #30363d);
+    -fx-background-color: #8FFAF1;
     -fx-effect: dropshadow(three-pass-box, rgba(88, 166, 255, 0.25), 8, 0, 0, 2);
 }
 
