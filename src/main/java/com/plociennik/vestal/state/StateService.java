@@ -51,4 +51,9 @@ public class StateService {
             default -> throw new VestalException("1311_24092026", "State not recognized: [%s].".formatted(state));
         }
     }
+
+    // todo: determineState
+    // todo: readState
+    // todo: setState
+    // todo: saveState
 }

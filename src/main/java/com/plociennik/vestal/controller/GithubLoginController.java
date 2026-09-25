@@ -6,9 +6,9 @@ import com.plociennik.vestal.security.CredentialsStorage;
 import com.plociennik.vestal.login.GitHubDeviceFlow;
 import com.plociennik.vestal.security.KeyringCredentialsStorage;
 import com.plociennik.vestal.login.TokenValidator;
+import com.plociennik.vestal.state.State;
+import com.plociennik.vestal.state.StateService;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -43,16 +43,12 @@ public class GithubLoginController extends VBox implements Initializable {
 
     private CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
     private TokenValidator tokenValidator = new TokenValidator();
+    private StateService stateService = StateService.getInstance();
+
     private String userCode = "";
     private String verificationLink = "";
 
     private boolean clientIdSaved;
-
-    private BooleanProperty isUserLoggedIn = new SimpleBooleanProperty(false);
-
-    public BooleanProperty isUserLoggedInProperty() {
-        return isUserLoggedIn;
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -68,8 +64,7 @@ public class GithubLoginController extends VBox implements Initializable {
             statusText.setText("Logged in as [%s]".formatted(credentialsStorage.get(CredentialType.GITHUB_LOGIN)));
             loginButton.setVisible(false);
             logoutButton.setVisible(true);
-//            isUserLoggedIn.set(true);
-            setLoggedInPropertyTrue();
+            stateService.setState(State.REPOS);
         } else {
             log.warn("Current token is not valid for login: [{}], reason: {}", authResult.login(), authResult.errorMessage());
             statusText.setText("Not logged in.");
@@ -128,8 +123,7 @@ public class GithubLoginController extends VBox implements Initializable {
                             // todo: which seems unnatural
                             TokenValidator.AuthResult validate = tokenValidator.validate();
                             credentialsStorage.save(CredentialType.GITHUB_LOGIN, validate.login());
-//                            isUserLoggedIn.set(true);
-                            setLoggedInPropertyTrue();
+                            stateService.setState(State.REPOS);
                             statusText.setText("Logged in as [%s]".formatted(credentialsStorage.get(CredentialType.GITHUB_LOGIN)));
                             log.info("Successfully logged in as [{}].", credentialsStorage.get(CredentialType.GITHUB_LOGIN));
                         } else {
@@ -165,8 +159,7 @@ public class GithubLoginController extends VBox implements Initializable {
             loginButton.setDisable(false);
             logoutButton.setVisible(false);
             credentialsStorage.clear();
-//            isUserLoggedIn.set(false);
-            setLoggedInPropertyFalse();
+            stateService.setState(State.LOGIN);
         });
     }
 
@@ -198,13 +191,5 @@ public class GithubLoginController extends VBox implements Initializable {
             clipboard.setContents(selection, null);
             log.info("Verification link [{}] has been copied.", trimmed);
         });
-    }
-
-    private void setLoggedInPropertyTrue() {
-        isUserLoggedInProperty().setValue(true);
-    }
-
-    private void setLoggedInPropertyFalse() {
-        isUserLoggedInProperty().setValue(false);
     }
 }

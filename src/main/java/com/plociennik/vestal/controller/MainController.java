@@ -29,11 +29,7 @@ public class MainController implements Initializable  {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // todo: need to think about, maybe state implementation9
         mainDirectoryService.init();
-//        setupActions.visibleProperty().bind(githubLoginController.isUserLoggedInProperty());
-//        gitActions.visibleProperty().bind(setupActionsController.getAreDirectoryRepositoryPresent());
-
         githubLogin.visibleProperty().bind(stateService.getLoginVisible());
         setupActions.visibleProperty().bind(stateService.getRepositoriesVisible());
         gitActions.visibleProperty().bind(stateService.getActionsVisible());

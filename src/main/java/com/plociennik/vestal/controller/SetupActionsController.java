@@ -7,6 +7,8 @@ import com.plociennik.vestal.config.RemoteRepository;
 import com.plociennik.vestal.git.fetch.GitFetchRepository;
 import com.plociennik.vestal.git.fetch.GithubRepositoryFetcher;
 import com.plociennik.vestal.git.init.LocalRepoManager;
+import com.plociennik.vestal.state.State;
+import com.plociennik.vestal.state.StateService;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -49,8 +51,9 @@ public class SetupActionsController extends VBox implements Initializable {
     @FXML private Text repositoryTitleText;
 
     private AppConfigManager configManager = AppConfigManager.getInstance();
-    private final GithubRepositoryFetcher githubRepositoryFetcher = new GithubRepositoryFetcher();
-    private final LocalRepoManager localRepoManager = new LocalRepoManager();
+    private StateService stateService = StateService.getInstance();
+    private GithubRepositoryFetcher githubRepositoryFetcher = new GithubRepositoryFetcher();
+    private LocalRepoManager localRepoManager = new LocalRepoManager();
 
     private String directoryPath = null;
     private String repositoryName = null;
@@ -83,7 +86,7 @@ public class SetupActionsController extends VBox implements Initializable {
             statusLabelText.setText("Both directory and repository need to be set.");
             log.info("[{}] Both directory and repository needs to be set.", "1311_310726");
         } else {
-            areDirectoryRepositoryPresent.set(true);
+            stateService.setState(State.ACTIONS);
             statusLabelText.setText("All set, time to work.");
             log.info("[{}] The directory is set to: [{}] and the repository has been set to [{}]", "1313_310726", directoryPath, repositoryName);
         }
@@ -221,7 +224,7 @@ public class SetupActionsController extends VBox implements Initializable {
 
     private void handleIfDirectoryAndRepositoryBothPresent() {
         if (directoryPath != null && repositoryName != null) {
-            areDirectoryRepositoryPresent.set(true);
+            stateService.setState(State.ACTIONS);
         }
     }
 
