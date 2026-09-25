@@ -16,17 +16,13 @@
     </padding>
 
     <StackPane>
-
+        <fx:include source="githubLogin-view.fxml" fx:id="githubLogin" stylesheets="@../css/githubLogin.css"/>
+        <fx:include source="setupActions-view.fxml" fx:id="setupActions" stylesheets="@../css/setupActions.css"/>
+        <fx:include source="gitActions-view.fxml" fx:id="gitActions" stylesheets="@../css/gitActions.css"/>
     </StackPane>
 
-    <fx:include source="githubLogin-view.fxml" fx:id="githubLogin" stylesheets="@../css/githubLogin.css"/>
-    <fx:include source="setupActions-view.fxml" fx:id="setupActions" stylesheets="@../css/setupActions.css"/>
-    <fx:include source="gitActions-view.fxml" fx:id="gitActions" stylesheets="@../css/gitActions.css"/>
+    <!--    // todo: make status bar component/view-->
 
-    <fx:include source="dummytest-view.fxml" fx:id="dummyTest"/>
-
-<!--    // todo: make status bar component/view-->
-
-<!--    // todo: make dummy buttons that control the sections visibility-->
+    <fx:include source="dummytest-view.fxml" fx:id="dummyTest" stylesheets="@../css/dummytest.css"/>
 
 </VBox>

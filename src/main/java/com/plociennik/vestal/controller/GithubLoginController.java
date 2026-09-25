@@ -68,7 +68,8 @@ public class GithubLoginController extends VBox implements Initializable {
             statusText.setText("Logged in as [%s]".formatted(credentialsStorage.get(CredentialType.GITHUB_LOGIN)));
             loginButton.setVisible(false);
             logoutButton.setVisible(true);
-            isUserLoggedIn.set(true);
+//            isUserLoggedIn.set(true);
+            setLoggedInPropertyTrue();
         } else {
             log.warn("Current token is not valid for login: [{}], reason: {}", authResult.login(), authResult.errorMessage());
             statusText.setText("Not logged in.");
@@ -127,7 +128,8 @@ public class GithubLoginController extends VBox implements Initializable {
                             // todo: which seems unnatural
                             TokenValidator.AuthResult validate = tokenValidator.validate();
                             credentialsStorage.save(CredentialType.GITHUB_LOGIN, validate.login());
-                            isUserLoggedIn.set(true);
+//                            isUserLoggedIn.set(true);
+                            setLoggedInPropertyTrue();
                             statusText.setText("Logged in as [%s]".formatted(credentialsStorage.get(CredentialType.GITHUB_LOGIN)));
                             log.info("Successfully logged in as [{}].", credentialsStorage.get(CredentialType.GITHUB_LOGIN));
                         } else {
@@ -163,7 +165,8 @@ public class GithubLoginController extends VBox implements Initializable {
             loginButton.setDisable(false);
             logoutButton.setVisible(false);
             credentialsStorage.clear();
-            isUserLoggedIn.set(false);
+//            isUserLoggedIn.set(false);
+            setLoggedInPropertyFalse();
         });
     }
 
@@ -195,5 +198,13 @@ public class GithubLoginController extends VBox implements Initializable {
             clipboard.setContents(selection, null);
             log.info("Verification link [{}] has been copied.", trimmed);
         });
+    }
+
+    private void setLoggedInPropertyTrue() {
+        isUserLoggedInProperty().setValue(true);
+    }
+
+    private void setLoggedInPropertyFalse() {
+        isUserLoggedInProperty().setValue(false);
     }
 }

@@ -1,5 +1,7 @@
 package com.plociennik.vestal.controller;
 
+import com.plociennik.vestal.state.State;
+import com.plociennik.vestal.state.StateService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,6 +15,8 @@ import java.util.ResourceBundle;
 @Slf4j
 public class DummyTestController extends HBox implements Initializable {
 
+    private StateService stateService = StateService.getInstance();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -23,24 +27,20 @@ public class DummyTestController extends HBox implements Initializable {
     @FXML private Button actionsButton;
 
     @FXML
-    private void initialize() {
-        // You can initially disable downstream buttons until logged in
-        // reposButton.setDisable(true);
-        // actionsButton.setDisable(true);
-    }
-
-    @FXML
     private void handleLogin(ActionEvent event) {
-        System.out.println("Opening GitHub Login step...");
+        stateService.setState(State.LOGIN);
+        log.info("[{}] Test: pressing login button.","0945_25092026");
     }
 
     @FXML
     private void handleRepos(ActionEvent event) {
-        System.out.println("Opening Local & Remote Repository config...");
+        stateService.setState(State.REPOS);
+        log.info("[{}] Test: pressing repos button.","0946_25092026");
     }
 
     @FXML
     private void handleActions(ActionEvent event) {
-        System.out.println("Opening Git sync actions (Status, Pull, Push)...");
+        stateService.setState(State.ACTIONS);
+        log.info("[{}] Test: pressing actions button.","0947_25092026");
     }
 }
