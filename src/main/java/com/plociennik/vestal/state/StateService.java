@@ -1,21 +1,23 @@
 package com.plociennik.vestal.state;
 
-import com.plociennik.vestal.common.VestalException;
-import com.plociennik.vestal.config.AppConfigManager;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
+
+import static java.util.Map.entry;
 
 @Slf4j
 public class StateService {
 
     private static StateService instance;
 
-    private State currentState;
+    private Map<State, BooleanProperty> mapOfStatesAndProperties;
 
     private StateService() {
-        this.currentState = AppConfigManager.getInstance().getCurrentConfig().vestalRepository.currentState;
+        initMap();
     }
 
     public static StateService getInstance() {
@@ -28,32 +30,28 @@ public class StateService {
     @Getter private BooleanProperty loginVisible = new SimpleBooleanProperty(false);
     @Getter private BooleanProperty repositoriesVisible = new SimpleBooleanProperty(false);
     @Getter private BooleanProperty actionsVisible = new SimpleBooleanProperty(false);
+    @Getter private BooleanProperty landingVisible = new SimpleBooleanProperty(false);
+    @Getter private BooleanProperty encryptionKeyVisible = new SimpleBooleanProperty(false);
 
     public void setState(State state) {
-        this.currentState = state;
+        mapOfStatesAndProperties.forEach((key, value) -> value.setValue(false));
+        mapOfStatesAndProperties.get(state).setValue(true);
 
-        switch (state) {
-            case LOGIN -> {
-                loginVisible.setValue(true);
-                repositoriesVisible.setValue(false);
-                actionsVisible.setValue(false);
-            }
-            case REPOS -> {
-                loginVisible.setValue(false);
-                repositoriesVisible.setValue(true);
-                actionsVisible.setValue(false);
-            }
-            case ACTIONS -> {
-                loginVisible.setValue(false);
-                repositoriesVisible.setValue(false);
-                actionsVisible.setValue(true);
-            }
-            default -> throw new VestalException("1311_24092026", "State not recognized: [%s].".formatted(state));
-        }
+    }
+
+    private void initMap() {
+        this.mapOfStatesAndProperties = Map.ofEntries(
+                entry(State.LOGGED_OUT, landingVisible),
+                entry(State.LOGIN, loginVisible),
+                entry(State.ENCRYPTION_KEY, encryptionKeyVisible),
+                entry(State.REPOS, repositoriesVisible),
+                entry(State.ACTIONS, actionsVisible)
+        );
     }
 
     // todo: determineState
     // todo: readState
     // todo: setState
     // todo: saveState
+    // todo: go next state
 }

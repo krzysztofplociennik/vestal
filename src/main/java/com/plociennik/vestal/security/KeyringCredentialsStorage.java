@@ -13,14 +13,6 @@ public class KeyringCredentialsStorage implements CredentialsStorage {
 
     private static final String VESTAL_SERVICE_NAME = "com.plociennik.vestal";
 
-    public KeyringCredentialsStorage() {
-        // todo: hardcoded encryption key for simplicity right now; will be properly implemented
-        Optional<String> optionalSecretKey = load(CredentialType.ENCRYPTION_SECRET_KEY);
-        if (optionalSecretKey.isEmpty()) {
-            save(CredentialType.ENCRYPTION_SECRET_KEY, "secret");
-        }
-    }
-
     @Override
     public void save(CredentialType type, String value) {
         try (Keyring keyring = Keyring.create()) {
@@ -39,6 +31,9 @@ public class KeyringCredentialsStorage implements CredentialsStorage {
     public Optional<String> load(CredentialType type) {
         try (Keyring keyring = Keyring.create()) {
             return Optional.of(keyring.getPassword(VESTAL_SERVICE_NAME, type.name()));
+        } catch (PasswordAccessException e) {
+            log.warn("[{}] 1244_25092026", "No present credentials for [%s] with type: [%s].".formatted(VESTAL_SERVICE_NAME, type.name()));
+            return Optional.empty();
         } catch (Exception e) {
             throw new VestalException(
                     "1115_07092026",

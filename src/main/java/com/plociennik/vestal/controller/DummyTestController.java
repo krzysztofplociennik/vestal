@@ -22,14 +22,28 @@ public class DummyTestController extends HBox implements Initializable {
 
     }
 
+    @FXML public Button loggedOutButton;
     @FXML private Button loginButton;
+    @FXML public Button encryptionButton;
     @FXML private Button reposButton;
     @FXML private Button actionsButton;
+
+    @FXML
+    public void handleLogout(ActionEvent actionEvent) {
+        stateService.setState(State.LOGGED_OUT);
+        log.info("[{}] Test: pressing logged out button.","0948_25092026");
+    }
 
     @FXML
     private void handleLogin(ActionEvent event) {
         stateService.setState(State.LOGIN);
         log.info("[{}] Test: pressing login button.","0945_25092026");
+    }
+
+    @FXML
+    public void handleEncryption(ActionEvent actionEvent) {
+        stateService.setState(State.ENCRYPTION_KEY);
+        log.info("[{}] Test: pressing encryption button.","0949_25092026");
     }
 
     @FXML

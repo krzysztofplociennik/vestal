@@ -64,7 +64,7 @@ public class GithubLoginController extends VBox implements Initializable {
             statusText.setText("Logged in as [%s]".formatted(credentialsStorage.get(CredentialType.GITHUB_LOGIN)));
             loginButton.setVisible(false);
             logoutButton.setVisible(true);
-            stateService.setState(State.REPOS);
+            stateService.setState(State.ENCRYPTION_KEY);
         } else {
             log.warn("Current token is not valid for login: [{}], reason: {}", authResult.login(), authResult.errorMessage());
             statusText.setText("Not logged in.");
@@ -123,7 +123,7 @@ public class GithubLoginController extends VBox implements Initializable {
                             // todo: which seems unnatural
                             TokenValidator.AuthResult validate = tokenValidator.validate();
                             credentialsStorage.save(CredentialType.GITHUB_LOGIN, validate.login());
-                            stateService.setState(State.REPOS);
+                            stateService.setState(State.ENCRYPTION_KEY);
                             statusText.setText("Logged in as [%s]".formatted(credentialsStorage.get(CredentialType.GITHUB_LOGIN)));
                             log.info("Successfully logged in as [{}].", credentialsStorage.get(CredentialType.GITHUB_LOGIN));
                         } else {
@@ -159,7 +159,9 @@ public class GithubLoginController extends VBox implements Initializable {
             loginButton.setDisable(false);
             logoutButton.setVisible(false);
             credentialsStorage.clear();
-            stateService.setState(State.LOGIN);
+            clientIdSaved = false;
+            // todo: repos clear from the config as well
+            stateService.setState(State.LOGGED_OUT);
         });
     }
 

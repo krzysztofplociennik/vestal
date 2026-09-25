@@ -19,7 +19,16 @@
         <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
     </padding>
 
-    <!-- 1. Login -->
+    <Button fx:id="loggedOutButton"
+            text="Logged Out"
+            onAction="#handleLogout"
+            maxWidth="1.0E38"
+            HBox.hgrow="ALWAYS">
+        <tooltip>
+            <Tooltip text="Log off"/>
+        </tooltip>
+    </Button>
+
     <Button fx:id="loginButton"
             text="Login"
             onAction="#handleLogin"
@@ -30,7 +39,16 @@
         </tooltip>
     </Button>
 
-    <!-- 2. Repos -->
+    <Button fx:id="encryptionButton"
+            text="Encryption"
+            onAction="#handleEncryption"
+            maxWidth="1.0E38"
+            HBox.hgrow="ALWAYS">
+        <tooltip>
+            <Tooltip text="Encryption"/>
+        </tooltip>
+    </Button>
+
     <Button fx:id="reposButton"
             text="Repos"
             onAction="#handleRepos"
@@ -41,7 +59,6 @@
         </tooltip>
     </Button>
 
-    <!-- 3. Actions -->
     <Button fx:id="actionsButton"
             text="Actions"
             onAction="#handleActions"
