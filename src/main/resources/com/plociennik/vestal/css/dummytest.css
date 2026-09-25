@@ -1,0 +1,99 @@
+
+HBox {
+    -fx-background-color: #FCC6BB;
+    -fx-border-color: #FF0000;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+
+    /* Soft elevation drop shadow */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.35), 10, 0, 0, 4);
+    -fx-padding: 28px 28px;
+}
+
+.button {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 18px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER;
+
+    /* Smooth transition simulator using inset borders */
+    -fx-border-width: 1px;
+    -fx-background-color: -bg-surface-hover;
+
+    /* Inner light reflection effect */
+    -fx-effect: innershadow(three-pass-box, rgba(255, 255, 255, 0.05), 1, 0, 0, 1);
+}
+
+.button:hover {
+    -fx-background-color: -bg-surface-active;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 6, 0, 0, 2);
+}
+
+.button:focused {
+    -fx-border-width: 1.5px;
+}
+
+.button:pressed {
+    -fx-background-color: -bg-surface;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: none;
+}
+
+.button:disabled {
+    -fx-opacity: 0.4;
+    -fx-cursor: default;
+}
+
+/* 1. LOGIN BUTTON (#loginButton) - GitHub Accent */
+#loginButton {
+    -fx-background-color: linear-gradient(to bottom, #2ea043, #238636);
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-text-fill: #ffffff;
+}
+
+#loginButton:hover {
+    -fx-background-color: linear-gradient(to bottom, #3fb950, #2ea043);
+    -fx-border-color: #56d364;
+    -fx-effect: dropshadow(three-pass-box, rgba(46, 160, 67, 0.4), 10, 0, 0, 2);
+}
+
+/* 2. REPOS BUTTON (#reposButton) - Slate / Neutral Modern */
+#reposButton {
+    -fx-background-color: linear-gradient(to bottom, #30363d, #21262d);
+}
+
+#reposButton:hover {
+    -fx-background-color: linear-gradient(to bottom, #3c444d, #30363d);
+    -fx-effect: dropshadow(three-pass-box, rgba(88, 166, 255, 0.25), 8, 0, 0, 2);
+}
+
+/* 3. ACTIONS BUTTON (#actionsButton) - Violet / Dynamic Action */
+#actionsButton {
+    -fx-background-color: linear-gradient(to bottom, #8957e5, #6e40c9);
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-text-fill: #ffffff;
+}
+
+#actionsButton:hover {
+    -fx-background-color: linear-gradient(to bottom, #9e6aef, #8957e5);
+    -fx-border-color: #a5d6ff;
+    -fx-effect: dropshadow(three-pass-box, rgba(137, 87, 229, 0.45), 10, 0, 0, 2);
+}
+
+.tooltip {
+    -fx-background-color: #1c2128;
+    -fx-text-fill: #adbac7;
+    -fx-font-size: 11px;
+    -fx-font-weight: normal;
+    -fx-padding: 6px 10px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #444c56;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.5), 8, 0, 0, 3);
+}

@@ -11,7 +11,9 @@
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:id="dummyTest"
-        fx:controller="com.plociennik.vestal.controller.DummyTestController">
+        fx:controller="com.plociennik.vestal.controller.DummyTestController"
+        stylesheets="@../css/dummytest.css"
+>
 
     <padding>
         <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
