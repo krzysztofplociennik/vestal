@@ -66,6 +66,7 @@ public class FilesUtils {
         return files;
     }
 
+    // todo: 2 methods should be merged
     public static void write(Path path, String fileContents) {
         try {
             createMissingDirectories(path);
