@@ -1,7 +1,5 @@
 #landingArea {
     -fx-background-color: #242424;
-    -fx-fill-width: false;
-    -fx-fill-height: false;
 }
 
 #loginButton {
