@@ -1,7 +1,6 @@
 #loginArea {
-    -fx-border-color: #000000;
     -fx-spacing: 6;
-    -fx-background-color: #474747;
+    -fx-background-color: #242424;
 }
 
 #clientIdArea {
@@ -14,35 +13,91 @@
     -fx-max-width: 200px;
 }
 
-#loginLogoutButton {
+#loginLogoutButtonArea {
     -fx-padding: 8px 16px;
-    -fx-border-color: #000000;
 }
 
 #statusArea {
     -fx-padding: 8px 16px;
-    -fx-border-color: #000000;
 }
 
 #userCodeArea {
     -fx-spacing: 10;
-    -fx-padding: 8px 16px;
-    -fx-border-color: #000000;
+    -fx-padding: 10px 5px 15px 5px;
 }
 
 #userCodeSubArea {
     -fx-border-color: #B8B8B8;
     -fx-border-radius: 8px;
-    -fx-padding: 8px 16px;
+    -fx-padding: 5px 5px 5px 5px;
     -fx-spacing: 6;
-    -fx-max-width: 200px;
+    -fx-max-width: 180px;
 }
 
 #verificationLinkSubArea {
     -fx-border-color: #B8B8B8;
     -fx-border-radius: 8px;
-    -fx-padding: 8px 16px;
+    -fx-padding: 5px 5px 5px 5px;
     -fx-spacing: 6;
-    -fx-max-width: 330px;
+    -fx-max-width: 390px;
 }
 
+#titleText {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-font-family: Hack;
+    -fx-fill: #F2F2F2;
+    -fx-padding: 8px 16px;
+}
+
+#githubImage {
+    -fx-padding: 8px 16px;
+}
+
+#titleArea {
+    -fx-spacing: 16;
+    -fx-padding: 10px 10px 10px 10px;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+}
+
+#statusText {
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px;
+}
+
+Text {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: Hack;
+    -fx-fill: #F2F2F2;
+}
+
+Button {
+    -fx-max-width: 200px;
+    -fx-background-color: #242424;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: Hack;
+    -fx-border-radius: 13px;
+    -fx-border-width: 0.5px;
+    -fx-border-color: #C4C4C4;
+    -fx-background-radius: 13px;
+    -fx-text-fill: #F2F2F2;
+}
+
+Button:hover {
+    -fx-background-color: #0D0D0D;
+}
+
+#verificationArea {
+    -fx-padding: 10px 10px 10px 10px;
+}
+
+#codeInfo {
+    -fx-padding: 10px 10px 10px 10px;
+}
+
+#verificationLinkInfo {
+    -fx-padding: 10px 10px 10px 10px;
+}

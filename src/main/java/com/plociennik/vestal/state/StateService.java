@@ -27,16 +27,18 @@ public class StateService {
         return instance;
     }
 
+    @Getter private BooleanProperty landingVisible = new SimpleBooleanProperty(false);
     @Getter private BooleanProperty loginVisible = new SimpleBooleanProperty(false);
+    @Getter private BooleanProperty encryptionKeyVisible = new SimpleBooleanProperty(false);
     @Getter private BooleanProperty repositoriesVisible = new SimpleBooleanProperty(false);
     @Getter private BooleanProperty actionsVisible = new SimpleBooleanProperty(false);
-    @Getter private BooleanProperty landingVisible = new SimpleBooleanProperty(false);
-    @Getter private BooleanProperty encryptionKeyVisible = new SimpleBooleanProperty(false);
+
+    @Getter private BooleanProperty isLoggedIn = new SimpleBooleanProperty(false);
 
     public void setState(State state) {
         mapOfStatesAndProperties.forEach((key, value) -> value.setValue(false));
         mapOfStatesAndProperties.get(state).setValue(true);
-
+        isLoggedIn.setValue(state.getOrder() > 2);
     }
 
     private void initMap() {
@@ -49,9 +51,7 @@ public class StateService {
         );
     }
 
-    // todo: determineState
     // todo: readState
-    // todo: setState
     // todo: saveState
     // todo: go next state
 }

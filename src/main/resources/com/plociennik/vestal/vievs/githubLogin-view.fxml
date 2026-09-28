@@ -5,44 +5,74 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.geometry.Insets?>
 
 <VBox
         fx:id="loginArea"
-        alignment="CENTER"
+        alignment="TOP_CENTER"
         fx:controller="com.plociennik.vestal.controller.GithubLoginController"
         xmlns:fx="http://javafx.com/fxml">
 
-    <VBox fx:id="statusArea" alignment="CENTER">
-        <Text fx:id="statusText"/>
+    <VBox fx:id="titleArea" alignment="CENTER">
+        <ImageView fx:id="githubImage">
+            <image>
+                <Image url="@../images/github-white-icon.png"/>
+            </image>
+        </ImageView>
+        <Text fx:id="titleText">Authenticate via GitHub</Text>
     </VBox>
 
-    <VBox fx:id="loginLogoutButton" alignment="CENTER">
-        <StackPane>
-            <Button fx:id="loginButton" text="login to GH"/>
-            <Button fx:id="logoutButton" text="logout" visible="false"/>
-        </StackPane>
-    </VBox>
+    <StackPane VBox.vgrow="ALWAYS">
 
-    <StackPane>
+        <VBox fx:id="loginLogoutButtonArea" alignment="CENTER">
+            <StackPane>
+                <Button fx:id="loginButton" text="login to GH"/>
+                <Button fx:id="logoutButton" text="logout" visible="false"/>
+            </StackPane>
+        </VBox>
+
         <VBox fx:id="clientIdArea" alignment="CENTER" visible="false">
             <Text text="Get your Client ID from GH and paste it here"/>
             <PasswordField fx:id="clientIdField"/>
             <Button fx:id="saveClientIdButton" text="Save the ID"/>
         </VBox>
 
-        <VBox fx:id="userCodeArea" alignment="CENTER" visible="false">
-            <Text fx:id="codeInfo" text="code information"/>
-            <HBox fx:id="userCodeSubArea" alignment="CENTER">
-                <Text fx:id="userCodeText"/>
-                <Button fx:id="copyCodeButton"> copy code </Button>
-            </HBox>
+        <VBox fx:id="userCodeVerificationArea" alignment="CENTER" visible="false">
 
-            <Text fx:id="verificationLinkInfo"/>
-            <HBox fx:id="verificationLinkSubArea" alignment="CENTER">
-                <Text fx:id="verificationLinkText"/>
-                <Button fx:id="copyVerificationLinkButton"> copy link </Button>
-            </HBox>
+            <VBox fx:id="userCodeArea" alignment="CENTER">
+                <VBox alignment="CENTER">
+                    <padding>
+                        <Insets top="10" bottom="10"/>
+                    </padding>
+                    <Text fx:id="codeInfo" text="code information"/>
+                </VBox>
+                <HBox fx:id="userCodeSubArea" alignment="CENTER">
+                    <Text fx:id="userCodeText"/>
+                    <Button fx:id="copyCodeButton">copy</Button>
+                </HBox>
+            </VBox>
+
+            <VBox fx:id="verificationArea" alignment="CENTER">
+                <VBox alignment="CENTER">
+                    <padding>
+                        <Insets top="10" bottom="20"/>
+                    </padding>
+                    <Text fx:id="verificationLinkInfo"/>
+                </VBox>
+                <HBox fx:id="verificationLinkSubArea" alignment="CENTER">
+                    <Text fx:id="verificationLinkText"/>
+                    <Button fx:id="copyVerificationLinkButton">copy</Button>
+                </HBox>
+            </VBox>
+
         </VBox>
+
     </StackPane>
+
+    <VBox fx:id="statusArea" alignment="CENTER">
+        <Text fx:id="statusText"/>
+    </VBox>
 
 </VBox>

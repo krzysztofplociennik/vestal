@@ -27,6 +27,8 @@ import java.util.ResourceBundle;
 @Slf4j
 public class GithubLoginController extends VBox implements Initializable {
 
+    @FXML private VBox userCodeVerificationArea;
+    @FXML private VBox loginLogoutButtonArea;
     @FXML private Text statusText;
     @FXML private Button loginButton;
     @FXML private Button logoutButton;
@@ -54,7 +56,7 @@ public class GithubLoginController extends VBox implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         clientIdSaved = credentialsStorage.load(CredentialType.GITHUB_CLIENT_ID).isPresent();
         clientIdArea.managedProperty().bind(clientIdArea.visibleProperty());
-        userCodeArea.managedProperty().bind(userCodeArea.visibleProperty());
+        userCodeVerificationArea.managedProperty().bind(userCodeVerificationArea.visibleProperty());
         loginButton.managedProperty().bind(loginButton.visibleProperty());
         logoutButton.managedProperty().bind(logoutButton.visibleProperty());
 
@@ -83,7 +85,8 @@ public class GithubLoginController extends VBox implements Initializable {
             if (clientIdSaved) {
                 statusText.setText("Requesting device code...");
                 loginButton.setDisable(true);
-                userCodeArea.setVisible(true);
+                loginLogoutButtonArea.setVisible(false);
+                userCodeVerificationArea.setVisible(true);
 
                 Task<GitHubDeviceFlow.PollResult> task = new Task<>() {
                     @Override
@@ -113,12 +116,14 @@ public class GithubLoginController extends VBox implements Initializable {
                 task.setOnSucceeded(e2 -> {
                     if (clientIdSaved) {
                         loginButton.setVisible(false);
+                        loginLogoutButtonArea.setVisible(false);
                         var result = task.getValue();
                         if (result.success()) {
                             credentialsStorage.save(CredentialType.GITHUB_TOKEN, result.accessToken());
                             loginButton.setVisible(false);
+                            loginLogoutButtonArea.setVisible(false);
                             logoutButton.setVisible(true);
-                            userCodeArea.setVisible(false);
+                            userCodeVerificationArea.setVisible(false);
                             // todo: weird thing, i get the token, but in order to get the login i need to authorize
                             // todo: which seems unnatural
                             TokenValidator.AuthResult validate = tokenValidator.validate();
@@ -135,10 +140,11 @@ public class GithubLoginController extends VBox implements Initializable {
                 task.setOnFailed(e2 -> {
                     loginButton.setVisible(true);
                     loginButton.setDisable(false);
+                    loginLogoutButtonArea.setVisible(true);
                     log.warn("[{}] Login failed, error: {}", "1638_280726", task.getException().getMessage());
                     statusText.setText("Login failed, check if your Client ID is correct.");
 
-                    userCodeArea.setVisible(false);
+                    userCodeVerificationArea.setVisible(false);
                     credentialsStorage.clear();
                     clientIdSaved = false;
                 });
@@ -146,6 +152,7 @@ public class GithubLoginController extends VBox implements Initializable {
             } else {
                 clientIdArea.setVisible(true);
                 loginButton.setDisable(true);
+                loginLogoutButtonArea.setVisible(false);
                 statusText.setText("Waiting for Client ID...");
             }
         });
@@ -157,6 +164,7 @@ public class GithubLoginController extends VBox implements Initializable {
             statusText.setText("Logged out.");
             loginButton.setVisible(true);
             loginButton.setDisable(false);
+            loginLogoutButtonArea.setVisible(true);
             logoutButton.setVisible(false);
             credentialsStorage.clear();
             clientIdSaved = false;
@@ -181,6 +189,7 @@ public class GithubLoginController extends VBox implements Initializable {
             clientIdSaved = true;
             clientIdArea.setVisible(false);
             loginButton.setDisable(false);
+            loginLogoutButtonArea.setVisible(true);
             statusText.setText("Client ID saved, you can login to GH now.");
         });
     }
