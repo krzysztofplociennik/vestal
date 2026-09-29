@@ -4,10 +4,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
 
 <VBox
         spacing="10.0"
-        alignment="CENTER_LEFT"
+        alignment="CENTER"
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:id="encryptionKey"
@@ -15,10 +16,17 @@
         stylesheets="@../css/encryptionkey.css"
 >
 
-    <VBox fx:id="encryptionKeyArea" alignment="CENTER">
-        <Text text="Paste your encryption key here."/>
-        <PasswordField fx:id="encryptionKeyField"/>
-        <Button fx:id="encryptionKeyButton" text="Save the encryption key"/>
+    <VBox alignment="CENTER">
+        <padding>
+            <Insets top="20" bottom="50"/>
+        </padding>
+        <Text> You have successfully logged in </Text>
+    </VBox>
+
+    <VBox spacing="20" fx:id="encryptionKeyArea" alignment="CENTER">
+        <Text text="Paste or write down your encryption key below"/>
+        <PasswordField maxWidth="300" fx:id="encryptionKeyField"/>
+        <Button fx:id="encryptionKeyButton" text="Save"/>
     </VBox>
 
 </VBox>

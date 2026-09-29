@@ -30,9 +30,7 @@ public class EncryptionKeyController extends VBox implements Initializable {
     public void setupEncryptionKeyButton() {
         encryptionKeyButton.setOnAction(e -> {
             String encryptionKeyInput = encryptionKeyField.getText();
-//            credentialsStorage.save(CredentialType.ENCRYPTION_SECRET_KEY, encryptionKeyInput);
-            // todo: hardcoded for now
-            credentialsStorage.save(CredentialType.ENCRYPTION_SECRET_KEY, "secret");
+            credentialsStorage.save(CredentialType.ENCRYPTION_SECRET_KEY, encryptionKeyInput);
             stateService.setState(State.REPOS);
         });
     }

@@ -1,0 +1,27 @@
+#encryptionKey {
+    -fx-background-color: #242424;
+}
+
+Text {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: Hack;
+    -fx-fill: #F2F2F2;
+}
+
+Button {
+    -fx-max-width: 260px;
+    -fx-background-color: #242424;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: Hack;
+    -fx-border-radius: 13px;
+    -fx-border-width: 0.5px;
+    -fx-border-color: #C4C4C4;
+    -fx-background-radius: 13px;
+    -fx-text-fill: #F2F2F2;
+}
+
+Button:hover {
+    -fx-background-color: #0D0D0D;
+}
