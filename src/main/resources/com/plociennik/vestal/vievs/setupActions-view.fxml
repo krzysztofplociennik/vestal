@@ -4,6 +4,8 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <VBox
         alignment="CENTER"
@@ -14,20 +16,34 @@
 >
 
     <HBox fx:id="statusLabelArea" alignment="CENTER">
-        <Text fx:id="statusLabelText"/>
+        <Text fx:id="statusLabelText" text="Pick both local and remote repository"/>
     </HBox>
 
     <HBox alignment="CENTER" fx:id="setupActionsSubArea">
+
         <VBox alignment="CENTER" fx:id="directoryArea" HBox.hgrow="ALWAYS" maxWidth="Infinity">
-            <Text> local </Text>
-            <Text fx:id="directoryTitleText"/>
-            <Button fx:id="addChangeDirectoryButton"/>
+            <VBox fx:id="card" alignment="CENTER">
+                <ImageView>
+                    <Image url="@../images/folder-3-64-white.png"/>
+                </ImageView>
+                <Text> local </Text>
+                <Text fx:id="directoryTitleText"/>
+                <Button fx:id="addChangeDirectoryButton"/>
+            </VBox>
         </VBox>
+
         <VBox alignment="CENTER" fx:id="repositoryArea" HBox.hgrow="ALWAYS" maxWidth="Infinity">
-            <Text> remote </Text>
-            <Text fx:id="repositoryTitleText"/>
-            <Button fx:id="addChangeRepositoryButton"/>
+            <VBox fx:id="card" alignment="CENTER">
+                <ImageView>
+                    <Image url="@../images/geography-64-white.png"/>
+                </ImageView>
+                <Text> remote </Text>
+                <Text fx:id="repositoryTitleText"/>
+                <Button fx:id="addChangeRepositoryButton"/>
+            </VBox>
+
         </VBox>
+
     </HBox>
 
 </VBox>

@@ -14,7 +14,7 @@ public class VestalApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(VestalApplication.class.getResource("/com/plociennik/vestal/vievs/main-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1200, 600);
+        Scene scene = new Scene(fxmlLoader.load(), 1400, 800);
         stage.setTitle("Vestal");
         stage.setScene(scene);
         stage.getIcons().addAll(

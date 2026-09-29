@@ -52,7 +52,7 @@ public class MainController implements Initializable  {
         setupLogoutButton();
 
         // todo: hardcoded, to be deleted
-        stateService.setState(State.ENCRYPTION_KEY);
+        stateService.setState(State.ACTIONS);
 
         log.info("[{}] App initialized, ready to work.", "1251_17092026");
     }

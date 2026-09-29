@@ -44,7 +44,6 @@ public class SetupActionsController extends VBox implements Initializable {
     @FXML private HBox setupActionsSubArea;
     @FXML private VBox directoryArea;
     @FXML private VBox repositoryArea;
-    @FXML private Text statusLabelText;
     @FXML private Button addChangeDirectoryButton;
     @FXML private Text directoryTitleText;
     @FXML private Button addChangeRepositoryButton;
@@ -81,15 +80,6 @@ public class SetupActionsController extends VBox implements Initializable {
 
         addChangeDirectoryButton.setText(isDirectoryPathBlank ? "add" : "change");
         addChangeRepositoryButton.setText(isRepositoryNameBlank ? "add" : "change");
-
-        if (isDirectoryPathBlank || isRepositoryNameBlank) {
-            statusLabelText.setText("Both directory and repository need to be set.");
-            log.info("[{}] Both directory and repository needs to be set.", "1311_310726");
-        } else {
-            stateService.setState(State.ACTIONS);
-            statusLabelText.setText("All set, time to work.");
-            log.info("[{}] The directory is set to: [{}] and the repository has been set to [{}]", "1313_310726", directoryPath, repositoryName);
-        }
 
         setupAddChangeDirectoryButton();
         setupAddChangeRepositoryButton();
