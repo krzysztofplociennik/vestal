@@ -1,5 +1,7 @@
 package com.plociennik.vestal.controller;
 
+import com.plociennik.vestal.config.AppConfig;
+import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.git.pull.RepoPullChangesService;
 import com.plociennik.vestal.git.push.RepoPushChangesService;
 import com.plociennik.vestal.git.status.GitStatusService;
@@ -16,6 +18,8 @@ import java.util.ResourceBundle;
 @Slf4j
 public class GitActionsController extends VBox implements Initializable {
 
+    @FXML private Text localRepoPath;
+    @FXML private Text remoteRepoName;
     @FXML private Text statusLabelText;
     @FXML private Button checkStatusButton;
     @FXML private Button pushChangesButton;
@@ -31,6 +35,10 @@ public class GitActionsController extends VBox implements Initializable {
         setupCheckStatusButton();
         setupPushChangesButton();
         setupPullChangesButton();
+
+        AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
+        localRepoPath.setText(currentConfig.vestalRepository.localRepository.sourcePath);
+        remoteRepoName.setText(currentConfig.vestalRepository.remoteRepository.name);
     }
 
     private void setupCheckStatusButton() {

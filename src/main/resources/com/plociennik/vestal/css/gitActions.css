@@ -1,14 +1,62 @@
 #gitActionsArea {
-    -fx-border-color: #FF0000;
+    -fx-background-color: #242424;
+}
+
+#cardsActionsArea {
+    -fx-background-color: #242424;
 }
 
 #statusLabelArea {
-    -fx-background-color: #FF6647;
-    -fx-padding: 8px 16px;
+    -fx-background-color: #242424;
+    -fx-padding: 10px 10px 80px 10px;
 }
 
-#gitActionsSubArea{
-    -fx-background-color: #FF87CF;
-    -fx-padding: 8px 16px;
-    -fx-spacing: 10;
+Text {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: Hack;
+    -fx-fill: #F2F2F2;
+}
+
+Button {
+    -fx-max-width: 200px;
+    -fx-background-color: #242424;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: Hack;
+    -fx-border-radius: 13px;
+    -fx-border-width: 0.5px;
+    -fx-border-color: #C4C4C4;
+    -fx-background-radius: 13px;
+    -fx-text-fill: #F2F2F2;
+}
+
+Button:hover {
+    -fx-background-color: #0D0D0D;
+}
+
+.card {
+    -fx-border-color: #C4C4C4;
+    -fx-border-radius: 8px;
+    -fx-padding: 51px 51px;
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+    -fx-spacing: 15;
+}
+
+#actionsArea {
+    -fx-padding: 51px 51px;
+    -fx-spacing: 15;
+}
+
+#checkStatusButton:hover {
+    -fx-background-color: #1C1C1C;
+}
+
+#pullChangesButton:hover {
+    -fx-background-color: #00051F;
+}
+
+#pushChangesButton:hover {
+    -fx-background-color: #001F06;
 }

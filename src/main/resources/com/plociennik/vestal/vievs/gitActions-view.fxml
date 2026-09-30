@@ -5,6 +5,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
 
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <VBox
         alignment="CENTER"
         fx:id="gitActionsArea"
@@ -17,12 +19,49 @@
         <Text fx:id="statusLabelText"/>
     </HBox>
 
-    <HBox alignment="CENTER" fx:id="gitActionsSubArea">
+    <HBox fx:id="cardsActionsArea" alignment="CENTER">
 
-        <Text fx:id="areaHeader"> Actions </Text>
-        <Button fx:id="checkStatusButton"> check status </Button>
-        <Button fx:id="pullChangesButton"> pull changes </Button>
-        <Button fx:id="pushChangesButton"> push changes </Button>
+        <VBox styleClass="card" alignment="CENTER">
+            <ImageView>
+                <Image url="@../images/folder-3-64-white.png"/>
+            </ImageView>
+            <Text> local </Text>
+            <Text wrappingWidth="250" fx:id="localRepoPath"/>
+        </VBox>
+
+        <VBox fx:id="actionsArea" alignment="CENTER">
+            <Button fx:id="checkStatusButton">
+                <graphic>
+                    <ImageView scaleX="0.4" scaleY="0.4">
+                        <Image url="@../icons/refresh-2-white-64.png"/>
+                    </ImageView>
+                </graphic>
+                Status</Button>
+            <Button fx:id="pullChangesButton">
+                <graphic>
+                    <ImageView>
+                        <Image url="@../icons/arrow-left-5-48-white.png"/>
+                    </ImageView>
+                </graphic>
+                Pull
+            </Button>
+            <Button fx:id="pushChangesButton">
+                <graphic>
+                    <ImageView>
+                        <Image url="@../icons/arrow-right-5-48-white.png"/>
+                    </ImageView>
+                </graphic>
+                Push
+            </Button>
+        </VBox>
+
+        <VBox styleClass="card" alignment="CENTER">
+            <ImageView>
+                <Image url="@../images/geography-64-white.png"/>
+            </ImageView>
+            <Text>remote</Text>
+            <Text wrappingWidth="250" fx:id="remoteRepoName"/>
+        </VBox>
 
     </HBox>
 
