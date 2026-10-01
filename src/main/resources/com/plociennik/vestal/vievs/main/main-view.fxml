@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+
+<VBox
+        alignment="CENTER"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.plociennik.vestal.controller.MainController"
+        stylesheets="@main.css"
+>
+    <HBox fx:id="logoutButtonArea" alignment="CENTER_RIGHT">
+        <Button fx:id="logoutButton"> Logout </Button>
+    </HBox>
+
+    <StackPane VBox.vgrow="ALWAYS">
+        <fx:include source="../landing/landing-view.fxml" fx:id="landingPage" stylesheets="@../landing/landing.css"/>
+        <fx:include source="../githublogin/githubLogin-view.fxml" fx:id="githubLogin" stylesheets="@../githublogin/githubLogin.css"/>
+        <fx:include source="../encryptionkey/encryptionkey-view.fxml" fx:id="encryptionKey" stylesheets="@../encryptionkey/encryptionkey.css"/>
+        <fx:include source="../setupactions/setupActions-view.fxml" fx:id="setupActions" stylesheets="@../setupactions/setupActions.css"/>
+        <fx:include source="../gitactions/gitActions-view.fxml" fx:id="gitActions" stylesheets="@../gitactions/gitActions.css"/>
+    </StackPane>
+
+    <!--    // todo: make status bar component/view-->
+
+    <fx:include source="../dummytest/dummytest-view.fxml" fx:id="dummyTest" stylesheets="@../dummytest/dummytest.css"/>
+
+</VBox>

@@ -10,7 +10,7 @@
         xmlns:fx="http://javafx.com/fxml/1"
         fx:id="landingArea"
         fx:controller="com.plociennik.vestal.controller.LandingController"
-        stylesheets="@../css/landing.css"
+        stylesheets="@landing.css"
 >
 
     <Button fx:id="loginButton"
