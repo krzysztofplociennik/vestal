@@ -24,7 +24,7 @@
         <VBox alignment="CENTER" fx:id="directoryArea" HBox.hgrow="ALWAYS" maxWidth="Infinity">
             <VBox fx:id="card" alignment="CENTER">
                 <ImageView>
-                    <Image url="@../../images/folder-3-64-white.png"/>
+                    <Image url="@../../assets/images/folder-3-64-white.png"/>
                 </ImageView>
                 <Text> local </Text>
                 <Text fx:id="directoryTitleText"/>
@@ -35,7 +35,7 @@
         <VBox alignment="CENTER" fx:id="repositoryArea" HBox.hgrow="ALWAYS" maxWidth="Infinity">
             <VBox fx:id="card" alignment="CENTER">
                 <ImageView>
-                    <Image url="@../../images/geography-64-white.png"/>
+                    <Image url="@../../assets/images/geography-64-white.png"/>
                 </ImageView>
                 <Text> remote </Text>
                 <Text fx:id="repositoryTitleText"/>

@@ -18,7 +18,7 @@
     <VBox fx:id="titleArea" alignment="CENTER">
         <ImageView fx:id="githubImage">
             <image>
-                <Image url="@../images/github-white-icon.png"/>
+                <Image url="@../../assets/images/github-white-icon.png"/>
             </image>
         </ImageView>
         <Text fx:id="titleText">Authenticate via GitHub</Text>

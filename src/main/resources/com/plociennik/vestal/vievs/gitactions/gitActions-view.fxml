@@ -32,7 +32,7 @@
 
         <VBox styleClass="card" alignment="CENTER">
             <ImageView>
-                <Image url="@../../images/folder-3-64-white.png"/>
+                <Image url="@../../assets/images/folder-3-64-white.png"/>
             </ImageView>
             <Text>local</Text>
             <Text wrappingWidth="250" fx:id="localRepoPath"/>
@@ -42,7 +42,7 @@
             <Button fx:id="checkStatusButton">
                 <graphic>
                     <ImageView scaleX="0.4" scaleY="0.4">
-                        <Image url="@../../icons/refresh-2-white-64.png"/>
+                        <Image url="@../../assets/icons/refresh-2-white-64.png"/>
                     </ImageView>
                 </graphic>
                 Status
@@ -50,7 +50,7 @@
             <Button fx:id="pullChangesButton">
                 <graphic>
                     <ImageView>
-                        <Image url="@../../icons/arrow-left-5-48-white.png"/>
+                        <Image url="@../../assets/icons/arrow-left-5-48-white.png"/>
                     </ImageView>
                 </graphic>
                 Pull
@@ -58,7 +58,7 @@
             <Button fx:id="pushChangesButton">
                 <graphic>
                     <ImageView>
-                        <Image url="@../../icons/arrow-right-5-48-white.png"/>
+                        <Image url="@../../assets/icons/arrow-right-5-48-white.png"/>
                     </ImageView>
                 </graphic>
                 Push
@@ -67,7 +67,7 @@
 
         <VBox styleClass="card" alignment="CENTER">
             <ImageView>
-                <Image url="@../../images/geography-64-white.png"/>
+                <Image url="@../../assets/images/geography-64-white.png"/>
             </ImageView>
             <Text>remote</Text>
             <Text wrappingWidth="250" fx:id="remoteRepoName"/>

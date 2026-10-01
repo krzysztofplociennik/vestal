@@ -18,9 +18,9 @@ public class VestalApplication extends Application {
         stage.setTitle("Vestal");
         stage.setScene(scene);
         stage.getIcons().addAll(
-                new Image(Objects.requireNonNull(VestalApplication.class.getResourceAsStream("/com/plociennik/vestal/icons/flammable-16.png"))),
-                new Image(Objects.requireNonNull(VestalApplication.class.getResourceAsStream("/com/plociennik/vestal/icons/flammable-24.png"))),
-                new Image(Objects.requireNonNull(VestalApplication.class.getResourceAsStream("/com/plociennik/vestal/icons/flammable-32.png")))
+                new Image(Objects.requireNonNull(VestalApplication.class.getResourceAsStream("/com/plociennik/vestal/assets/icons/flammable-16.png"))),
+                new Image(Objects.requireNonNull(VestalApplication.class.getResourceAsStream("/com/plociennik/vestal/assets/icons/flammable-24.png"))),
+                new Image(Objects.requireNonNull(VestalApplication.class.getResourceAsStream("/com/plociennik/vestal/assets/icons/flammable-32.png")))
         );
         stage.show();
     }
