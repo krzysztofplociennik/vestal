@@ -60,3 +60,7 @@ Button:hover {
 #pushChangesButton:hover {
     -fx-background-color: #001F06;
 }
+
+.progress-indicator {
+    -fx-progress-color: #6496ff;
+}

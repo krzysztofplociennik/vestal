@@ -40,14 +40,6 @@ public class RepoPushChangesService {
     private EncryptionService encryptionService = new EncryptionService();
 
     public void push() {
-        log.info("[{}] Checking if there are any changes that warrant a push.", "1130_01092026");
-        boolean isClean = gitStatusService.isClean();
-        if (isClean) {
-            log.info("[{}] There were no changes, cancelling the process.", "1232_10082026");
-            return;
-        }
-        log.info("[{}] There are changes, pushing current state to remote.", "1222_10082026");
-
         AppConfig currentConfig = configManager.getCurrentConfig();
         Path sourcePath = Path.of(currentConfig.vestalRepository.localRepository.sourcePath);
         Path encryptionPath = Path.of(currentConfig.vestalRepository.localRepository.encryptionPath);
