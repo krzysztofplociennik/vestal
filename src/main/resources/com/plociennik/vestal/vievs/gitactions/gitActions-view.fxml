@@ -39,15 +39,15 @@
         </VBox>
 
         <VBox fx:id="actionsArea" alignment="CENTER">
-            <Button fx:id="checkStatusButton">
+            <Button fx:id="checkStatusButton" graphicTextGap="25">
                 <graphic>
-                    <ImageView scaleX="0.4" scaleY="0.4">
-                        <Image url="@../../assets/icons/refresh-2-white-64.png"/>
+                    <ImageView scaleX="0.5" scaleY="0.5">
+                        <Image url="@../../assets/icons/refresh-2-48-white.png"/>
                     </ImageView>
                 </graphic>
                 Status
             </Button>
-            <Button fx:id="pullChangesButton">
+            <Button fx:id="pullChangesButton" graphicTextGap="33">
                 <graphic>
                     <ImageView>
                         <Image url="@../../assets/icons/arrow-left-5-48-white.png"/>
@@ -55,7 +55,7 @@
                 </graphic>
                 Pull
             </Button>
-            <Button fx:id="pushChangesButton">
+            <Button fx:id="pushChangesButton" graphicTextGap="33">
                 <graphic>
                     <ImageView>
                         <Image url="@../../assets/icons/arrow-right-5-48-white.png"/>

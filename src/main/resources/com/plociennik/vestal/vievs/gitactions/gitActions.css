@@ -19,7 +19,7 @@ Text {
 }
 
 Button {
-    -fx-max-width: 200px;
+    -fx-max-width: 400px;
     -fx-background-color: #242424;
     -fx-font-size: 22px;
     -fx-font-weight: bold;
@@ -63,4 +63,8 @@ Button:hover {
 
 .progress-indicator {
     -fx-progress-color: #6496ff;
+}
+
+#checkStatusButton {
+    -fx-padding: 8px 15px 7px 27px;
 }
