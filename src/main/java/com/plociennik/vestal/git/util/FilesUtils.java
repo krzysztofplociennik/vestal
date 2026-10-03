@@ -55,7 +55,7 @@ public class FilesUtils {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    log.info("Visiting: {}", file);
+                    log.info("[{}] Visiting: {}", "1006_01102026", file);
                     files.add(file);
                     return FileVisitResult.CONTINUE;
                 }
