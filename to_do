@@ -14,7 +14,12 @@ TODOS
 14. there is a possibility that force pushing from a new OS/local repository might delete (???) previous commits,
 maybe force is a no-no and should be handled via pulling first
 17. need to add a test that checks if encryption and decryption are not transforming contents
--
+- code reload (when logging in)
+- buttons start with a big letter or a small one
+- buttons' borders do not always match the text inside them
+- different way of structuring views and css files (more like a typescript project
+- starting state is hardcoded
+- git actions view is not exactly centered
 
 
 NICE TO HAVES
