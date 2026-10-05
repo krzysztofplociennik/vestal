@@ -35,7 +35,7 @@
                 <Image url="@../../assets/images/folder-3-64-white.png"/>
             </ImageView>
             <Text>local</Text>
-            <Text wrappingWidth="250" fx:id="localRepoPath"/>
+            <Text wrappingWidth="250" fx:id="localRepoPathText"/>
         </VBox>
 
         <VBox fx:id="actionsArea" alignment="CENTER">
@@ -70,7 +70,7 @@
                 <Image url="@../../assets/images/geography-64-white.png"/>
             </ImageView>
             <Text>remote</Text>
-            <Text wrappingWidth="250" fx:id="remoteRepoName"/>
+            <Text wrappingWidth="250" fx:id="remoteRepoNameText"/>
         </VBox>
 
     </HBox>

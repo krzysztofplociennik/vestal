@@ -1,9 +1,10 @@
 #logoutButtonArea {
     -fx-background-color: #242424;
     -fx-padding: 8px 8px;
+    -fx-spacing: 10;
 }
 
-#logoutButton {
+Button {
     -fx-max-width: 200px;
     -fx-background-color: #242424;
     -fx-font-size: 14px;
@@ -16,6 +17,6 @@
     -fx-text-fill: #F2F2F2;
 }
 
-#logoutButton:hover {
+Button:hover {
     -fx-background-color: #0D0D0D;
 }

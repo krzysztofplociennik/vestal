@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
 @Slf4j
 public class MainController implements Initializable  {
 
+    @FXML private Button changeRepositoriesButton;
     @FXML private HBox logoutButtonArea;
     @FXML private VBox landingPage;
 
@@ -48,8 +49,10 @@ public class MainController implements Initializable  {
         landingPage.visibleProperty().bind(stateService.getLandingVisible());
         encryptionKey.visibleProperty().bind(stateService.getEncryptionKeyVisible());
         logoutButton.visibleProperty().bind(stateService.getIsLoggedIn());
+        changeRepositoriesButton.visibleProperty().bind(stateService.getActionsVisible());
 
         setupLogoutButton();
+        setupChangeReposButton();
 
         // todo: hardcoded, to be deleted
         stateService.setState(State.ACTIONS);
@@ -61,6 +64,12 @@ public class MainController implements Initializable  {
         logoutButton.setOnAction(e -> {
             stateService.setState(State.LOGGED_OUT);
             credentialsStorage.clear();
+        });
+    }
+
+    private void setupChangeReposButton() {
+        changeRepositoriesButton.setOnAction(e -> {
+            stateService.setState(State.REPOS);
         });
     }
 }

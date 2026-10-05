@@ -12,6 +12,7 @@
         stylesheets="@main.css"
 >
     <HBox fx:id="logoutButtonArea" alignment="CENTER_RIGHT">
+        <Button fx:id="changeRepositoriesButton"> Change repos </Button>
         <Button fx:id="logoutButton"> Logout </Button>
     </HBox>
 

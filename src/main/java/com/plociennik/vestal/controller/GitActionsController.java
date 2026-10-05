@@ -6,6 +6,9 @@ import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.git.pull.RepoPullChangesService;
 import com.plociennik.vestal.git.push.RepoPushChangesService;
 import com.plociennik.vestal.git.status.GitStatusService;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,13 +25,16 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class GitActionsController extends VBox implements Initializable {
 
-    @FXML private Text localRepoPath;
-    @FXML private Text remoteRepoName;
+    @FXML private Text localRepoPathText;
+    @FXML private Text remoteRepoNameText;
     @FXML private Text statusLabelText;
     @FXML private Button checkStatusButton;
     @FXML private Button pushChangesButton;
     @FXML private Button pullChangesButton;
     @FXML private ProgressIndicator busyIndicator;
+
+    private StringProperty localRepoPathProperty = new SimpleStringProperty(null);
+    private StringProperty remoteRepoNameProperty = new SimpleStringProperty(null);
 
     private GitStatusService gitStatusService = new GitStatusService();
     private RepoPushChangesService repoPushChangesService = new RepoPushChangesService();
@@ -41,9 +47,18 @@ public class GitActionsController extends VBox implements Initializable {
         setupPushChangesButton();
         setupPullChangesButton();
 
-        AppConfig currentConfig = AppConfigManager.getInstance().getCurrentConfig();
-        localRepoPath.setText(currentConfig.vestalRepository.localRepository.sourcePath);
-        remoteRepoName.setText(currentConfig.vestalRepository.remoteRepository.name);
+        ObjectProperty<AppConfig> currentConfig = AppConfigManager.getInstance().getCurrentConfigProperty();
+
+        localRepoPathProperty.setValue(currentConfig.get().vestalRepository.localRepository.sourcePath);
+        remoteRepoNameProperty.setValue(currentConfig.get().vestalRepository.remoteRepository.name);
+
+        currentConfig.addListener((observable, oldConfig, newConfig) -> {
+            localRepoPathProperty.setValue(newConfig.vestalRepository.localRepository.sourcePath);
+            remoteRepoNameProperty.setValue(newConfig.vestalRepository.remoteRepository.name);
+        });
+
+        localRepoPathText.textProperty().bind(localRepoPathProperty);
+        remoteRepoNameText.textProperty().bind(remoteRepoNameProperty);
     }
 
     private void setupCheckStatusButton() {
