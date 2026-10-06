@@ -28,8 +28,8 @@
 
         <VBox fx:id="loginLogoutButtonArea" alignment="CENTER">
             <StackPane>
-                <Button fx:id="loginButton" text="login to GH"/>
-                <Button fx:id="logoutButton" text="logout" visible="false"/>
+                <Button fx:id="loginButton" text="Login to GH"/>
+                <Button fx:id="logoutButton" text="Logout" visible="false"/>
             </StackPane>
         </VBox>
 
