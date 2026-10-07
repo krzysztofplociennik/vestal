@@ -27,9 +27,10 @@ public class MainDirectoryService {
         log.info("[{}] Main directory is not present, creating it now.", "1449_18082026");
         OperatingSystem os = establishOs();
         Path establishedDirectory = establishMainDirectoryPath(os);
-        currentConfig.operatingSystemMainDirectory = establishedDirectory;
-        currentConfig.operatingSystem = os;
-        appConfigManager.saveConfig(currentConfig);
+        appConfigManager.update(ac -> {
+            ac.operatingSystemMainDirectory = establishedDirectory;
+            ac.operatingSystem = os;
+        });
 
         try {
             Files.createDirectories(establishedDirectory);

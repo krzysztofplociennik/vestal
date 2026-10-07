@@ -6,7 +6,7 @@ import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.git.pull.RepoPullChangesService;
 import com.plociennik.vestal.git.push.RepoPushChangesService;
 import com.plociennik.vestal.git.status.GitStatusService;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
@@ -47,12 +47,13 @@ public class GitActionsController extends VBox implements Initializable {
         setupPushChangesButton();
         setupPullChangesButton();
 
-        ObjectProperty<AppConfig> currentConfig = AppConfigManager.getInstance().getCurrentConfigProperty();
+        ReadOnlyProperty<AppConfig> currentConfig = AppConfigManager.getInstance().getCurrentConfigProperty();
 
-        localRepoPathProperty.setValue(currentConfig.get().vestalRepository.localRepository.sourcePath);
-        remoteRepoNameProperty.setValue(currentConfig.get().vestalRepository.remoteRepository.name);
+        localRepoPathProperty.setValue(currentConfig.getValue().vestalRepository.localRepository.sourcePath);
+        remoteRepoNameProperty.setValue(currentConfig.getValue().vestalRepository.remoteRepository.name);
 
         currentConfig.addListener((observable, oldConfig, newConfig) -> {
+            log.info("[{}] Listener for [{}] has been added.", "1033_07102026", "GitActionsController");
             localRepoPathProperty.setValue(newConfig.vestalRepository.localRepository.sourcePath);
             remoteRepoNameProperty.setValue(newConfig.vestalRepository.remoteRepository.name);
         });

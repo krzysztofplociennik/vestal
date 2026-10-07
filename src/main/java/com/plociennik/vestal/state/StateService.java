@@ -1,5 +1,6 @@
 package com.plociennik.vestal.state;
 
+import com.plociennik.vestal.config.AppConfigManager;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import lombok.Getter;
@@ -39,6 +40,8 @@ public class StateService {
         mapOfStatesAndProperties.forEach((key, value) -> value.setValue(false));
         mapOfStatesAndProperties.get(state).setValue(true);
         isLoggedIn.setValue(state.getOrder() > 2);
+        AppConfigManager manager = AppConfigManager.getInstance();
+        manager.update(ac -> ac.vestalRepository.state = state);
     }
 
     private void initMap() {

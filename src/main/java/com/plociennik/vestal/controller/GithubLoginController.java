@@ -66,12 +66,12 @@ public class GithubLoginController extends VBox implements Initializable {
             statusText.setText("Logged in as [%s]".formatted(credentialsStorage.get(CredentialType.GITHUB_LOGIN)));
             loginButton.setVisible(false);
             logoutButton.setVisible(true);
-            stateService.setState(State.ENCRYPTION_KEY);
         } else {
             log.warn("Current token is not valid for login: [{}], reason: {}", authResult.login(), authResult.errorMessage());
             statusText.setText("Not logged in.");
             loginButton.setVisible(true);
             logoutButton.setVisible(false);
+            stateService.setState(State.LOGIN);
         }
         setupLoginButtonAction();
         setupLogoutButtonAction();

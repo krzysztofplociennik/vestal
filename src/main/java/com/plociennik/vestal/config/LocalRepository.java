@@ -38,4 +38,10 @@ public class LocalRepository {
             return separator + split[length - 1];
         }
     }
+
+    public void clear() {
+        this.sourcePath = "";
+        this.rootFolder = "";
+        this.encryptionPath = "";
+    }
 }

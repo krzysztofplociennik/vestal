@@ -11,6 +11,8 @@ import com.plociennik.vestal.state.State;
 import com.plociennik.vestal.state.StateService;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -38,6 +40,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+// todo: naming should be more like: SetupRepositoriesController
+
 @Slf4j
 public class SetupActionsController extends VBox implements Initializable {
 
@@ -48,6 +52,9 @@ public class SetupActionsController extends VBox implements Initializable {
     @FXML private Text directoryTitleText;
     @FXML private Button addChangeRepositoryButton;
     @FXML private Text repositoryTitleText;
+
+    private StringProperty localRepositoryPathProperty = new SimpleStringProperty(null);
+    private StringProperty remoteRepositoryPathProperty = new SimpleStringProperty(null);
 
     private AppConfigManager configManager = AppConfigManager.getInstance();
     private StateService stateService = StateService.getInstance();
@@ -63,6 +70,7 @@ public class SetupActionsController extends VBox implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        log.info("[{}] SetupActionsController is initialized.", "1029_07102026");
         directoryArea.prefWidthProperty().bind(setupActionsSubArea.widthProperty().divide(2));
         repositoryArea.prefWidthProperty().bind(setupActionsSubArea.widthProperty().divide(2));
 
@@ -77,6 +85,14 @@ public class SetupActionsController extends VBox implements Initializable {
 
         directoryTitleText.setText(isDirectoryPathBlank ? "empty" : directoryPath);
         repositoryTitleText.setText(isRepositoryNameBlank ? "empty" : repositoryName);
+
+        localRepositoryPathProperty.bind(configManager.getCurrentConfigProperty()
+                .map(c -> c.vestalRepository.localRepository.sourcePath));
+        remoteRepositoryPathProperty.bind(configManager.getCurrentConfigProperty()
+                .map(c -> c.vestalRepository.remoteRepository.name));
+
+        directoryTitleText.textProperty().bind(localRepositoryPathProperty);
+        repositoryTitleText.textProperty().bind(remoteRepositoryPathProperty);
 
         addChangeDirectoryButton.setText(isDirectoryPathBlank ? "add" : "change");
         addChangeRepositoryButton.setText(isRepositoryNameBlank ? "add" : "change");
@@ -104,12 +120,12 @@ public class SetupActionsController extends VBox implements Initializable {
             if (selectedDirectory != null) {
                 directoryPath = selectedDirectory.getAbsolutePath();
                 AppConfig currentConfig = configManager.getCurrentConfig();
-                currentConfig.vestalRepository.localRepository = new LocalRepository(directoryPath);
-                configManager.saveConfig(currentConfig);
+                configManager.update(ac -> {
+                    ac.vestalRepository.localRepository = new LocalRepository(directoryPath);
+                    ac.vestalRepository.remoteRepository.clear();
+                });
                 localRepoManager.setupLocalRepository(currentConfig.vestalRepository.localRepository);
-                directoryTitleText.setText(directoryPath);
                 isDirectoryAbsent.set(false);
-                handleIfDirectoryAndRepositoryBothPresent();
                 log.info("[{}] A new directory path: [{}] has been set.", "1122_040826", directoryPath);
             } else {
                 log.info("[{}] Directory selection was cancelled by the user.", "1123_040826");
@@ -120,7 +136,6 @@ public class SetupActionsController extends VBox implements Initializable {
 
     private void setupAddChangeRepositoryButton() {
         addChangeRepositoryButton.setOnAction(e -> {
-            repositoryTitleText.setText("Loading repositories...");
             log.info("[{}] Loading repositories...", "0820_050826");
 
             Task<List<GitFetchRepository>> fetchTask = new Task<>() {
@@ -135,7 +150,6 @@ public class SetupActionsController extends VBox implements Initializable {
 
                 if (repositories.isEmpty()) {
                     addChangeRepositoryButton.setDisable(false);
-                    repositoryTitleText.setText("No repositories found.");
                     log.info("[{}] No repositories found.", "0823_050826");
                     return;
                 }
@@ -146,25 +160,21 @@ public class SetupActionsController extends VBox implements Initializable {
                             // todo 2: maybe automatic pull should happen?
                             repositoryName = result.repository.name();
                             repositoryUrl = result.repository.cloneUrl();
-                            AppConfig currentConfig = configManager.getCurrentConfig();
-                            currentConfig.vestalRepository.remoteRepository.name = repositoryName;
-                            currentConfig.vestalRepository.remoteRepository.url = repositoryUrl;
-                            configManager.saveConfig(currentConfig);
                             localRepoManager.setRemoteOrigin(new RemoteRepository(repositoryName, repositoryUrl));
-                            repositoryTitleText.setText(repositoryName);
-                            handleIfDirectoryAndRepositoryBothPresent();
+                            configManager.update(ac -> {
+                                ac.vestalRepository.remoteRepository.name = repositoryName;
+                                ac.vestalRepository.remoteRepository.url = repositoryUrl;
+                            });
+
+                            stateService.setState(State.ACTIONS);
                             log.info("[{}] Repository [{}] has been saved.", "1602_040826", repositoryName);
                         },
-                        () -> {
-                            repositoryTitleText.setText(configManager.getCurrentConfig().vestalRepository.remoteRepository.name);
-                            log.info("[{}] Repository selection was cancelled.", "1603_040826");
-                        }
+                        () -> log.info("[{}] Repository selection was cancelled.", "1603_040826")
                 );
             });
 
             fetchTask.setOnFailed(evt -> {
                 addChangeRepositoryButton.setDisable(false);
-                repositoryTitleText.setText("Failed to load repositories.");
                 log.warn("[{}] Failed to fetch repositories, error: {}", "1604_040826", fetchTask.getException().getMessage());
             });
 
@@ -210,12 +220,6 @@ public class SetupActionsController extends VBox implements Initializable {
                         : null);
 
         return dialog.showAndWait();
-    }
-
-    private void handleIfDirectoryAndRepositoryBothPresent() {
-        if (directoryPath != null && repositoryName != null) {
-            stateService.setState(State.ACTIONS);
-        }
     }
 
     private record RepositorySelection(GitFetchRepository repository, boolean checkboxValue) {}

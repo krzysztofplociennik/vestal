@@ -10,4 +10,9 @@ import lombok.NoArgsConstructor;
 public class RemoteRepository {
     public String name;
     public String url;
+
+    public void clear() {
+        this.name = "";
+        this.url = "";
+    }
 }

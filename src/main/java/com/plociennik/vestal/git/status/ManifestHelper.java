@@ -1,6 +1,7 @@
 package com.plociennik.vestal.git.status;
 
 import com.plociennik.vestal.common.VestalException;
+import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.git.util.FilesUtils;
 import com.plociennik.vestal.git.util.CustomStringUtils;
@@ -29,7 +30,7 @@ public class ManifestHelper {
     private static final String SEPARATOR = "|||";
 
     public ManifestHelper() {
-        if (isManifestFileNotPresent()) {
+        if (!isLocalRepoEmpty() && isManifestFileNotPresent()) {
             init();
         }
     }
@@ -64,6 +65,11 @@ public class ManifestHelper {
     boolean isManifestFileNotPresent() {
         File manifestFile = getManifestFile();
         return !manifestFile.exists();
+    }
+
+    boolean isLocalRepoEmpty() {
+        AppConfig currentConfig = configManager.getCurrentConfig();
+        return StringUtils.isBlank(currentConfig.vestalRepository.localRepository.sourcePath);
     }
 
     Map<String, String> getManifestMap() {

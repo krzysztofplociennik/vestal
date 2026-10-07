@@ -1,5 +1,6 @@
 package com.plociennik.vestal.controller;
 
+import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.config.MainDirectoryService;
 import com.plociennik.vestal.security.CredentialsStorage;
 import com.plociennik.vestal.security.KeyringCredentialsStorage;
@@ -35,9 +36,7 @@ public class MainController implements Initializable  {
     @FXML private SetupActionsController setupActionsController;
 
     private MainDirectoryService mainDirectoryService = new MainDirectoryService();
-
     private StateService stateService = StateService.getInstance();
-
     private CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
 
     @Override
@@ -53,22 +52,27 @@ public class MainController implements Initializable  {
 
         setupLogoutButton();
         setupChangeReposButton();
-
-        // todo: hardcoded, to be deleted
-        stateService.setState(State.ACTIONS);
-
+        applyState();
         log.info("[{}] App initialized, ready to work.", "1251_17092026");
+    }
+
+    private void applyState() {
+        AppConfigManager manager = AppConfigManager.getInstance();
+        State currentState = manager.getCurrentConfig().vestalRepository.state;
+        stateService.setState(currentState);
     }
 
     private void setupLogoutButton() {
         logoutButton.setOnAction(e -> {
-            stateService.setState(State.LOGGED_OUT);
             credentialsStorage.clear();
+            stateService.setState(State.LOGGED_OUT);
         });
     }
 
     private void setupChangeReposButton() {
         changeRepositoriesButton.setOnAction(e -> {
+            AppConfigManager manager = AppConfigManager.getInstance();
+            manager.update(c -> c.vestalRepository.clear());
             stateService.setState(State.REPOS);
         });
     }

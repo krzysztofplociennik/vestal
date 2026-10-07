@@ -7,11 +7,15 @@ import lombok.Data;
 public class VestalRepository {
     public LocalRepository localRepository;
     public RemoteRepository remoteRepository;
-    public State currentState;
+    public State state;
 
     public VestalRepository() {
         this.localRepository = new LocalRepository();
         this.remoteRepository = new RemoteRepository();
-        this.currentState = State.LOGIN;
+    }
+
+    public void clear() {
+        this.localRepository.clear();
+        this.remoteRepository.clear();
     }
 }
