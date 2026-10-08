@@ -1,5 +1,6 @@
 package com.plociennik.vestal.controller;
 
+import com.plociennik.vestal.config.AppConfigManager;
 import com.plociennik.vestal.login.BrowserLauncher;
 import com.plociennik.vestal.security.CredentialType;
 import com.plociennik.vestal.security.CredentialsStorage;
@@ -24,6 +25,8 @@ import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+// todo: bindings
+
 @Slf4j
 public class GithubLoginController extends VBox implements Initializable {
 
@@ -46,6 +49,7 @@ public class GithubLoginController extends VBox implements Initializable {
     private CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
     private TokenValidator tokenValidator = new TokenValidator();
     private StateService stateService = StateService.getInstance();
+    private AppConfigManager appConfigManager = AppConfigManager.getInstance();
 
     private String userCode = "";
     private String verificationLink = "";
@@ -158,6 +162,7 @@ public class GithubLoginController extends VBox implements Initializable {
         });
     }
 
+    // todo: logout button not really used here, probably to be deleted
     private void setupLogoutButtonAction() {
         logoutButton.setOnAction(e -> {
             log.info("Logged out.");
@@ -168,7 +173,6 @@ public class GithubLoginController extends VBox implements Initializable {
             logoutButton.setVisible(false);
             credentialsStorage.clear();
             clientIdSaved = false;
-            // todo: repos clear from the config as well
             stateService.setState(State.LOGGED_OUT);
         });
     }

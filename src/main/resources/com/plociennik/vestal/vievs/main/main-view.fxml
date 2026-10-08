@@ -24,6 +24,7 @@
         <fx:include source="../gitactions/git-actions-view.fxml" fx:id="gitActionsView" stylesheets="@../gitactions/git-actions.css"/>
     </StackPane>
 
+<!--    todo: global status, for errors mostly -->
 <!--    <fx:include source="../dummytest/dummy-test-view.fxml" fx:id="dummyTest" stylesheets="@../dummytest/dummy-test.css"/>-->
 
 </VBox>
