@@ -39,7 +39,7 @@
                 </ImageView>
                 <Text> remote </Text>
                 <Text fx:id="repositoryTitleText"/>
-                <Button fx:id="addChangeRepositoryButton"/>
+                <Button fx:id="addChangeRepositoryButton" text="add"/>
             </VBox>
 
         </VBox>

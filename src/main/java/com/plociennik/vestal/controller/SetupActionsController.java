@@ -61,12 +61,13 @@ public class SetupActionsController extends VBox implements Initializable {
     private GithubRepositoryFetcher githubRepositoryFetcher = new GithubRepositoryFetcher();
     private LocalRepoManager localRepoManager = new LocalRepoManager();
 
+    // todo: to be deleted
     private String directoryPath = null;
     private String repositoryName = null;
     private String repositoryUrl = null;
 
-    @Getter private BooleanProperty areDirectoryRepositoryPresent = new SimpleBooleanProperty(false);
     @Getter private BooleanProperty isDirectoryAbsent = new SimpleBooleanProperty(true);
+    @Getter private BooleanProperty areDirectoryRepositoryPresent = new SimpleBooleanProperty(false);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -78,13 +79,7 @@ public class SetupActionsController extends VBox implements Initializable {
         repositoryName = configManager.getCurrentConfig().vestalRepository.remoteRepository.name;
         addChangeRepositoryButton.disableProperty().bind(isDirectoryAbsent);
 
-        boolean isDirectoryPathBlank = StringUtils.isBlank(directoryPath);
-        boolean isRepositoryNameBlank = StringUtils.isBlank(repositoryName);
-
-        isDirectoryAbsent.set(isDirectoryPathBlank);
-
-        directoryTitleText.setText(isDirectoryPathBlank ? "empty" : directoryPath);
-        repositoryTitleText.setText(isRepositoryNameBlank ? "empty" : repositoryName);
+        isDirectoryAbsent.bind(localRepositoryPathProperty.map(StringUtils::isBlank));
 
         localRepositoryPathProperty.bind(configManager.getCurrentConfigProperty()
                 .map(c -> c.vestalRepository.localRepository.sourcePath));
@@ -94,8 +89,8 @@ public class SetupActionsController extends VBox implements Initializable {
         directoryTitleText.textProperty().bind(localRepositoryPathProperty);
         repositoryTitleText.textProperty().bind(remoteRepositoryPathProperty);
 
-        addChangeDirectoryButton.setText(isDirectoryPathBlank ? "add" : "change");
-        addChangeRepositoryButton.setText(isRepositoryNameBlank ? "add" : "change");
+        addChangeDirectoryButton.textProperty().bind(
+                isDirectoryAbsent.map(isAbsent -> isAbsent ? "add" : "change"));
 
         setupAddChangeDirectoryButton();
         setupAddChangeRepositoryButton();
@@ -119,13 +114,12 @@ public class SetupActionsController extends VBox implements Initializable {
 
             if (selectedDirectory != null) {
                 directoryPath = selectedDirectory.getAbsolutePath();
-                AppConfig currentConfig = configManager.getCurrentConfig();
                 configManager.update(ac -> {
                     ac.vestalRepository.localRepository = new LocalRepository(directoryPath);
                     ac.vestalRepository.remoteRepository.clear();
                 });
+                AppConfig currentConfig = configManager.getCurrentConfig();
                 localRepoManager.setupLocalRepository(currentConfig.vestalRepository.localRepository);
-                isDirectoryAbsent.set(false);
                 log.info("[{}] A new directory path: [{}] has been set.", "1122_040826", directoryPath);
             } else {
                 log.info("[{}] Directory selection was cancelled by the user.", "1123_040826");
