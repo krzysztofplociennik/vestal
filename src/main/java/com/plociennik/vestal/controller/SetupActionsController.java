@@ -11,8 +11,6 @@ import com.plociennik.vestal.state.State;
 import com.plociennik.vestal.state.StateService;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -32,7 +30,6 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -52,9 +49,6 @@ public class SetupActionsController extends VBox implements Initializable {
     @FXML private Text directoryTitleText;
     @FXML private Button addChangeRepositoryButton;
     @FXML private Text repositoryTitleText;
-
-    private StringProperty localRepositoryPathProperty = new SimpleStringProperty(null);
-    private StringProperty remoteRepositoryPathProperty = new SimpleStringProperty(null);
 
     private AppConfigManager configManager = AppConfigManager.getInstance();
     private StateService stateService = StateService.getInstance();
@@ -79,15 +73,15 @@ public class SetupActionsController extends VBox implements Initializable {
         repositoryName = configManager.getCurrentConfig().vestalRepository.remoteRepository.name;
         addChangeRepositoryButton.disableProperty().bind(isDirectoryAbsent);
 
-        isDirectoryAbsent.bind(localRepositoryPathProperty.map(StringUtils::isBlank));
+        isDirectoryAbsent.bind(configManager.getCurrentConfigProperty()
+                .map(p -> p.vestalRepository.localRepository.sourcePath)
+                .map(String::isBlank));
 
-        localRepositoryPathProperty.bind(configManager.getCurrentConfigProperty()
+        directoryTitleText.textProperty().bind(configManager.getCurrentConfigProperty()
                 .map(c -> c.vestalRepository.localRepository.sourcePath));
-        remoteRepositoryPathProperty.bind(configManager.getCurrentConfigProperty()
-                .map(c -> c.vestalRepository.remoteRepository.name));
 
-        directoryTitleText.textProperty().bind(localRepositoryPathProperty);
-        repositoryTitleText.textProperty().bind(remoteRepositoryPathProperty);
+        repositoryTitleText.textProperty().bind(configManager.getCurrentConfigProperty()
+                .map(c -> c.vestalRepository.remoteRepository.name));
 
         addChangeDirectoryButton.textProperty().bind(
                 isDirectoryAbsent.map(isAbsent -> isAbsent ? "add" : "change"));
