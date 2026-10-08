@@ -55,11 +55,6 @@ public class SetupActionsController extends VBox implements Initializable {
     private GithubRepositoryFetcher githubRepositoryFetcher = new GithubRepositoryFetcher();
     private LocalRepoManager localRepoManager = new LocalRepoManager();
 
-    // todo: to be deleted
-    private String directoryPath = null;
-    private String repositoryName = null;
-    private String repositoryUrl = null;
-
     @Getter private BooleanProperty isDirectoryAbsent = new SimpleBooleanProperty(true);
     @Getter private BooleanProperty areDirectoryRepositoryPresent = new SimpleBooleanProperty(false);
 
@@ -69,8 +64,6 @@ public class SetupActionsController extends VBox implements Initializable {
         directoryArea.prefWidthProperty().bind(setupActionsSubArea.widthProperty().divide(2));
         repositoryArea.prefWidthProperty().bind(setupActionsSubArea.widthProperty().divide(2));
 
-        directoryPath = configManager.getCurrentConfig().vestalRepository.localRepository.sourcePath;
-        repositoryName = configManager.getCurrentConfig().vestalRepository.remoteRepository.name;
         addChangeRepositoryButton.disableProperty().bind(isDirectoryAbsent);
 
         isDirectoryAbsent.bind(configManager.getCurrentConfigProperty()
@@ -107,7 +100,7 @@ public class SetupActionsController extends VBox implements Initializable {
             File selectedDirectory = directoryChooser.showDialog(addChangeDirectoryButton.getScene().getWindow());
 
             if (selectedDirectory != null) {
-                directoryPath = selectedDirectory.getAbsolutePath();
+                String directoryPath = selectedDirectory.getAbsolutePath();
                 configManager.update(ac -> {
                     ac.vestalRepository.localRepository = new LocalRepository(directoryPath);
                     ac.vestalRepository.remoteRepository.clear();
@@ -146,14 +139,13 @@ public class SetupActionsController extends VBox implements Initializable {
                         result -> {
                             // todo: maybe a good idea would be to have a check for not selecting a wrong repository
                             // todo 2: maybe automatic pull should happen?
-                            repositoryName = result.repository.name();
-                            repositoryUrl = result.repository.cloneUrl();
+                            String repositoryName = result.repository.name();
+                            String repositoryUrl = result.repository.cloneUrl();
                             localRepoManager.setRemoteOrigin(new RemoteRepository(repositoryName, repositoryUrl));
                             configManager.update(ac -> {
                                 ac.vestalRepository.remoteRepository.name = repositoryName;
                                 ac.vestalRepository.remoteRepository.url = repositoryUrl;
                             });
-
                             stateService.setState(State.ACTIONS);
                             log.info("[{}] Repository [{}] has been saved.", "1602_040826", repositoryName);
                         },
