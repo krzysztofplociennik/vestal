@@ -20,7 +20,7 @@
         <fx:include source="../landing/landing-view.fxml" fx:id="landingPage" stylesheets="@../landing/landing.css"/>
         <fx:include source="../githublogin/githubLogin-view.fxml" fx:id="githubLogin" stylesheets="@../githublogin/githubLogin.css"/>
         <fx:include source="../encryptionkey/encryptionkey-view.fxml" fx:id="encryptionKey" stylesheets="@../encryptionkey/encryptionkey.css"/>
-        <fx:include source="../setupactions/setupActions-view.fxml" fx:id="setupActions" stylesheets="@../setupactions/setupActions.css"/>
+        <fx:include source="../setuprepositories/setup-repositories-view.fxml" fx:id="setupActions" stylesheets="@../setuprepositories/setup-repositories.css"/>
         <fx:include source="../gitactions/gitActions-view.fxml" fx:id="gitActions" stylesheets="@../gitactions/gitActions.css"/>
     </StackPane>
 

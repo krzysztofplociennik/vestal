@@ -1,14 +1,14 @@
-#setupActionsArea {
+#setupRepositoriesArea {
     -fx-background-color: #242424;
 }
 
-#directoryArea {
+#localRepoArea {
     -fx-background-color: #242424;
     -fx-padding: 40px 40px;
     -fx-spacing: 10;
 }
 
-#repositoryArea {
+#remoteRepoArea {
     -fx-background-color: #242424;
     -fx-padding: 40px 40px;
     -fx-spacing: 10;

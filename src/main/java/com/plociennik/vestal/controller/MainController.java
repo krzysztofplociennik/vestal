@@ -33,7 +33,7 @@ public class MainController implements Initializable  {
 
     // todo: maybe unneeded
     @FXML private GithubLoginController githubLoginController;
-    @FXML private SetupActionsController setupActionsController;
+    @FXML private SetupRepositoriesController setupRepositoriesController;
 
     private MainDirectoryService mainDirectoryService = new MainDirectoryService();
     private StateService stateService = StateService.getInstance();
