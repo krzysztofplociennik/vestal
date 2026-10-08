@@ -9,7 +9,6 @@ import com.plociennik.vestal.state.StateService;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,21 +18,14 @@ import java.util.ResourceBundle;
 @Slf4j
 public class MainController implements Initializable  {
 
+    @FXML private VBox landingView;
+    @FXML private VBox githubLoginView;
+    @FXML private VBox encryptionKeyView;
+    @FXML private VBox setupRepositoriesView;
+    @FXML private VBox gitActionsView;
+
     @FXML private Button changeRepositoriesButton;
-    @FXML private HBox logoutButtonArea;
-    @FXML private VBox landingPage;
-
-    // todo: names should point that this is a page/view
-    @FXML private VBox githubLogin;
-    @FXML private VBox encryptionKey;
-    @FXML private VBox setupActions;
-    @FXML private VBox gitActions;
-
     @FXML private Button logoutButton;
-
-    // todo: maybe unneeded
-    @FXML private GithubLoginController githubLoginController;
-    @FXML private SetupRepositoriesController setupRepositoriesController;
 
     private MainDirectoryService mainDirectoryService = new MainDirectoryService();
     private StateService stateService = StateService.getInstance();
@@ -42,11 +34,12 @@ public class MainController implements Initializable  {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         mainDirectoryService.init();
-        githubLogin.visibleProperty().bind(stateService.getLoginVisible());
-        setupActions.visibleProperty().bind(stateService.getRepositoriesVisible());
-        gitActions.visibleProperty().bind(stateService.getActionsVisible());
-        landingPage.visibleProperty().bind(stateService.getLandingVisible());
-        encryptionKey.visibleProperty().bind(stateService.getEncryptionKeyVisible());
+        githubLoginView.visibleProperty().bind(stateService.getLoginVisible());
+        setupRepositoriesView.visibleProperty().bind(stateService.getRepositoriesVisible());
+        gitActionsView.visibleProperty().bind(stateService.getActionsVisible());
+        landingView.visibleProperty().bind(stateService.getLandingVisible());
+        encryptionKeyView.visibleProperty().bind(stateService.getEncryptionKeyVisible());
+
         logoutButton.visibleProperty().bind(stateService.getIsLoggedIn());
         changeRepositoriesButton.visibleProperty().bind(stateService.getActionsVisible());
 
