@@ -18,14 +18,14 @@
 
     <StackPane VBox.vgrow="ALWAYS">
         <fx:include source="../landing/landing-view.fxml" fx:id="landingPage" stylesheets="@../landing/landing.css"/>
-        <fx:include source="../githublogin/githubLogin-view.fxml" fx:id="githubLogin" stylesheets="@../githublogin/githubLogin.css"/>
-        <fx:include source="../encryptionkey/encryptionkey-view.fxml" fx:id="encryptionKey" stylesheets="@../encryptionkey/encryptionkey.css"/>
+        <fx:include source="../githublogin/github-login-view.fxml" fx:id="githubLogin" stylesheets="@../githublogin/github-login.css"/>
+        <fx:include source="../encryptionkey/encryption-key-view.fxml" fx:id="encryptionKey" stylesheets="@../encryptionkey/encryption-key.css"/>
         <fx:include source="../setuprepositories/setup-repositories-view.fxml" fx:id="setupActions" stylesheets="@../setuprepositories/setup-repositories.css"/>
-        <fx:include source="../gitactions/gitActions-view.fxml" fx:id="gitActions" stylesheets="@../gitactions/gitActions.css"/>
+        <fx:include source="../gitactions/git-actions-view.fxml" fx:id="gitActions" stylesheets="@../gitactions/git-actions.css"/>
     </StackPane>
 
     <!--    // todo: make status bar component/view-->
 
-    <fx:include source="../dummytest/dummytest-view.fxml" fx:id="dummyTest" stylesheets="@../dummytest/dummytest.css"/>
+    <fx:include source="../dummytest/dummy-test-view.fxml" fx:id="dummyTest" stylesheets="@../dummytest/dummy-test.css"/>
 
 </VBox>

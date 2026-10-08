@@ -13,7 +13,7 @@
         xmlns:fx="http://javafx.com/fxml/1"
         fx:id="encryptionKey"
         fx:controller="com.plociennik.vestal.controller.EncryptionKeyController"
-        stylesheets="@encryptionkey.css"
+        stylesheets="@encryption-key.css"
 >
 
     <VBox alignment="CENTER">
