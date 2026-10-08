@@ -20,7 +20,7 @@ maybe force is a no-no and should be handled via pulling first
 - different way of structuring views and css files (more like a typescript project
 - starting state is hardcoded
 - git actions view is not exactly centered
-
+- there should be a check if for a local repo you pick an existing encryption path
 
 NICE TO HAVES
 1. token might need more handling (expiry, warning before expiring, better information/status of the token)
