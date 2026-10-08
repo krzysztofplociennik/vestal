@@ -19,7 +19,6 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -65,6 +64,8 @@ public class SetupActionsController extends VBox implements Initializable {
         repositoryArea.prefWidthProperty().bind(setupActionsSubArea.widthProperty().divide(2));
 
         addChangeRepositoryButton.disableProperty().bind(isDirectoryAbsent);
+        addChangeDirectoryButton.textProperty().bind(
+                isDirectoryAbsent.map(isAbsent -> isAbsent ? "add" : "change"));
 
         isDirectoryAbsent.bind(configManager.getCurrentConfigProperty()
                 .map(p -> p.vestalRepository.localRepository.sourcePath)
@@ -75,9 +76,6 @@ public class SetupActionsController extends VBox implements Initializable {
 
         repositoryTitleText.textProperty().bind(configManager.getCurrentConfigProperty()
                 .map(c -> c.vestalRepository.remoteRepository.name));
-
-        addChangeDirectoryButton.textProperty().bind(
-                isDirectoryAbsent.map(isAbsent -> isAbsent ? "add" : "change"));
 
         setupAddChangeDirectoryButton();
         setupAddChangeRepositoryButton();
@@ -177,10 +175,9 @@ public class SetupActionsController extends VBox implements Initializable {
                 setText(empty || repo == null ? null : repo.name());
             }
         });
-        CheckBox checkBox = new CheckBox("Encrypt notes in this repository");
 
         VBox.setVgrow(listView, Priority.ALWAYS);
-        VBox content = new VBox(10, listView, checkBox);
+        VBox content = new VBox(10, listView);
         content.setPadding(new Insets(10));
         dialog.getDialogPane().setContent(content);
 
@@ -196,11 +193,11 @@ public class SetupActionsController extends VBox implements Initializable {
 
         dialog.setResultConverter(buttonType ->
                 buttonType == selectButtonType
-                        ? new RepositorySelection(listView.getSelectionModel().getSelectedItem(), checkBox.isSelected())
+                        ? new RepositorySelection(listView.getSelectionModel().getSelectedItem())
                         : null);
 
         return dialog.showAndWait();
     }
 
-    private record RepositorySelection(GitFetchRepository repository, boolean checkboxValue) {}
+    private record RepositorySelection(GitFetchRepository repository) {}
 }
