@@ -30,6 +30,7 @@ public class MainController implements Initializable  {
     private MainDirectoryService mainDirectoryService = new MainDirectoryService();
     private StateService stateService = StateService.getInstance();
     private CredentialsStorage credentialsStorage = new KeyringCredentialsStorage();
+    private AppConfigManager appConfigManager = AppConfigManager.getInstance();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -58,6 +59,7 @@ public class MainController implements Initializable  {
     private void setupLogoutButton() {
         logoutButton.setOnAction(e -> {
             credentialsStorage.clear();
+            appConfigManager.update(cc -> cc.vestalRepository.clear());
             stateService.setState(State.LOGGED_OUT);
         });
     }
