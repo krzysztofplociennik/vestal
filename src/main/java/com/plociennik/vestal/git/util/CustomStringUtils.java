@@ -49,4 +49,15 @@ public class CustomStringUtils {
         int length = string.length();
         return substring(string, start, length);
     }
+
+    public static int lastIndexOf(String substring, String string) {
+        int i = string.lastIndexOf(substring);
+        if (i == -1) {
+            throw new VestalException(
+                    "0927_09102026",
+                    "The substring of [%s] has not been found in the string of [%s]".formatted(substring, string)
+            );
+        }
+        return i;
+    }
 }

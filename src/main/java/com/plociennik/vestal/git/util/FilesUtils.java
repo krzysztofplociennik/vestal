@@ -94,8 +94,7 @@ public class FilesUtils {
     // todo: test
     private static void createMissingDirectories(Path path) {
         String separator = getOperatingSystemFolderSeparator();
-        // todo: method to be implemented in CustomStringUtils
-        int lastSeparator = path.toString().lastIndexOf(separator);
+        int lastSeparator = CustomStringUtils.lastIndexOf(separator, path.toString());
         String substring = CustomStringUtils.substring(path.toString(), 0, lastSeparator);
         try {
             Files.createDirectories(Path.of(substring));
