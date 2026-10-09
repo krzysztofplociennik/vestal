@@ -2,7 +2,7 @@ package com.plociennik.vestal.encryption;
 
 import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
-import com.plociennik.vestal.git.util.FilesUtils;
+import com.plociennik.vestal.common.util.FilesUtils;
 import com.plociennik.vestal.security.CredentialType;
 import com.plociennik.vestal.security.CredentialsStorage;
 import com.plociennik.vestal.security.KeyringCredentialsStorage;

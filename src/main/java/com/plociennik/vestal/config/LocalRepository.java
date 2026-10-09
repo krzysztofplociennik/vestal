@@ -1,7 +1,7 @@
 package com.plociennik.vestal.config;
 
 import com.plociennik.vestal.common.VestalException;
-import com.plociennik.vestal.git.util.FilesUtils;
+import com.plociennik.vestal.common.util.FilesUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

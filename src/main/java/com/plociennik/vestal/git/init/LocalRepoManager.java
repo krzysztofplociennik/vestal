@@ -5,7 +5,7 @@ import com.plociennik.vestal.config.LocalRepository;
 import com.plociennik.vestal.config.RemoteRepository;
 import com.plociennik.vestal.encryption.EncryptResult;
 import com.plociennik.vestal.encryption.EncryptionService;
-import com.plociennik.vestal.git.util.GitUtils;
+import com.plociennik.vestal.common.util.GitUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;

@@ -3,7 +3,7 @@ package com.plociennik.vestal.git.status;
 // todo: generally the package should be somewhere else since it's not really using git
 // todo: the name probably should be just changed
 
-import com.plociennik.vestal.git.util.FilesUtils;
+import com.plociennik.vestal.common.util.FilesUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;

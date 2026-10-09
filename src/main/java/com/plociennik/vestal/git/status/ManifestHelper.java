@@ -3,8 +3,8 @@ package com.plociennik.vestal.git.status;
 import com.plociennik.vestal.common.VestalException;
 import com.plociennik.vestal.config.AppConfig;
 import com.plociennik.vestal.config.AppConfigManager;
-import com.plociennik.vestal.git.util.FilesUtils;
-import com.plociennik.vestal.git.util.CustomStringUtils;
+import com.plociennik.vestal.common.util.FilesUtils;
+import com.plociennik.vestal.common.util.CustomStringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
