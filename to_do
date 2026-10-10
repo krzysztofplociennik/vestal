@@ -2,24 +2,16 @@ VESTAL
 
 
 TODOS
-1. current config implementation might need to be a little bit simplified
-2. delete remaining borders, colors, comments, todos, etc.
-3. naming conventions probably should be unified (directory = local repo, repo = remote repo)
 5. at least a minimal amount of tests would be nice
 7. need tests
 8. when adding/changing a repository there should be an option to create a new remote repository
-9. important: secret key is hardcoded, needs implementation
-12. right now encrypting works with just one level (no folders, just files)
 13. windows separator needs to be tested
 14. there is a possibility that force pushing from a new OS/local repository might delete (???) previous commits,
 maybe force is a no-no and should be handled via pulling first
 17. need to add a test that checks if encryption and decryption are not transforming contents
-- code reload (when logging in)
+- github code reload (when logging in)
 - buttons start with a big letter or a small one
 - buttons' borders do not always match the text inside them
-- different way of structuring views and css files (more like a typescript project
-- starting state is hardcoded
-- git actions view is not exactly centered
 - there should be a check if for a local repo you pick an existing encryption path
 
 NICE TO HAVES
