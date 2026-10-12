@@ -35,8 +35,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-// todo: naming should be more like: SetupRepositoriesController
-
 @Slf4j
 public class SetupRepositoriesController extends VBox implements Initializable {
 
