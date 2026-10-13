@@ -80,7 +80,7 @@ public class GitStatusService {
         }
         Map<String, String> currentManifestMap = manifestHelper.createCurrentFilenamesHashesMap();
         String fileContents = manifestHelper.parseMapIntoString(currentManifestMap);
-        FilesUtils.write(manifestPath, fileContents);
+        FilesUtils.write(manifestPath, fileContents.getBytes());
         log.info("[{}] Status manifest has been successfully updated.", "1336_31082026");
     }
 }

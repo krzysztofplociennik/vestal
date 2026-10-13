@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,20 +67,10 @@ public class FilesUtils {
         return files;
     }
 
-    // todo: 2 methods should be merged
-    public static void write(Path path, String fileContents) {
-        try {
-            createMissingDirectories(path);
-            Files.writeString(path, fileContents, StandardOpenOption.CREATE);
-        } catch (IOException e) {
-            throw new VestalException(
-                    "1443_21082026",
-                    "Something happened while trying to create a file of path: [%s].".formatted(path.toString()),
-                    e);
-        }
-    }
-
     public static void write(Path path, byte[] fileContents) {
+        if (doesPathExist(path.toString())) {
+            delete(path);
+        }
         try {
             createMissingDirectories(path);
             Files.write(path, fileContents, StandardOpenOption.CREATE);
@@ -91,7 +82,6 @@ public class FilesUtils {
         }
     }
 
-    // todo: test
     private static void createMissingDirectories(Path path) {
         String separator = getOperatingSystemFolderSeparator();
         int lastSeparator = CustomStringUtils.lastIndexOf(separator, path.toString());

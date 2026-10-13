@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
 class FilesUtilsTest {
 
     // --------------------------------------------
@@ -271,14 +270,159 @@ class FilesUtilsTest {
                 .collect(Collectors.toSet());
     }
 
+    // ----------------------------------------------------------------
+    // ---------- void write(Path path, byte[] fileContents) ----------
+    // ----------------------------------------------------------------
+
+    @Test
+    @DisplayName("write: writes exact bytes to an existing directory")
+    void write_existingDirectory(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path target = tempDir.resolve("out.bin");
+        byte[] payload = {1, 2, 3, 4, 5};
+
+        // Act
+        FilesUtils.write(target, payload);
+
+        // Assert
+        Assertions.assertTrue(Files.isRegularFile(target));
+        Assertions.assertArrayEquals(payload, Files.readAllBytes(target));
+    }
+
+    @Test
+    @DisplayName("write: empty byte array creates a zero-length file")
+    void write_emptyPayload(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path target = tempDir.resolve("empty.bin");
+        byte[] payload = new byte[0];
+
+        // Act
+        FilesUtils.write(target, payload);
+
+        // Assert
+        Assertions.assertTrue(Files.isRegularFile(target));
+        Assertions.assertEquals(0L, Files.size(target));
+    }
+
+    @Test
+    @DisplayName("write: binary content (all 256 byte values) is preserved exactly")
+    void write_binaryContentPreserved(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path target = tempDir.resolve("bin.dat");
+        byte[] payload = new byte[256];
+        for (int i = 0; i < 256; i++) payload[i] = (byte) i;
+
+        // Act
+        FilesUtils.write(target, payload);
+
+        // Assert
+        Assertions.assertArrayEquals(payload, Files.readAllBytes(target));
+    }
+
+    @Test
+    @DisplayName("write: text content is readable back as the same string")
+    void write_textRoundTrip(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path target = tempDir.resolve("note.txt");
+        String text = "Hello, World!";
+        byte[] payload = text.getBytes();
+
+        // Act
+        FilesUtils.write(target, payload);
+
+        // Assert
+        Assertions. assertEquals(text, Files.readString(target));
+    }
+
+    @Test
+    @DisplayName("write: second write to the same path succeeds")
+    void write_secondWriteSucceeds(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path target = tempDir.resolve("x.txt");
+
+        // Act
+        FilesUtils.write(target, "first".getBytes());
+        FilesUtils.write(target, "second".getBytes());
+
+        // Assert
+        Assertions.assertEquals("second", Files.readString(target));
+    }
+
+    @Test
+    @DisplayName("write: writing shorter content over longer must truncate (no stale tail)")
+    void write_shorterOverLongerMustTruncate(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path target = tempDir.resolve("x.txt");
+
+        // Act
+        FilesUtils.write(target, "hello world".getBytes());
+        FilesUtils.write(target, "hi".getBytes());
+
+        // Assert
+        byte[] withStaleTail = "hillo world".getBytes();
+        byte[] actual = Files.readAllBytes(target);
+        byte[] expected = "hi".getBytes();
+
+        Assertions.assertNotEquals(withStaleTail, actual);
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("write: creates a single missing parent directory")
+    void write_createsMissingDirs_singleLevel(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path target = tempDir.resolve("sub").resolve("out.bin");
+        Assertions.assertFalse(Files.exists(target.getParent()));
+
+        // Act
+        FilesUtils.write(target, "data".getBytes());
+
+        // Assert
+        Assertions.assertTrue(Files.exists(target.getParent()));
+        Assertions.assertTrue(Files.isDirectory(tempDir.resolve("sub")));
+        Assertions.assertTrue(Files.isRegularFile(target));
+        Assertions.assertEquals("data", Files.readString(target));
+    }
+
+    @Test
+    @DisplayName("write: creates multiple missing parent directories (deep path)")
+    void write_createsMissingDirs_deepPath(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path target = tempDir.resolve("a").resolve("b").resolve("c")
+                .resolve("d").resolve("out.bin");
+        Assertions.assertFalse(Files.exists(tempDir.resolve("a")));
+        Assertions.assertFalse(Files.exists(tempDir.resolve("a").resolve("b")));
+        Assertions.assertFalse(Files.exists(tempDir.resolve("a").resolve("b").resolve("c")));
+
+        // Act
+        FilesUtils.write(target, "deep".getBytes());
+
+        // Assert
+        Assertions.assertTrue(Files.isDirectory(tempDir.resolve("a")));
+        Assertions.assertTrue(Files.isDirectory(tempDir.resolve("a").resolve("b")));
+        Assertions.assertTrue(Files.isDirectory(tempDir.resolve("a").resolve("b").resolve("c")));
+        Assertions.assertTrue(Files.isDirectory(target.getParent()));
+        Assertions.assertEquals("deep", Files.readString(target));
+    }
+
+    @Test
+    @DisplayName("write: does NOT fail when parent directories already exist")
+    void write_createsMissingDirs_alreadyExist(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path parent = tempDir.resolve("existing").resolve("dir");
+        Files.createDirectories(parent);
+        Path target = parent.resolve("out.bin");
+
+        // Act
+        FilesUtils.write(target, "ok".getBytes());
+
+        // Assert
+        Assertions.assertEquals("ok", Files.readString(target));
+    }
 
     // ---------------------------------------
     // ---------- paste_method_here ----------
     // ---------------------------------------
-
-    @Test
-    void write() {
-    }
 
     @Test
     void testWrite() {
