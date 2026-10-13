@@ -1,11 +1,17 @@
 package com.plociennik.vestal.common.util;
 
 import com.plociennik.vestal.common.VestalException;
+import com.plociennik.vestal.config.AppConfig;
+import com.plociennik.vestal.config.AppConfigManager;
+import com.plociennik.vestal.config.OperatingSystem;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -543,13 +549,78 @@ class FilesUtilsTest {
         Assertions.assertTrue(Files.exists(dir.resolve("inner.txt")));
     }
 
+    // ----------------------------------------------------------------
+    // ---------- String getOperatingSystemFolderSeparator() ----------
+    // ----------------------------------------------------------------
+
+    @Test
+    @DisplayName("LINUX → '/'")
+    void getOperatingSystemFolderSeparator_linux() {
+        // Arrange
+        try (MockedStatic<AppConfigManager> mockedManager = Mockito.mockStatic(AppConfigManager.class)) {
+            AppConfigManager mockInstance = Mockito.mock(AppConfigManager.class);
+            mockedManager.when(AppConfigManager::getInstance).thenReturn(mockInstance);
+
+            var config = Mockito.mock(AppConfig.class);
+            config.operatingSystem = OperatingSystem.LINUX;
+            Mockito.when(mockInstance.getCurrentConfig()).thenReturn(config);
+
+            // Act
+            String result = FilesUtils.getOperatingSystemFolderSeparator();
+
+            // Assert
+            Assertions.assertEquals("/", result);
+        }
+    }
+
+    @Test
+    @DisplayName("WINDOWS → '\\'")
+    void getOperatingSystemFolderSeparator_windows() {
+        // Arrange
+        try (MockedStatic<AppConfigManager> mockedManager = Mockito.mockStatic(AppConfigManager.class)) {
+            AppConfigManager mockInstance = Mockito.mock(AppConfigManager.class);
+            mockedManager.when(AppConfigManager::getInstance).thenReturn(mockInstance);
+
+            var config = Mockito.mock(AppConfig.class);
+            config.operatingSystem = OperatingSystem.WINDOWS;
+            Mockito.when(mockInstance.getCurrentConfig()).thenReturn(config);
+
+            // Act
+            String result = FilesUtils.getOperatingSystemFolderSeparator();
+
+            // Assert
+            Assertions.assertEquals("\\", result);
+        }
+    }
+
+    @Test
+    @DisplayName("LINUX separator matches File.separator on a Linux host (integration sanity)")
+    void getOperatingSystemFolderSeparator_matchesPlatformWhenLinux() {
+        // Arrange
+        String osName = System.getProperty("os.name", "").toLowerCase();
+        if (!osName.contains("linux")) {
+            Assumptions.abort("Only meaningful on a Linux host");
+        }
+
+        try (MockedStatic<AppConfigManager> mockedManager = Mockito.mockStatic(AppConfigManager.class)) {
+            AppConfigManager mockInstance = Mockito.mock(AppConfigManager.class);
+            mockedManager.when(AppConfigManager::getInstance).thenReturn(mockInstance);
+
+            var config = Mockito.mock(AppConfig.class);
+            config.operatingSystem = OperatingSystem.LINUX;
+            Mockito.when(mockInstance.getCurrentConfig()).thenReturn(config);
+
+            // Act
+            String result = FilesUtils.getOperatingSystemFolderSeparator();
+
+            // Assert
+            Assertions.assertEquals(java.io.File.separator, result);
+        }
+    }
+
     // ---------------------------------------
     // ---------- paste_method_here ----------
     // ---------------------------------------
-
-    @Test
-    void getOperatingSystemFolderSeparator() {
-    }
 
     @Test
     void doesPathExist() {
