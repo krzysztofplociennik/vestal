@@ -120,6 +120,7 @@ public class FilesUtils {
         return Files.exists(Path.of(path));
     }
 
+    // todo: change to path from string
     public static void createEmptyDirectory(String path, String name) {
         Path directory = Path.of(path);
         Path folder = directory.resolve(name);

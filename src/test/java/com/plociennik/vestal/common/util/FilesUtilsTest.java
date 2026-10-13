@@ -618,17 +618,61 @@ class FilesUtilsTest {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // ---------- void createEmptyDirectory(String path, String name) ----------
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Creates a new empty directory successfully")
+    void createEmptyDirectory_success(@TempDir Path tempDir) {
+        // Arrange
+        String path = tempDir.toString();
+        String name = "newFolder";
+
+        // Act
+        FilesUtils.createEmptyDirectory(path, name);
+
+        // Assert
+        Path folder = tempDir.resolve(name);
+        Assertions.assertTrue(Files.exists(folder));
+        Assertions.assertTrue(Files.isDirectory(folder));
+        Assertions.assertEquals(0, FilesUtils.collectFrom(folder).size());
+    }
+
+    @Test
+    @DisplayName("Throws VestalException if directory already exists")
+    void createEmptyDirectory_dirAlreadyExists(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        String name = "existingFolder";
+        Files.createDirectories(tempDir.resolve(name));
+
+        // Act & Assert
+        VestalException ex = Assertions.assertThrows(
+                VestalException.class,
+                () -> FilesUtils.createEmptyDirectory(tempDir.toString(), name)
+        );
+        Assertions.assertEquals("1354_09092026", ex.getErrorID());
+    }
+
+    @Test
+    @DisplayName("Throws VestalException if a file already exists at the target path")
+    void createEmptyDirectory_fileAlreadyExists(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        String filename = "someFile.txt";
+        Files.writeString(tempDir.resolve(filename), "content");
+
+        // Act & Assert
+        VestalException ex = Assertions.assertThrows(
+                VestalException.class,
+                () -> FilesUtils.createEmptyDirectory(tempDir.toString(), filename)
+        );
+
+        Assertions.assertEquals("1354_09092026", ex.getErrorID());
+    }
+
     // ---------------------------------------
     // ---------- paste_method_here ----------
     // ---------------------------------------
-
-    @Test
-    void doesPathExist() {
-    }
-
-    @Test
-    void createEmptyDirectory() {
-    }
 
     @Test
     void getFile() {
