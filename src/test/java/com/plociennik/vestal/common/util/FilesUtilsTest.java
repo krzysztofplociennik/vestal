@@ -275,7 +275,7 @@ class FilesUtilsTest {
     // ----------------------------------------------------------------
 
     @Test
-    @DisplayName("write: writes exact bytes to an existing directory")
+    @DisplayName("writes exact bytes to an existing directory")
     void write_existingDirectory(@TempDir Path tempDir) throws IOException {
         // Arrange
         Path target = tempDir.resolve("out.bin");
@@ -290,7 +290,7 @@ class FilesUtilsTest {
     }
 
     @Test
-    @DisplayName("write: empty byte array creates a zero-length file")
+    @DisplayName("empty byte array creates a zero-length file")
     void write_emptyPayload(@TempDir Path tempDir) throws IOException {
         // Arrange
         Path target = tempDir.resolve("empty.bin");
@@ -305,7 +305,7 @@ class FilesUtilsTest {
     }
 
     @Test
-    @DisplayName("write: binary content (all 256 byte values) is preserved exactly")
+    @DisplayName("binary content (all 256 byte values) is preserved exactly")
     void write_binaryContentPreserved(@TempDir Path tempDir) throws IOException {
         // Arrange
         Path target = tempDir.resolve("bin.dat");
@@ -320,7 +320,7 @@ class FilesUtilsTest {
     }
 
     @Test
-    @DisplayName("write: text content is readable back as the same string")
+    @DisplayName("text content is readable back as the same string")
     void write_textRoundTrip(@TempDir Path tempDir) throws IOException {
         // Arrange
         Path target = tempDir.resolve("note.txt");
@@ -335,7 +335,7 @@ class FilesUtilsTest {
     }
 
     @Test
-    @DisplayName("write: second write to the same path succeeds")
+    @DisplayName("second write to the same path succeeds")
     void write_secondWriteSucceeds(@TempDir Path tempDir) throws IOException {
         // Arrange
         Path target = tempDir.resolve("x.txt");
@@ -349,7 +349,7 @@ class FilesUtilsTest {
     }
 
     @Test
-    @DisplayName("write: writing shorter content over longer must truncate (no stale tail)")
+    @DisplayName("writing shorter content over longer must truncate (no stale tail)")
     void write_shorterOverLongerMustTruncate(@TempDir Path tempDir) throws IOException {
         // Arrange
         Path target = tempDir.resolve("x.txt");
@@ -368,7 +368,7 @@ class FilesUtilsTest {
     }
 
     @Test
-    @DisplayName("write: creates a single missing parent directory")
+    @DisplayName("creates a single missing parent directory")
     void write_createsMissingDirs_singleLevel(@TempDir Path tempDir) throws IOException {
         // Arrange
         Path target = tempDir.resolve("sub").resolve("out.bin");
@@ -385,7 +385,7 @@ class FilesUtilsTest {
     }
 
     @Test
-    @DisplayName("write: creates multiple missing parent directories (deep path)")
+    @DisplayName("creates multiple missing parent directories (deep path)")
     void write_createsMissingDirs_deepPath(@TempDir Path tempDir) throws IOException {
         // Arrange
         Path target = tempDir.resolve("a").resolve("b").resolve("c")
@@ -406,7 +406,7 @@ class FilesUtilsTest {
     }
 
     @Test
-    @DisplayName("write: does NOT fail when parent directories already exist")
+    @DisplayName("does NOT fail when parent directories already exist")
     void write_createsMissingDirs_alreadyExist(@TempDir Path tempDir) throws IOException {
         // Arrange
         Path parent = tempDir.resolve("existing").resolve("dir");
@@ -420,17 +420,132 @@ class FilesUtilsTest {
         Assertions.assertEquals("ok", Files.readString(target));
     }
 
+    // --------------------------------------------
+    // ---------- void delete(Path path) ----------
+    // --------------------------------------------
+
+    @Test
+    @DisplayName("removes an existing file")
+    void delete_existingFile(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path target = tempDir.resolve("toDelete.txt");
+        Files.writeString(target, "bye");
+        Assertions.assertTrue(Files.exists(target));
+
+        // Act
+        FilesUtils.delete(target);
+
+        // Assert
+        Assertions.assertFalse(Files.exists(target));
+    }
+
+    @Test
+    @DisplayName("removes a file in a nested path")
+    void delete_nestedFile(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path nested = tempDir.resolve("a").resolve("b");
+        Files.createDirectories(nested);
+        Path target = nested.resolve("file.bin");
+        Files.writeString(target, "data");
+
+        // Act
+        FilesUtils.delete(target);
+
+        // Assert
+        Assertions.assertFalse(Files.exists(target));
+        Assertions.assertTrue(Files.exists(nested));
+    }
+
+    @Test
+    @DisplayName("removes an empty directory")
+    void delete_emptyDirectory(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path emptyDir = tempDir.resolve("emptyDir");
+        Files.createDirectory(emptyDir);
+
+        // Act
+        FilesUtils.delete(emptyDir);
+
+        // Assert
+        Assertions.assertFalse(Files.exists(emptyDir));
+    }
+
+    @Test
+    @DisplayName("multiple sequential deletes all succeed")
+    void delete_multipleFiles(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path f1 = tempDir.resolve("f1.txt");
+        Path f2 = tempDir.resolve("f2.txt");
+        Path f3 = tempDir.resolve("f3.txt");
+        Files.writeString(f1, "1");
+        Files.writeString(f2, "2");
+        Files.writeString(f3, "3");
+
+        // Act
+        FilesUtils.delete(f1);
+        FilesUtils.delete(f2);
+        FilesUtils.delete(f3);
+
+        // Assert
+        Assertions.assertFalse(Files.exists(f1));
+        Assertions.assertFalse(Files.exists(f2));
+        Assertions.assertFalse(Files.exists(f3));
+    }
+
+    @Test
+    @DisplayName("a zero-length (empty) file is deleted successfully")
+    void delete_emptyFile(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path target = tempDir.resolve("zero.bin");
+        Files.createFile(target);
+
+        // Act
+        FilesUtils.delete(target);
+
+        // Assert
+        Assertions.assertFalse(Files.exists(target));
+    }
+
+
+    @Test
+    @DisplayName("non-existent path → VestalException 1326_31082026")
+    void delete_nonExistentPath(@TempDir Path tempDir) {
+        // Arrange
+        Path missing = tempDir.resolve("does").resolve("not").resolve("exist.txt");
+        Assertions.assertFalse(Files.exists(missing));
+
+        // Act & Assert
+        VestalException ex = Assertions.assertThrows(
+                VestalException.class,
+                () -> FilesUtils.delete(missing));
+
+        Assertions.assertEquals("1326_31082026", ex.getErrorID());
+        Assertions.assertTrue(
+                ex.getMessage().contains("does/not/exist.txt")
+                        || ex.getMessage().contains("does\\not\\exist.txt"),
+                "Message should include the path, was: " + ex.getMessage());
+    }
+
+    @Test
+    @DisplayName("non-empty directory → VestalException 1326_31082026")
+    void delete_nonEmptyDirectory(@TempDir Path tempDir) throws IOException {
+        // Arrange
+        Path dir = tempDir.resolve("dirWithStuff");
+        Files.createDirectory(dir);
+        Files.writeString(dir.resolve("inner.txt"), "content");
+
+        // Act & Assert
+        VestalException ex = Assertions.assertThrows(
+                VestalException.class,
+                () -> FilesUtils.delete(dir));
+
+        Assertions.assertEquals("1326_31082026", ex.getErrorID());
+        Assertions.assertTrue(Files.exists(dir.resolve("inner.txt")));
+    }
+
     // ---------------------------------------
     // ---------- paste_method_here ----------
     // ---------------------------------------
-
-    @Test
-    void testWrite() {
-    }
-
-    @Test
-    void delete() {
-    }
 
     @Test
     void getOperatingSystemFolderSeparator() {
